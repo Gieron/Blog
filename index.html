@@ -6,20 +6,27 @@
     <link rel="stylesheet" href="/styles/common.css" />
     <script src="/scripts/common.js"></script>
 </head>
-<body itemscope itemtype="http://schema.org/Blog">
+<body>
 	<header>
-        <h1 itemprop="headline name">Pseudorandom Knowledge</h1>
+        <h1>Pseudorandom Knowledge</h1>
     </header>
 
-    <aside>
-        <p itemprop="about">
-            The collected learnings of a swedish software developer. Mostly
-            about web and .NET development. All source code is released under
-            <a itemprop="license" href="http://www.wtfpl.net/">WTFPL</a>.
-            You may do whatever you want with it. You do not have to attribute
-            it back to me. I take no responsibility for its correctness.
-        </p>
-        <span class="author" itemprop="author">Henrik Ripa</span>
+    <aside itemscope itemtype="http://schema.org/Blog">
+        <header>
+            <h1 itemprop="headline name">Pseudorandom Knowledge</h1>
+        </header>
+        <content itemprop="about">
+            <p>
+                The collected learnings of a swedish software developer. Mostly
+                about web and .NET development. All source code is released under
+                <a itemprop="license" href="http://www.wtfpl.net/">WTFPL</a>.
+                You may do whatever you want with it. You do not have to attribute
+                it back to me. I take no responsibility for its correctness.
+            </p>
+        </content>
+        <footer>
+            <span class="author" itemprop="author">Henrik Ripa</span>
+        </footer>
     </aside>
 
     <article>
