@@ -170,9 +170,9 @@ body {
     }
 }
 
-@media screen and (min-resolution: 3dppx) {
+@media screen and (min-resolution: 2dppx) {
     body {
-        font-size: 20px;
+        font-size: 16px;
     }
 
     body > * {
