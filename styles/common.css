@@ -13,7 +13,7 @@ body {
     background-image: url('/images/rubber_grip.png');
     background-repeat: repeat;
     font-family: Arial, Helvetica, Sans-Serif;
-    font-size: 12px;
+    font-size: 0.75em;
 }
 
     body a {
@@ -30,8 +30,7 @@ body {
 
 
     body > * {
-        width: 65%;
-        min-width: 560px;
+        width: 700px;
         box-sizing: border-box;
         box-shadow: 12px 12px 8px #151515;
     }
@@ -53,7 +52,7 @@ body {
         body > header h1 {
             transform: translateY(149px);
             margin-right: 4px;
-            font-size: 2.5em;
+            font-size: 30px;
             color: #ffffff;
             text-align: right;
         }
@@ -81,6 +80,7 @@ body {
         body > aside > span.author {
             display: block;
             text-align: right;
+            font-size: 1em;
         }
             body > aside > span.author::before {
                 content: 'by ';
@@ -113,6 +113,7 @@ body {
                 flex-flow: column nowrap;
                 text-align: right;
                 margin-top: 5px;
+                font-size: 1em;
             }
 
                 body > article > header > div.meta > time.published {
@@ -146,3 +147,25 @@ body {
         margin-bottom: 80px;
         background-color: #555555;
     }
+
+@media screen and (max-width: 700px) {
+    body > * {
+        width: 100%;
+        min-width: 400px;
+    }
+
+    body > header {
+        margin-top: 0;
+    }
+}
+
+@media screen and (min-resolution: 2dppx) {
+    body > * {
+        width: 100%;
+        min-width: 400px;
+    }
+
+    body > header {
+        margin-top: 0;
+    }
+}
