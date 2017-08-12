@@ -10,7 +10,7 @@ body {
     align-items: center;
     flex-direction: column;
     background-color: #707070;
-    background-image: url('/_images/rubber_grip.png');
+    background-image: url('/images/rubber_grip.png');
     background-repeat: repeat;
     font-family: Arial, Helvetica, Sans-Serif;
     font-size: 12px;
@@ -40,7 +40,7 @@ body {
         height: 185px;
         margin-top: 20px;
         background-color: #608fbb;
-        background-image: url('/_images/ptarmigan.jpg');
+        background-image: url('/images/ptarmigan.jpg');
         background-position: left top;
     }
 
