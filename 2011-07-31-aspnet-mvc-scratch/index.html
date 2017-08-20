@@ -1,0 +1,129 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>ASP.NET MVC from scratch | Pseudorandom Knowledge</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="/styles/highlight.css" />
+    <link rel="stylesheet" href="/styles/common.css" />
+    <script src="/scripts/highlight.js"></script>
+    <script src="/scripts/common.js"></script>
+</head>
+<body>
+	<header>
+		<a href="/" rel="home">
+            <h1>Pseudorandom Knowledge</h1>
+        </a>
+    </header>
+
+    <article itemscope itemtype="http://schema.org/BlogPosting">
+        <header>
+            <h1 itemprop="headline name">ASP.NET MVC from scratch</h1>
+            <time class="published" itemprop="datePublished">2011-07-31</time>
+            <time class="modified" itemprop="dateModified">2017-08-20</time>
+        </header>
+
+        <content itemprop="articleBody text">
+
+            <p>
+                ASP.NET MVC is Microsoft’s answer to <a href="http://rubyonrails.org/">Ruby on Rails</a>. Apart from the Model-View-Controller design pattern it contains the following:
+            </p>
+
+            <ul>
+                <li>URL routing</li>
+                <li>Code generation</li>
+                <li>Convention over configuration</li>
+                <li>Razor markup instead of ASPX (optional)</li>
+            </ul>
+
+            <p>
+                When you create a new ASP.NET MVC project in Visual Studio you can start with all the code necessary for creating and logging in users. You can also use code generation to generate <a href="https://en.wikipedia.org/wiki/Create,_read,_update_and_delete">CRUD interfaces</a>. While this might be nice to have I suspect it isn’t very useful in bigger projects. But my main problem with this is that far too many tutorials will make use of it. I think this makes it harder to understand how the system actually works.
+            </p>
+
+            <h2>From nothing to a web page</h2>
+
+            <p>
+                Therefore let us start with an empty ASP.NET MVC 3 application and take it step by step until we have a web page without generating large quantities of code.
+            </p>
+
+            <p>
+                First we must set up a route in the <em>Global.asax.cs</em> file for the root of the web site:
+            </p>
+
+            <pre><code class="cs">routes.MapRoute(
+    "Front", // Name
+    "", // URL
+    new { controller = "Main", action = "Front" }
+);</code></pre>
+
+            <p>
+                Now if someone goes to our web site the <em>Front</em> action on the <em>Main</em> controller will be called. Here is where the convention over configuration comes in. MVC will look for a method named <em>Front</em> in a class named <em>MainController</em> in the <em>Controllers</em> namespace. This method must return a type derived from <em>ActionResult</em>.
+            </p>
+
+            <pre><code class="cs">namespace MvcTest.Controllers
+{
+    public class MainController : Controller
+    {
+        public ContentResult Front()
+        {
+            return Content("Front page", "text/plain");
+        }
+    }
+}</code></pre>
+
+            <p>
+                This is one of the biggest strengths with MVC in my opinion. Every request to the web server can be routed to a method in a controller. Then you can return anything you want from there, there are many <a href="https://msdn.microsoft.com/en-us/library/dd410269(VS.98).aspx">types of results</a> that you can return.
+            </p>
+
+            <p>
+                The front page now works. But you probably want to return a web page and not just text. First change the return value of the method:
+            </p>
+
+            <pre><code class="cs">public ViewResult Front()
+{
+    return View();
+}</code></pre>
+
+            <p>
+                Yet again the convention comes up. MVC will now search for an appropriate file to use. If you run the application it will show an error message with a list of files it searches for. We will use the following file because we use Razor and C#: <em>Views/Main/Front.cshtml</em>
+            </p>
+
+            <pre><code class="html">@{
+    ViewBag.Title = "Front page";
+}
+&lt;h2>Front page&lt;/h2></code></pre>
+
+            <p>
+                The <em>ViewBag</em> that we here use to set the title is an object that is available both in the controller and the view. It can be used to pass information from the controller to the view as in the following example:
+            </p>
+
+            <pre><code class="cs">public ViewResult Front()
+{
+    ViewBag.Greeting = "Hello world";
+    return View();
+}</code></pre>
+
+            <pre><code class="html">@{
+    ViewBag.Title = "Front page";
+}
+&lt;h2>@ViewBag.Greeting&lt;/h2></code></pre>
+
+            <p>
+                The last part is an example of the Razor syntax. This is used instead of the ASPX syntax used in ASP.NET Web Forms.
+            </p>
+
+            <p>
+                In practice you will use the <em>ViewBag</em> sparingly. Instead you can create classes in the <em>Models</em> namespace. These classes can either be used only for moving data between controllers and views or they can be used to represent tables in a database.
+            </p>
+
+        </content>
+
+        <footer>
+            <span class="comment"></span>
+            <span class="author" itemprop="author">Henrik Ripa</span>
+        </footer>
+    </article>
+
+    <footer></footer>
+</body>
+</html>
