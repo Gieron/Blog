@@ -1,0 +1,98 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>That jQuery thing: Visual Studio | Pseudorandom Knowledge</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="/styles/highlight.css" />
+    <link rel="stylesheet" href="/styles/common.css" />
+    <script src="/scripts/highlight.js"></script>
+    <script src="/scripts/common.js"></script>
+</head>
+<body>
+	<header>
+		<a href="/" rel="home">
+            <h1>Pseudorandom Knowledge</h1>
+        </a>
+    </header>
+
+    <article itemscope itemtype="http://schema.org/BlogPosting">
+        <header>
+            <h1 itemprop="headline name">That jQuery thing: Visual Studio</h1>
+            <time class="published" itemprop="datePublished">2011-07-23</time>
+            <time class="modified" itemprop="dateModified">2017-08-16</time>
+        </header>
+
+        <content itemprop="articleBody text">
+
+            <p>
+                When creating a new web application in Visual Studio I suggest doing the following to get the best jQuery and JavaScript support.
+            </p>
+
+            <ol>
+                <li>Create a directory called <em>Scripts</em> in the root of the web application. This will hold all JavaScript files.</li>
+                <li>Download the <a href="http://jquery.com/download/">latest jQuery version</a>, both the minified and uncompressed versions, and put them in the scripts directory</li>
+                <li>Go to the <a href="http://jqueryvsdocgen.azurewebsites.net/">jQuery vsdoc File Generator</a> and select the same version as you downloaded in step 2. Build the doc file, copy the output and put it in a file named <em>jquery-x.x.x-vsdoc.js</em> in the scripts directory (where x.x.x is the jQuery version number of course).</li>
+            </ol>
+
+            <p>
+                The last file will give full IntelliSense support for jQuery in Visual Studio. More on that later. Your scripts directory should now look something like this:
+            </p>
+
+<pre>
+jquery-1.6.2.js
+jquery-1.6.2.min.js
+jquery-1.6.2-vsdoc.js
+</pre>
+
+            <p>
+                Next include the minified version in the master page.
+            </p>
+
+            <pre><code class="html">&lt;script src="Scripts/jquery-1.6.2.min.js" type="text/javascript">&lt;/script></code></pre>
+
+            <p>
+                Both jQuery and IntelliSense for jQuery will now be available in all ASPX pages (if they use the master page). However, if we want IntelliSense in external JavaScript files we have to put the following line at the top:
+            </p>
+
+            <pre><code class="javascript">/// &lt;reference path="jquery-1.6.2.min.js" /></code></pre>
+
+            <p>
+                The reference tag is used to tell IntelliSense where to look for functions and objects outside of the current file. It can be used for any <a href="http://blog.brentmckendrick.com/jquery-visual-studio-2010-intellisense-in-javascript-js-file/">JavaScript file or web page</a>. In this case Visual Studio will be smart enough to use the vsdoc version. I could reference the vsdoc version directly but I want to keep it consistent.
+            </p>
+
+            <p>
+                Note that we don’t actually use the uncompressed version of the jQuery file. I still recommend adding it, it might be needed if you have to debug into the jQuery code. When it is time to update jQuery we have to update all these references. Fortunately a bit of search and replace should make the process fairly simple.
+            </p>
+
+            <h2>JavaScript debugging</h2>
+
+            <p>
+                While we are on the subject it is worth mentioning the best way to debug JavaScript in Visual Studio. For this we need to use Internet Explorer when debugging.
+            </p>
+
+            <ol>
+                <li>Right click any ASPX page in the Solution Explorer</li>
+                <li>Select <em>Browse With...</em></li>
+                <li>Select Internet Explorer and set it as default</li>
+            </ol>
+
+            <p>
+                Now you can put break points in JavaScript code and step through it like you do with C# code. Internet Explorer also integrates better with Visual Studio in other ways. For example, if you close the IE window VS drops out of debug mode.
+            </p>
+
+            <p>
+                All of this has been tested with Microsoft Visual Web Developer 2010 Express, which is what I’m currently using.
+            </p>
+
+        </content>
+
+        <footer>
+            <span class="comment"></span>
+            <span class="author" itemprop="author">Henrik Ripa</span>
+        </footer>
+    </article>
+
+    <footer></footer>
+</body>
+</html>

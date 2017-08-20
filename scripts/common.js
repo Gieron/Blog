@@ -1,1 +1,3 @@
-﻿
+﻿if (hljs) {
+    hljs.initHighlightingOnLoad();
+}

@@ -1,0 +1,117 @@
+﻿.hljs
+{
+    display: block;
+    overflow-x: auto;
+    padding: 0.5em;
+    background: white;
+}
+
+/* Black */
+.hljs,
+.hljs-subst,
+.hljs-function,
+.hljs-title,
+.hljs-params,
+.hljs-formula,
+.hljs-tag,
+.hljs-bullet
+{
+    color: black;
+}
+
+/* Blue */
+.hljs-keyword,
+.hljs-literal,
+.hljs-symbol,
+.hljs-name
+{
+    color: rgb(0,0,255);
+}
+
+.hljs-link
+{
+    color: rgb(0,0,255);
+    text-decoration: underline;
+}
+
+/* Brown */
+.hljs-meta,
+.hljs-meta-keyword,
+.hljs-built_in,
+.hljs-type,
+.hljs-attr,
+.hljs-attribute,
+.hljs-builtin-name,
+.hljs-variable,
+.hljs-template-variable
+{
+    color: rgb(163,21,21);
+}
+
+/* Green */
+.hljs-string,
+.hljs-meta-string
+{
+    color: rgb(0,128,0);
+}
+
+.hljs-quote
+{
+    color: rgb(0,128,0);
+    font-style: italic;
+}
+
+/* Teal */
+.hljs-number,
+.hljs-class,
+.hljs-regexp,
+.hljs-template-tag
+{
+    color: rgb(43,145,175);
+}
+
+/* Red */
+.hljs-selector-tag,
+.hljs-selector-id,
+.hljs-selector-class,
+.hljs-selector-attr,
+.hljs-selector-pseudo
+{
+    color: rgb(255,0,0);
+}
+
+/* Gray */
+.hljs-doctag,
+.hljs-comment
+{
+    color: gray;
+}
+
+.hljs-section
+{
+    color: gold;
+}
+
+.hljs-emphasis
+{
+    font-style: italic;
+}
+
+.hljs-strong
+{
+    font-weight: bold;
+}
+
+.hljs-addition
+{
+    background-color: #144212;
+    display: inline-block;
+    width: 100%;
+}
+
+.hljs-deletion
+{
+    background-color: #600;
+    display: inline-block;
+    width: 100%;
+}

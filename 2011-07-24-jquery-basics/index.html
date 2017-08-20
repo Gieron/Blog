@@ -1,0 +1,119 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>That jQuery thing: basics | Pseudorandom Knowledge</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="/styles/highlight.css" />
+    <link rel="stylesheet" href="/styles/common.css" />
+    <script src="/scripts/highlight.js"></script>
+    <script src="/scripts/common.js"></script>
+</head>
+<body>
+	<header>
+		<a href="/" rel="home">
+            <h1>Pseudorandom Knowledge</h1>
+        </a>
+    </header>
+
+    <article itemscope itemtype="http://schema.org/BlogPosting">
+        <header>
+            <h1 itemprop="headline name">That jQuery thing: basics</h1>
+            <time class="published" itemprop="datePublished">2011-07-24</time>
+            <time class="modified" itemprop="dateModified">2017-08-18</time>
+        </header>
+
+        <content itemprop="articleBody text">
+
+            <p>
+                Internally jQuery is implemented as a class with the name <em>jQuery</em>. But you will almost always use its alias: <em>$</em>. Instances of this class can be created via its constructor [e.g. <em>$("img")</em>]. When instantiated the jQuery object represents a collection of HTML elements. You can run methods on these elements [e.g. <em>$("a").hide()</em>]. You can use the collection as a base for new collections [e.g. <em>$("div").first()</em>]. The jQuery class also has static methods [e.g. <em>$.now()</em>].
+            </p>
+
+            <p>
+                The problem with the description given above is that JavaScript doesn’t have classes. <strong>The explanation above is false.</strong> Still, I find it the best way to understand what jQuery actually is.
+            </p>
+
+            <p>
+                The main use of jQuery is to manipulate the DOM (Document Object Model). Before we can do this we should make sure the DOM is loaded.
+            </p>
+
+            <pre><code class="javascript">$(document).ready(function () {
+    // The DOM has been loaded
+});
+ 
+$(function () {
+    // Shorthand form of the above
+});
+ 
+$(window).load(function () {
+    // The entire page has been loaded
+});</code></pre>
+
+            <p>
+                It is better to use jQuery than the <em>onload</em> attribute in the body tag which will wait until all assets has been received. The jQuery <em>ready</em> method will fire as soon as the DOM is loaded which happens much earlier. The last example shows how you can wait until the entire web page has loaded, including images. I recommend reading up on the <em>load</em> method if you need to do this though.
+            </p>
+
+            <p>
+                To manipulate elements in the DOM we must first select them. jQuery uses the same syntax as CSS files to select HTML elements.
+            </p>
+
+            <pre><code class="javascript">$("*");             // selects all
+$("#top");          // by ID
+$("table");         // by tag
+$(".alert");        // by class
+$(":hidden");       // by pseudo class
+$("img[alt]");      // by tag, has attribute
+$("a[href='#']");   // by tag, has attribute value
+$("em.red:hidden"); // combination of selectors</code></pre>
+
+            <p>
+                Finally, when we have selected some elements we can do something with them. To see your complete set of options, and also more on selectors, it is time to go to the <a href="http://api.jquery.com/">jQuery documentation</a>. I will end this with a practical example to ponder on.
+            </p>
+
+            <pre><code class="javascript">$(document).ready(function () {
+    $("#reset").click(function () {
+        $("form").each(function () {
+            this.reset();
+        });
+    });
+});</code></pre>
+
+            <h2>Performance considerations</h2>
+
+            <p>
+                jQuery makes it trivial to select elements from the DOM. However, under the hood it might not be as trivial. Used incorrectly jQuery can <a href="http://eng.wealthfront.com/2010/10/20/jquery-right-way/">slow your site to a crawl</a>. Selecting a single element via its ID is quick, selecting all elements with a certain class is not. Using attributes or pseudo selectors (i.e. <em>:visible</em>, <em>:even</em> etc) is even slower.
+            </p>
+
+            <p>
+                Consider the following advice to keep your site fluent:
+            </p>
+
+            <pre><code class="javascript">// Root your selection to an element with an ID before
+// delving deeper with slower selectors
+$("#faq").find(".answer").css("color", "blue");
+ 
+// Use variables if you need to reuse the collection
+var questions = $("#faq .question");
+questions.css("color", "red");
+questions.append("?");
+ 
+// Chain jQuery expressions when it makes sense
+$("#faq")
+    .find(".answer").hide().end()
+    .find(".question").click(toggleNext);</code></pre>
+
+            <p>
+                The last example works because most jQuery methods will return a reference to the object used to call them. Methods that needs to return something else obviously can’t do this though. When a jQuery object is created from another jQuery object it will keep a reference to its parent, that is why we can go backwards with the <em>end()</em> method.
+            </p>
+
+        </content>
+
+        <footer>
+            <span class="comment"></span>
+            <span class="author" itemprop="author">Henrik Ripa</span>
+        </footer>
+    </article>
+
+    <footer></footer>
+</body>
+</html>
