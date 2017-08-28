@@ -1,0 +1,121 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>CSS sprite button | Pseudorandom Knowledge</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="/styles/highlight.css" />
+    <link rel="stylesheet" href="/styles/common.css" />
+    <script src="/scripts/highlight.js"></script>
+    <script src="/scripts/common.js"></script>
+    <style>
+      #button {
+        text-indent: -5000px;
+        display: block;
+        width: 150px;
+        height: 50px;
+        background-image: url("CssSpriteButton.png");
+        background-position: 0 0;
+        margin: auto;
+      }
+      #button:hover {
+        background-position: 0 -50px;
+      }
+      #button:active {
+        background-position: 0 -100px;
+      }
+    </style>
+</head>
+<body>
+	<header>
+		<a href="/" rel="home">
+            <h1>Pseudorandom Knowledge</h1>
+        </a>
+    </header>
+
+    <article itemscope itemtype="http://schema.org/BlogPosting">
+        <header>
+            <h1 itemprop="headline name">CSS sprite button</h1>
+            <time class="published" itemprop="datePublished">2011-08-06</time>
+            <time class="modified" itemprop="dateModified">2017-08-28</time>
+        </header>
+
+        <content itemprop="articleBody text">
+
+            <p>
+                When you have a lot of small images on a web page you can combine them into one image and then use CSS to cut out the individual parts. This practice is called CSS sprites and can make your web page load faster.
+            </p>
+
+            <p>
+                I’m going to use this technique here to implement an image button with hover and clicked states. It will also degrade gracefully and does not use any JavaScript. We start with the following beauty I created in Paint:
+            </p>
+
+            <img src="CssSpriteButton.png" />
+
+            <p>
+                The dimensions of this image are 150 times 150 pixels. Each box is 50 pixels high.
+            </p>
+
+            <pre><code class="html">&lt;a id="button" title="Explanation" href="#">Fallback text&lt;/a></code></pre>
+
+            <p>
+                We use an ordinary link as the basis for our button. This is what users who have CSS turned off will see. It should also work well with screen readers. The <em>title</em> attribute sets a text that is shown when the user hovers over the button. In practice it would probably be the same as the link text.
+            </p>
+
+            <pre><code class="css">#button
+{
+    text-indent: -5000px;
+    display: block;
+    width: 150px;
+    height: 50px;
+    background-image: url("CssSpriteButton.png");
+    background-position: 0 0;
+}
+#button:hover
+{
+    background-position: 0 -50px;
+}
+#button:active
+{
+    background-position: 0 -100px;
+}</code></pre>
+
+            <p>
+                In the CSS we have to set a height and width of the button. When we then set our image as the background only the first box will be shown. In the hover and active states we set the background position to a negative vertical value. This means we will show the second and third box respectively. The result is a working button:
+            </p>
+
+            <p>
+                <a id="button" href="#bottom" title="Explanation">Fallback text</a>
+            </p>
+
+            <p>
+                The text indent is there to move the text out of the way. Otherwise the text would be put on top of the image. There are <a href="http://www.mezzoblue.com/tests/revised-image-replacement/">several other techniques</a> to hide the text. Some of which can handle the situation where the user has CSS enabled but images disabled. Personally I don’t think it is worth the effort.
+            </p>
+
+            <p>
+                CSS sprites and background images can be used in many other ways. For example, you can make <a href="http://www.alistapart.com/articles/sprites">nice image maps</a> with it.
+            </p>
+
+            <h2>Flickering</h2>
+
+            <p>
+                If you read older articles about CSS sprites, for example the one linked above, you will come across concerns about flickering. The proposed solution for this is to put the background image for the normal state in a parent tag and let the background image for the hover state cover it.
+            </p>
+
+            <p>
+                However, as far as what I’ve read this problem only <a href="https://stackoverflow.com/q/2468788/12031">exists in Internet Explorer 6</a> and possibly only when the cache has been turned off. Personally I would not worry about it. Even if this happens it is still perfectly usable, it just looks a bit bad.
+            </p>
+
+            <a name="bottom"></a>
+
+        </content>
+
+        <footer>
+            <span class="comment"></span>
+            <span class="author" itemprop="author">Henrik Ripa</span>
+        </footer>
+    </article>
+
+    <footer></footer>
+</body>
+</html>

@@ -23,9 +23,19 @@
 .hljs-keyword,
 .hljs-literal,
 .hljs-symbol,
-.hljs-name
+.hljs-name,
+.hljs-selector-tag,
+.hljs-selector-id,
+.hljs-selector-class
 {
     color: rgb(0,0,255);
+}
+
+.hljs-selector-attr,
+.hljs-selector-pseudo
+{
+    color: rgb(0,0,255);
+    font-style: italic;
 }
 
 .hljs-link
@@ -71,11 +81,7 @@
 }
 
 /* Red */
-.hljs-selector-tag,
-.hljs-selector-id,
-.hljs-selector-class,
-.hljs-selector-attr,
-.hljs-selector-pseudo
+.hljs-placeholder-1
 {
     color: rgb(255,0,0);
 }
