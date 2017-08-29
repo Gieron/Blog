@@ -1,0 +1,106 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>Semantic markup in HTML5 | Pseudorandom Knowledge</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="/styles/highlight.css" />
+    <link rel="stylesheet" href="/styles/common.css" />
+    <script src="/scripts/highlight.js"></script>
+    <script src="/scripts/common.js"></script>
+</head>
+<body>
+	<header>
+		<a href="/" rel="home">
+            <h1>Pseudorandom Knowledge</h1>
+        </a>
+    </header>
+
+    <article itemscope itemtype="http://schema.org/BlogPosting">
+        <header>
+            <h1 itemprop="headline name">Semantic markup in HTML5</h1>
+            <time class="published" itemprop="datePublished">2011-08-08</time>
+            <time class="modified" itemprop="dateModified">2017-08-29</time>
+        </header>
+
+        <content itemprop="articleBody text">
+
+            <p>
+                HTML5 introduces several new tags for semantic markup. The purpose is to replace the <em>div</em>s with home made classes and ids with something standardized. This will be helpful when the content is read by something other than a standard browser. The example below shows some of the main elements in the new system.
+            </p>
+
+            <pre><code class="html">&lt;body>
+    &lt;header>
+      &lt;h1>Site title&lt;/h1>
+    &lt;/header>
+    &lt;nav>
+        &lt;a href="url">Link&lt;/a>
+        &lt;a href="url">Link&lt;/a>
+    &lt;/nav>
+    &lt;section id="articles">
+        &lt;article>
+            &lt;h1>Heading&lt;/h1>
+            &lt;p>Paragraph text.&lt;/p>
+            &lt;h2>Sub heading&lt;/h2>
+            &lt;p>More text.&lt;/p>
+            &lt;section>
+                &lt;h1>Second sub heading&lt;/h1>
+                &lt;p>Even more text.&lt;/p>
+            &lt;/section>
+        &lt;/article>
+        &lt;aside>
+            Advertisement
+        &lt;/aside>
+    &lt;/section>
+    &lt;footer>Copyright notice&lt;/footer>
+&lt;/body></code></pre>
+
+            <p>
+                The article tag is used for a self contained independent pieces, like a blog post or an article or anything that could be distributed on its own. A section is used to group related content together, for example a collection of articles or a set of paragraphs. There are also implicit sections. In the example above the article contains three sections of which only the last is explicit.
+            </p>
+
+            <p>
+                There is a lot more to say <a href="https://developer.mozilla.org/en/Sections_and_Outlines_of_an_HTML5_document">about sections in HTML5</a> and about all <a href="http://html5doctor.com/element-index/">the other elements</a>. Two things I will say though. Remember that header and headings are not the same. Secondly, you should still use <em>div</em>s in cases where new tags doesn’t make sense.
+            </p>
+
+            <h2>Browser compatibility</h2>
+
+            <p>
+                All modern browsers support the new elements. Most older browsers will handle the new tags the same way as <em>span</em>s. That means they are styled as inline by default. This can be fixed easily with a bit of CSS.
+            </p>
+
+            <pre><code class="css">section, article, header, footer, hgroup, aside, nav {
+  display: block;
+}</code></pre>
+
+            <p>
+                However, this doesn’t work in Internet Explorer 8 and below which doesn’t allow you to style elements it doesn’t recognize. This can be fixed with the following workaround.
+            </p>
+
+            <pre><code class="html">&lt;!--[if lte IE 8]>
+  &lt;script>
+    document.createElement("section");
+    document.createElement("article");
+    document.createElement("header");
+    document.createElement("footer");
+    document.createElement("hgroup");
+    document.createElement("aside");
+    document.createElement("nav");
+  &lt;/script>
+&lt;![endif]--></code></pre>
+
+            <p>
+                In reality there are more elements than these. You can either include them as you need or use <a href="http://remysharp.com/2009/01/07/html5-enabling-script/">a finished script</a> that does this for you. Unfortunately this wont work if the user has disabled JavaScript. In that case the only thing you can do is inform them about it with a <em>noscript</em> tag and proceed without CSS for the new elements.
+            </p>
+
+        </content>
+
+        <footer>
+            <span class="comment"></span>
+            <span class="author" itemprop="author">Henrik Ripa</span>
+        </footer>
+    </article>
+
+    <footer></footer>
+</body>
+</html>
