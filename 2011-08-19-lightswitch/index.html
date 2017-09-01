@@ -1,0 +1,99 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>Visual Studio LightSwitch | Pseudorandom Knowledge</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="/styles/highlight.css" />
+    <link rel="stylesheet" href="/styles/common.css" />
+    <script src="/scripts/highlight.js"></script>
+    <script src="/scripts/common.js"></script>
+</head>
+<body>
+	<header>
+		<a href="/" rel="home">
+            <h1>Pseudorandom Knowledge</h1>
+        </a>
+    </header>
+
+    <article itemscope itemtype="http://schema.org/BlogPosting">
+        <header>
+            <h1 itemprop="headline name">Visual Studio LightSwitch</h1>
+            <time class="published" itemprop="datePublished">2011-08-19</time>
+            <time class="modified" itemprop="dateModified">2017-09-01</time>
+        </header>
+
+        <content itemprop="articleBody text">
+
+            <p>
+                <a href="https://msdn.microsoft.com/en-us/library/ff851953.aspx">LightSwitch</a> is a new development tool from Microsoft which lets you create data-centric applications by writing little or no code. It is built on .NET, Silverlight and SQL Server. The result can be deployed both to the web and as a desktop application.
+            </p>
+
+            <p>
+                For an example we are going to create a very simple to do list. First download and install LightSwitch, start it and create a new project. Then we are asked if we want to create a new table or use an existing data source. We want to do the former.
+            </p>
+
+            <img src="lightswitch-todolist-1.png" width="600" />
+
+            <p>
+                In our application a task has a description and a Boolean flag that tells whether the task has been done. To be able to view and edit our tasks we need to add a screen to our application.
+            </p>
+
+            <img src="lightswitch-todolist-2.png" width="600" />
+
+            <p>
+                Right click <em>Screens</em> in the solution explorer to add a new screen. We want to use an editable grid screen. We must also select which data it should use and give it a name.
+            </p>
+
+            <img src="lightswitch-todolist-3.png" width="600" />
+
+            <p>
+                That is actually all that is needed. If we run the application now we get a list where we can create new tasks, mark them as done and save them for later.
+            </p>
+
+            <img src="lightswitch-todolist-4.png" width="600" />
+
+            <p>
+                Let us make it a bit more interesting by only showing tasks that hasn’t been done yet. We do this by clicking <em>Edit Query</em>.
+            </p>
+
+            <img src="lightswitch-todolist-5.png" />
+
+            <p>
+                While we’re at it we can also tell it to sort the tasks. Now the application will only show uncompleted tasks. But we have to manually refresh after we save for it to update properly. We can fix that. Right click on <em>Save</em> on the right and select <em>Edit Saved Code</em>.
+            </p>
+
+            <pre><code class="csharp">namespace LightSwitchApplication
+{
+    public partial class Todo
+    {
+        partial void Todo_Saved()
+        {
+            Refresh();
+        }
+    }
+}</code></pre>
+
+            <p>
+                This code refreshes the screen after the data has been saved. Now the application works like we would expect.
+            </p>
+
+            <p>
+                The application can now be published. If you publish it as a desktop application you also need to install an SQL server and create the tables on the target machine. In a practical situation you would probably want to connect to a common database.
+            </p>
+
+            <p>
+                <em><a href="https://blogs.msdn.microsoft.com/lightswitch/2016/10/14/lightswitch-update/">Visual Studio 2015 was the last version to include support for LightSwitch</a>.</em>
+            </p>
+
+        </content>
+
+        <footer>
+            <span class="comment"></span>
+            <span class="author" itemprop="author">Henrik Ripa</span>
+        </footer>
+    </article>
+
+    <footer></footer>
+</body>
+</html>

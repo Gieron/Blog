@@ -1,0 +1,163 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>My ASP.NET is full of eels | Pseudorandom Knowledge</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="/styles/highlight.css" />
+    <link rel="stylesheet" href="/styles/common.css" />
+    <script src="/scripts/highlight.js"></script>
+    <script src="/scripts/common.js"></script>
+</head>
+<body>
+	<header>
+		<a href="/" rel="home">
+            <h1>Pseudorandom Knowledge</h1>
+        </a>
+    </header>
+
+    <article itemscope itemtype="http://schema.org/BlogPosting">
+        <header>
+            <h1 itemprop="headline name">My ASP.NET is full of eels</h1>
+            <time class="published" itemprop="datePublished">2011-08-14</time>
+            <time class="modified" itemprop="dateModified">2017-09-01</time>
+        </header>
+
+        <content itemprop="articleBody text">
+
+            <p>
+                When creating a multilingual ASP.NET application there are two sane options. You can either create different pages for each language. This can be done without duplicating the server code by using views in MVC or by using the same code behind file for different pages in web forms. However, in both cases you will have to duplicate your markup.
+            </p>
+
+            <p>
+                The second option is to use resources. Commonly in the form of resource files, though <a href="http://www.west-wind.com/presentations/wwdbresourceprovider/">there are other options</a>. Resource files are XML files, each file contains resources for one language and each resource is identified with a name. Resource values can contain binary data such as images but for localization purposes they will typically be strings.
+            </p>
+
+            <pre>Resource.resx
+Resource.de.resx
+Resource.sv-SE.resx
+Resource.uz-Cyrl-UZ.resx</pre>
+
+            <p>
+                Above are examples of resource file names. The language of a resource file is denoted by an <a href="http://tools.ietf.org/html/rfc1766">RFC 1766</a> language identifier before the files <em>.resx</em> extension. When .NET looks up a resource by name it will choose the most appropriate file available (e.g. using <em>en</em> if <em>en-US</em> doesn’t exist). The last resort is to use the resource file without a language identifier. This file must exist and it must contain all resource names you want to use or .NET will not find them.
+            </p>
+
+            <p>
+                Visual Studio has good support for editing resource files but for translations you might want to use a third party program. For example <a href="http://www.zeta-resource-editor.com/index.html">Zeta Resource Editor</a> which is free. It allows you to edit several resource files at once.
+            </p>
+
+            <h2>Local and global resource files</h2>
+
+            <p>
+                ASP.NET web forms has excellent support for resource files. It uses two types of files, local resource files are bound to a specific page while global resource files are used everywhere. The resource files are put in two folders named <em>App_<em>LocalResources</em></em> and <em>App_</em><em><em></em>GlobalResources </em>respectively.
+            </p>
+
+            <pre><code class="html">&lt;asp:Literal runat="server" meta:resourcekey="Concept" />
+&lt;asp:Literal runat="server" Text="&lt;%$ Resources: Concept.Text %>" />
+&lt;asp:Literal runat="server" Text="&lt;%$ Resources: Company, Slogan %>" /></code></pre>
+
+            <p>
+                You can include text from your local resource files in an ASPX page implicitly. The first line in the code above, which is taken from a page called <em>About.aspx</em>, will look for resources named <em>Concept.X</em> in the local resource file called&nbsp;<em><em>About</em>.aspx.resx</em>, where <em>X</em> is a valid attribute for the tag. In this case I have a resource named <em>Concept.Text</em> which will set the <em>Text</em> attribute of the literal tag.
+            </p>
+
+            <p>
+                The second line does the same thing as the first but looks up the resource name explicitly. The third line gets a resource named <em>Slogan</em> from the global resource file named <em>Company.resx</em>. Global resources cannot be used implicitly.
+            </p>
+
+            <pre><code class="csharp">GetLocalResourceObject("Concept.Text") as string;
+GetGlobalResourceObject("Company", "Slogan") as string;
+HttpContext.GetLocalResourceObject("~/About.aspx", "Concept.Text") as string;
+HttpContext.GetGlobalResourceObject("Company", "Slogan") as string;</code></pre>
+
+            <p>
+                You can also use the resources in your C# code. If you are in the code behind for a page you can use either of the first two lines while the last two lines can be used from anywhere. In the latter case you have to specify which page you want if you use a local resource file.
+            </p>
+
+            <h2>Strongly typed resources</h2>
+
+            <p>
+                Unfortunately, the local/global resource system doesn’t work very well in MVC. Instead you may want to use the following system. When you create new resource files in Visual Studio it will also generate a C# class with members for each resource. The class is regenerated when you rebuild the project to keep up to date with the resource file.
+            </p>
+
+            <pre><code class="csharp">Resources.Support.Contact;</code></pre>
+
+            <p>
+                If you are using strongly typed resources there is no reason to use the directories for local and global resource files, although that should be possible as well, instead I suggest using a directory called <em>Resources</em> for all your resource files. In this case I have put a resource file called <em>Support.resx</em> in the <em>Resources</em> directory. In the example above I retrieve the resource named <em>Contact</em>.
+            </p>
+
+            <pre><code class="html">@Project.Resources.Support.Help</code></pre>
+
+            <p>
+                You use the same code to get resources into the razor views. You have to include the project name. You may want to simplify the syntax by using <em>using</em> or something similar.
+            </p>
+
+            <p>
+                While the strongly typed resources look easy to use there are two major drawbacks. You can’t assemble resource names dynamically in the code, which can be useful sometimes. Secondly the generated classes only work with resource files, if you want to store resources some other way it won’t work. It might be worth putting together your own classes for dealing with resources in MVC.
+            </p>
+
+            <h2>Setting the language</h2>
+
+            <p>
+                The resources are pretty useless without a way to set the language. This has to be done at the start of each HTTP request. The best way to decide which language to use is to look at what the user’s browser tells us. But we also want the user to be able to override that decision.
+            </p>
+
+            <pre><code class="csharp">protected void Application_BeginRequest(object sender, EventArgs e)
+{
+    string[] SupportedLanguages = { "en", "sv" };
+    string DefaultLanguge = "en";
+    string language = DefaultLanguge;
+ 
+    HttpRequest request = HttpContext.Current.Request;
+ 
+    HttpCookie cookie = request.Cookies["Language"];
+    if (cookie != null && SupportedLanguages.Contains(cookie.Value))
+    {
+        language = cookie.Value;
+    }
+    else if (request.UserLanguages != null)
+    {
+        foreach (string userLang in request.UserLanguages)
+        {
+            string lang = userLang;
+            if (lang.Length < 2) continue;
+            if (lang.Contains('-'))
+                lang = lang.Substring(0, lang.IndexOf('-'));
+            if (SupportedLanguages.Contains(lang))
+            {
+                language = lang;
+                break;
+            }
+        }
+    }
+ 
+    CultureInfo culture = new CultureInfo(language);
+    Thread.CurrentThread.CurrentCulture = culture;
+    Thread.CurrentThread.CurrentUICulture = culture;
+}</code></pre>
+
+            <p>
+                This function in <em>Global.asax.cs</em> is run at the start of each request (this works in both web forms and MVC). We check if we have a language cookie set. Then we check the browser’s languages. If none of those are acceptable we default to English. Finally we can set the language of the thread. The current culture determines how dates, currencies and such things are formatted. The current UI culture determines which resource files to use.
+            </p>
+
+
+            <pre><code class="csharp">protected void SwitchToSwedish(object sender, EventArgs e)
+{
+    Response.Cookies["Language"].Value = "sv";
+    Response.Redirect(Request.RawUrl);
+}</code></pre>
+
+            <p>
+                This is the web forms code we use when the user clicks the Swedish button. We set the cookie and then tell the browser to refresh the page. This is the only way to do it since by the time we reach this function it is too late to change the language. We have to get another HTTP request to be able to do that.
+            </p>
+
+        </content>
+
+        <footer>
+            <span class="comment"></span>
+            <span class="author" itemprop="author">Henrik Ripa</span>
+        </footer>
+    </article>
+
+    <footer></footer>
+</body>
+</html>
