@@ -1,0 +1,72 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>Server-sent events | Pseudorandom Knowledge</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="/styles/highlight.css" />
+    <link rel="stylesheet" href="/styles/common.css" />
+    <script src="/scripts/highlight.js"></script>
+    <script src="/scripts/common.js"></script>
+</head>
+<body>
+	<header>
+		<a href="/" rel="home">
+            <h1>Pseudorandom Knowledge</h1>
+        </a>
+    </header>
+
+    <article itemscope itemtype="http://schema.org/BlogPosting">
+        <header>
+            <h1 itemprop="headline name">Server-sent events</h1>
+            <time class="published" itemprop="datePublished">2011-08-22</time>
+            <time class="modified" itemprop="dateModified">2017-09-02</time>
+        </header>
+
+        <content itemprop="articleBody text">
+
+            <p>
+                <a href="http://www.html5rocks.com/en/tutorials/eventsource/basics/">Server-sent events</a> is a new technology that allows the web server to send data to the browser. It works by adding an event source in JavaScript that calls a special page on the server. This page never returns but sends the events as text to the browser. If the page does return the browser will re-establish contact within a couple of seconds.
+            </p>
+
+            <pre><code class="csharp">public EmptyResult Events()
+{
+    Response.ContentType = "text/event-stream";
+    while (true)
+    {
+        string time = DateTime.Now.ToString();
+        Response.Write("data: " + time + "\n");
+        Response.Write("\n");
+        Response.Flush();
+        Thread.Sleep(5000);
+    }
+}</code></pre>
+
+            <p>
+                I used MVC for this test. After you set the content type correctly you can send event data by the syntax shown above. You can use several <em>data:</em> lines if you need to send multiline data. Each event is followed by an empty line. If you need to send different types of events you can name them by using an <em>event:</em> line. Unnamed events has the generic name <em>message</em>.
+            </p>
+
+            <pre><code class="javascript">var events = new EventSource("events");
+events.addEventListener("message", function (event) {
+    alert(event.data);
+}, false);</code></pre>
+
+            <p>
+                In the client we add an event source to the page URL (in my case <em>event</em>) and then add an event listener to it. Here we can add different listeners to different named events as described above.
+            </p>
+
+            <p>
+                Compared to WebSockets this technology doesn’t allow two-way communication. But in return it is much easier to implement. Browser support for server-sent events <a href="http://caniuse.com/#search=eventsource">exist in the latest browsers</a> except Internet Explorer 9. Unfortunately, there is no workaround for older browsers as far as I know.
+            </p>
+
+        </content>
+
+        <footer>
+            <span class="comment"></span>
+            <span class="author" itemprop="author">Henrik Ripa</span>
+        </footer>
+    </article>
+
+    <footer></footer>
+</body>
+</html>

@@ -1,0 +1,58 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>WebSockets | Pseudorandom Knowledge</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="/styles/common.css" />
+    <script src="/scripts/common.js"></script>
+</head>
+<body>
+	<header>
+		<a href="/" rel="home">
+            <h1>Pseudorandom Knowledge</h1>
+        </a>
+    </header>
+
+    <article itemscope itemtype="http://schema.org/BlogPosting">
+        <header>
+            <h1 itemprop="headline name">WebSockets</h1>
+            <time class="published" itemprop="datePublished">2011-08-21</time>
+            <time class="modified" itemprop="dateModified">2017-09-02</time>
+        </header>
+
+        <content itemprop="articleBody text">
+
+            <p>
+                The <a href="https://www.websocket.org/">WebSocket API</a> is yet another new technology introduced together with HTML5. It allows two way communication between a web page (JavaScript) and a TCP socket. There are several differences compared to normal sockets though.
+            </p>
+
+            <ul>
+                <li>Only sockets on the page’s web server can be called.</li>
+                <li>Communication goes through the web server socket.</li>
+                <li>Both server and browser must support it.</li>
+            </ul>
+
+            <p>
+                The application on the server that wishes to communicate through the WebSocket opens a regular TCP socket. Then there is a <a href="https://en.wikipedia.org/wiki/WebSocket#Protocol_handshake">handshake procedure</a> that must be followed before data can be sent and received.
+            </p>
+
+            <p>
+                Support for WebSockets in browsers are still a bit lacking. Internet Explorer 9 does not support it. Firefox 6.0 supports it but calls the object <a href="https://developer.mozilla.org/en/WebSockets#Gecko_notes"><em>MozWebSocket</em></a>. Older browsers can fake support by using Flash. There are JavaScript libraries that can abstract this for us.
+            </p>
+
+            <p>
+                I tried to use WebSockets myself without the aid of libraries. Unfortunately, this turned out to be harder than expected. I wrote a Perl script to act as the server side. This would receive the headers from the client and the client would also react to me closing the socket on the server. However, I did not manage to properly shake hands with the client and no data could be sent. Currently I feel it’s not worth the effort to dig deeper.
+            </p>
+
+        </content>
+
+        <footer>
+            <span class="comment"></span>
+            <span class="author" itemprop="author">Henrik Ripa</span>
+        </footer>
+    </article>
+
+    <footer></footer>
+</body>
+</html>
