@@ -1,0 +1,131 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>LINQ: from one IEnumerable to another | Pseudorandom Knowledge</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="/styles/highlight.css" />
+    <link rel="stylesheet" href="/styles/common.css" />
+    <script src="/scripts/highlight.js"></script>
+    <script src="/scripts/common.js"></script>
+</head>
+<body>
+	<header>
+		<a href="/" rel="home">
+            <h1>Pseudorandom Knowledge</h1>
+        </a>
+    </header>
+
+    <article itemscope itemtype="http://schema.org/BlogPosting">
+        <header>
+            <h1 itemprop="headline name">LINQ: from one IEnumerable to another</h1>
+            <time class="published" itemprop="datePublished">2011-08-29</time>
+            <time class="modified" itemprop="dateModified">2017-09-05</time>
+        </header>
+
+        <content itemprop="articleBody text">
+
+            <p>
+                <a href="https://docs.microsoft.com/en-us/dotnet/csharp/programming-guide/concepts/linq/index">LINQ</a> (Language Integrated Query) is a .NET framework which adds three things. A set of classes for use with <em>IEnumerable</em>, a new query syntax and a new <em>IQueryable</em> interface. The last one extends <em>IEnumerable</em> with the ability to run data queries. This is used by <a href="https://msdn.microsoft.com/en-us/library/bb425822.aspx">LINQ to SQL</a> and <a href="https://docs.microsoft.com/en-us/dotnet/csharp/programming-guide/concepts/linq/linq-to-xml">LINQ to XML</a>. But in this blog post I will focus on <a href="https://docs.microsoft.com/en-us/dotnet/csharp/programming-guide/concepts/linq/linq-to-objects">LINQ to Objects</a>.
+            </p>
+
+            <pre><code class="csharp">List&lt;int> integers = new List&lt;int> { 1, 2, 5, 7, 2, 9, 2 };
+IEnumerable sorted = integers.OrderBy(i => i);
+sorted;
+1, 2, 2, 2, 5, 7, 9
+integers.Add(4);
+sorted;
+1, 2, 2, 2, 4, 5, 7, 9
+integers.Add(5);
+sorted;
+1, 2, 2, 2, 4, 5, 5, 7, 9</code></pre>
+
+            <p>
+                The first thing to learn is that LINQ methods does not return a list. What it returns is an object that knows what the data source is and knows what to do with it. This means that LINQ can, and will, run the query against the data source every time the result is requested. The example above shows what this means in practice. If you do not want this behavior you can convert the result to something permanent with <em>ToList</em> or <em>ToArray</em>.
+            </p>
+
+            <pre><code class="csharp">from i in integers select i;
+1, 2, 5, 7, 2, 9, 2, 4, 5
+from i in integers select i + 2;
+3, 4, 7, 9, 4, 11, 4, 6, 7
+integers.Select(i => i + 3);
+4, 5, 8, 10, 5, 12, 5, 7, 8
+integers.Select((i, index) => index + ":" + i);
+"0:1", "1:2", "2:5", "3:7", "4:2", "5:9", "6:2", "7:4", "8:5"</code></pre>
+
+            <p>
+                The LINQ query syntax as shown in the two first examples above is probably the most noticeable part of LINQ. However, it’s only syntactic sugar and hence it’s not a .NET extension but a language extension. Every query written in this new way can be written with methods as shown in the third example. There are LINQ methods that cannot be used via the query syntax.
+            </p>
+
+            <p>
+                The query syntax looks like SQL but notice that the <em>select</em> clause comes last. <em>From</em> and <em>select</em> are the only required clauses. You can use select to map a set of objects to a new set of objects.
+            </p>
+
+            <pre><code class="csharp">from i in integers where i &lt; 5 select i;
+1, 2, 2, 2, 4
+integers.Where(delegate(int i) { return i >= 5; });
+5, 7, 9, 5
+integers.Where((i, index) => i > index);
+1, 2, 5, 7, 9</code></pre>
+
+            <p>
+                The <em>where</em> clause is used to filter the result set. You may have noticed the <em>=&gt;</em> syntax by now. This is the new <a href="http://stackoverflow.com/questions/167343/c-lambda-expression-why-should-i-use-this/167392#167392">lambda expression</a> syntax which can be used wherever you used to use delegates before. I showed that you can still use delegates if you want to in the second example. There is however an important difference. Lambda expressions can be turned into expression trees which LINQ can translate into something else, for example SQL. This is how you can write LINQ queries in C# against a database. Hence you can’t use delegates with LINQ to SQL (which is hardly a loss).
+            </p>
+
+            <pre><code class="csharp">from i in integers orderby i select i;
+1, 2, 2, 2, 4, 5, 5, 7, 9
+from i in integers orderby i / 3 descending, i select i;
+9, 7, 4, 5, 5, 1, 2, 2, 2
+integers.OrderByDescending(i => i / 3).ThenBy(i => i);
+9, 7, 4, 5, 5, 1, 2, 2, 2</code></pre>
+
+            <p>
+                <em>Orderby</em> is used to order the set. You can order by multiple conditions as seen in the last two examples. Notice the use of <em>ThenBy</em> which is required, if <em>OrderBy</em> is used the whole set will be reordered and the first condition forgotten. The last example also shows chaining which is very useful in LINQ when you’re not using the query syntax.
+            </p>
+
+            <pre><code class="csharp">from i in integers group i by i / 3 into g let m = g.Key * 3 select
+  String.Format("{0}-{1}:{2}", m, m + 2, g.Count());
+"0-2:4", "3-5:3", "6-8:1", "9-11:1"</code></pre>
+
+            <p>
+                You can use <em>group</em> to group elements like in SQL. This example also shows <em>let</em> which you can use to introduce a new variable inside the query. Here I use it so I don’t have to multiply by three twice.
+            </p>
+
+            <pre><code class="csharp">List&lt;KeyValuePair&lt;int, char>> characters = new List&lt;KeyValuePair&lt;int, char>> {
+  new KeyValuePair&lt;int, char>(1, 'a'),
+  new KeyValuePair&lt;int, char>(2, 'b'),
+  new KeyValuePair&lt;int, char>(3, 'c'),
+  new KeyValuePair&lt;int, char>(4, 'd'),
+  new KeyValuePair&lt;int, char>(5, 'e')};
+from c in characters select c.Key + "=" + c.Value;
+"1=a", "2=b", "3=c", "4=d", "5=e"
+                
+from i in integers from c in characters where i == c.Key select c.Value;
+'a', 'b', 'e', 'b', 'b', 'd', 'e'
+from i in integers join c in characters on i equals c.Key select c.Value;
+'a', 'b', 'e', 'b', 'b', 'd', 'e'
+from i in integers
+  join c in characters on i equals c.Key into n
+  from k in n.DefaultIfEmpty(new KeyValuePair&lt;int, char>(0, '_'))
+  select i + "=" + k.Value;
+"1=a", "2=b", "5=e", "7=_", "2=b", "9=_", "2=b", "4=d", "5=e"</code></pre>
+
+            <p>
+                Of course you can also use joins. If you use multiple <em>from</em> you get a cross join. A <em>join on equals</em> gives an inner join. In my example, where I use a where clause for the cross join, these give the same result. In SQL the cross join is highly discouraged so I would suggest not using it here either. The last example shows how to do an left outer join.
+            </p>
+
+            <p>
+                There are <a href="https://code.msdn.microsoft.com/101-LINQ-Samples-3fb9811b">several other methods</a> which I haven’t shown here, such as <em>Single</em>, <em>Union</em>, <em>Count</em>, <em>Distinct</em> etc. Or you can <a href="http://stackoverflow.com/questions/3645644/whats-your-favorite-linq-to-objects-operator-which-is-not-built-in">create your own</a> if you feel something is missing.
+            </p>
+
+        </content>
+
+        <footer>
+            <span class="comment"></span>
+            <span class="author" itemprop="author">Henrik Ripa</span>
+        </footer>
+    </article>
+
+    <footer></footer>
+</body>
+</html>
