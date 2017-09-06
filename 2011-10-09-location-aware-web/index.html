@@ -1,0 +1,138 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>Location aware web sites with Geolocation | Pseudorandom Knowledge</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="/styles/highlight.css" />
+    <link rel="stylesheet" href="/styles/common.css" />
+    <script src="/scripts/highlight.js"></script>
+    <script src="/scripts/common.js"></script>
+</head>
+<body>
+	<header>
+		<a href="/" rel="home">
+            <h1>Pseudorandom Knowledge</h1>
+        </a>
+    </header>
+
+    <article itemscope itemtype="http://schema.org/BlogPosting">
+        <header>
+            <h1 itemprop="headline name">Oh browser, where art thou</h1>
+            <time class="published" itemprop="datePublished">2011-10-09</time>
+            <time class="modified" itemprop="dateModified">2017-09-06</time>
+        </header>
+
+        <content itemprop="articleBody text">
+
+            <p>
+                <a href="https://dev.w3.org/geo/api/spec-source.html">The Geolocation API</a> gives us access to the users position from JavaScript. When called the browser will ask the user for permission, retrieve the position from GPS, Wi-Fi, IP address or anything else it has available and return it. The API is supported in <a href="http://caniuse.com/#search=geolocation">all current browsers</a>. Just be aware that Internet Explorer require you to use a proper doctype. Note that the Geolocation API is not part of HTML5 even though it is often discussed alongside it.
+            </p>
+
+            <p>
+                I have created <a href="example.html">an example page</a> where you can see how it works from a user perspective and see what your browser returns.
+            </p>
+
+            <h2>The geolocation object</h2>
+
+            <p>
+                Before you can <a href="https://developer.mozilla.org/en-US/docs/Web/API/Geolocation/Using_geolocation">use geolocation</a> you must make sure that the browser supports it.
+            </p>
+
+            <pre><code class="javascript">if (navigator.geolocation) {
+  // Geolocation is supported
+}
+else {
+  // Geolocation is NOT supported
+}</code></pre>
+
+            <p>
+                Then you can ask for the user’s position with the following call.
+            </p>
+
+            <pre><code class="javascript">navigator.geolocation.getCurrentPosition(
+  function (position) {
+    // Use the position data
+  },
+  function (error) {
+    switch (error.code) {
+      case 1:
+        // Permission was denied
+        break;
+      case 2:
+        // Position was not available
+        break;
+      case 3:
+        // Position request timed out
+        break;
+      default:
+        // Unknown error
+        break;
+    }
+  },
+  { enableHighAccuracy: true, maximumAge: 0, timeout: 60000 });</code></pre>
+
+            <p>
+                This asks for a high accuracy position fix that has not been cached with a timeout of one minute. We will look at what is returned in the position object soon. If you need to continuously update the user’s position you can use the following call instead.
+            </p>
+
+            <pre><code class="javascript">var watchId = navigator.geolocation.watchPosition(
+  function (position) {
+    // Use the position data
+  });
+ 
+// When you are done
+navigator.geolocation.clearWatch(watchId);</code></pre>
+
+            <p>
+                The <em>watchPosition</em> method takes the same parameters as the <em>getCurrentPosition</em> method. Here I have only given it a function to call on success which is the only argument that is required (for both methods). With the <em>watchPosition</em> method the browser will call our function whenever the position changes until we tell it to stop.
+            </p>
+
+            <h2>The position object</h2>
+
+            <p>
+                The position object that is returned has the following data.
+            </p>
+
+            <pre><code class="javascript">position.timestamp;               // Milliseconds since 1 January 1970
+position.coords.latitude;         // Decimal degrees (WGS84)
+position.coords.longitude;        // Decimal degrees (WGS84)
+position.coords.accuracy;         // Decimal meters, 95% confidence level
+position.coords.altitude;         // Decimal meters above the WGS84 ellipsoid
+position.coords.altitudeAccuracy; // Decimal meters, 95% confidence level
+position.coords.speed;            // Decimal meters per second
+position.coords.heading;          // Decimal degrees from true north clockwise</code></pre>
+
+            <p>
+                All decimal values are of type double. Only the timestamp, latitude, longitude and accuracy are guaranteed to be returned. But if the altitude is returned then the altitude accuracy must also be present. This is according to the specification, real browsers may behave otherwise. Values that are not provided may be 0, NaN or null.
+            </p>
+
+            <p>
+                Gecko browsers (i.e. Firefox) will also return the user’s address.
+            </p>
+
+            <pre><code class="javascript">position.address.premises;
+position.address.street;
+position.address.streetNumber;
+position.address.postalCode;
+position.address.city;
+position.address.region;
+position.address.county;
+position.address.country;
+position.address.countryCode;</code></pre>
+
+            <p>
+                All address values are of type string.
+            </p>
+
+        </content>
+
+        <footer>
+            <span class="comment"></span>
+            <span class="author" itemprop="author">Henrik Ripa</span>
+        </footer>
+    </article>
+
+    <footer></footer>
+</body>
+</html>

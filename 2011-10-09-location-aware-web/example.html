@@ -1,0 +1,90 @@
+<!DOCTYPE HTML />
+<html>
+<head>
+  <title>Geolocation API example</title>
+  <script type="text/javascript" src="/scripts/jquery.js"></script>
+  <script type="text/javascript">
+    $(function () {
+      if (navigator.geolocation) {
+        $("#status").text("Querying position from your browser");
+        navigator.geolocation.getCurrentPosition(
+            function (position) {
+              $("#status").text("Position acquired");
+              $("#time").css("visibility", "visible");
+              $("#timestamp").text(position.timestamp);
+              if (position.coords) {
+                $("#coords").css("visibility", "visible");
+                $("#latitude").text(position.coords.latitude);
+                $("#longitude").text(position.coords.longitude);
+                $("#altitude").text(position.coords.altitude);
+                $("#accuracy").text(position.coords.accuracy);
+                $("#altitude_accuracy").text(position.coords.altitudeAccuracy);
+                $("#heading").text(position.coords.heading);
+                $("#speed").text(position.coords.speed);
+              }
+              if (position.address) {
+                $("#address").css("visibility", "visible");
+                $("#city").text(position.address.city);
+                $("#country").text(position.address.country);
+                $("#country_code").text(position.address.countryCode);
+                $("#county").text(position.address.county);
+                $("#postal_code").text(position.address.postalCode);
+                $("#premises").text(position.address.premises);
+                $("#region").text(position.address.region);
+                $("#street").text(position.address.street);
+                $("#street_number").text(position.address.streetNumber);
+              }
+            },
+            function (error) {
+              switch (error.code) {
+                case 1: $("#status").text("Permission was denied"); break;
+                case 2: $("#status").text("Position was not availabe"); break;
+                case 3: $("#status").text("Position request timed out"); break;
+                default: $("#status").text("An unknown error occurred"); break;
+              }
+            },
+            { enableHighAccuracy: true, maximumAge: 0, timeout: 600000 });
+      }
+      else {
+        $("#status").text("Your browser does not support geolocation");
+      }
+    });
+  </script>
+  <style>
+    div { margin: 10px; }
+  </style>
+</head>
+<body>
+  <div id="meta">
+    <b>Status:</b>
+    <span id="status"></span>
+    <noscript>Your browser does not run JavaScript</noscript>
+  </div>
+
+  <div id="time" style="visibility:hidden">
+    <b>Timestamp:</b> <span id="timestamp"></span><br />
+  </div>
+
+  <div id="coords" style="visibility:hidden">
+    <b>Latitude:</b> <span id="latitude"></span><br />
+    <b>Longitude:</b> <span id="longitude"></span><br />
+    <b>Accuracy:</b> <span id="accuracy"></span><br />
+    <b>Altitude:</b> <span id="altitude"></span><br />
+    <b>Altitude accuracy:</b> <span id="altitude_accuracy"></span><br />
+    <b>Speed:</b> <span id="speed"></span><br />
+    <b>Heading:</b> <span id="heading"></span><br />
+  </div>
+
+  <div id="address" style="visibility:hidden">
+    <b>Premises:</b> <span id="premises"></span><br />
+    <b>Street:</b> <span id="street"></span><br />
+    <b>Street number:</b> <span id="street_number"></span><br />
+    <b>Postal code:</b> <span id="postal code"></span><br />
+    <b>City:</b> <span id="city"></span><br />
+    <b>Region:</b> <span id="region"></span><br />
+    <b>County:</b> <span id="county"></span><br />
+    <b>Country:</b> <span id="country"></span><br />
+    <b>Country code:</b> <span id="country_code"></span><br />
+  </div>
+</body>
+</html>
