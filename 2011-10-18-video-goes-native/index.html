@@ -1,0 +1,271 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>Video goes native | Pseudorandom Knowledge</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="/styles/highlight.css" />
+    <link rel="stylesheet" href="/styles/common.css" />
+    <script src="/scripts/highlight.js"></script>
+    <script src="/scripts/common.js"></script>
+    <style>
+        .video
+        {
+            font-size: 18px;
+            text-align: center;
+            border-style: solid;
+            border-width: 2px;
+            margin-top: 10px;
+            margin-bottom: 10px;
+            float: left;
+        }
+
+            .video + .video
+            {
+                margin-left: 2px;
+            }
+
+            .video + :not(.video)
+            {
+                clear: both;
+            }
+
+        .audio
+        {
+            font-size: 18px;
+            text-align: center;
+            border-style: solid;
+            border-width: 2px;
+            margin-top: 10px;
+            float: left;
+        }
+
+            .audio:nth-child(2n + 1)
+            {
+                margin-left: 20px;
+            }
+
+            .audio + :not(.audio)
+            {
+                clear: both;
+            }
+    </style>
+</head>
+<body>
+	<header>
+		<a href="/" rel="home">
+            <h1>Pseudorandom Knowledge</h1>
+        </a>
+    </header>
+
+    <article itemscope itemtype="http://schema.org/BlogPosting">
+        <header>
+            <h1 itemprop="headline name">Video goes native</h1>
+            <time class="published" itemprop="datePublished">2011-10-18</time>
+            <time class="modified" itemprop="dateModified">2017-09-08</time>
+        </header>
+
+        <content itemprop="articleBody text">
+
+            <p>
+                With HTML5 we get <a href="http://fortuito.us/diveintohtml5/video.html">native support for video</a>. We no longer have to rely on third party plugins such as Flash. All <a href="http://caniuse.com/#search=video">current browsers</a> have support for the <em>video</em> tag but unfortunately they can’t agree on what formats to support.
+            </p>
+
+            <table>
+                <tbody>
+                    <tr>
+                        <td></td>
+                        <td><strong>WebM</strong></td>
+                        <td><strong>MPEG-4</strong></td>
+                        <td><strong>Ogg</strong></td>
+                    </tr>
+                    <tr>
+                        <td><strong>Internet Explorer</strong></td>
+                        <td></td>
+                        <td>Supported</td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td><strong>Firefox</strong></td>
+                        <td>Supported</td>
+                        <td>Supported</td>
+                        <td>Supported</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Chrome</strong></td>
+                        <td>Supported</td>
+                        <td>Supported</td>
+                        <td>Supported</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Safari</strong></td>
+                        <td></td>
+                        <td>Supported</td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td><strong>Opera</strong></td>
+                        <td>Supported</td>
+                        <td>Supported</td>
+                        <td>Supported</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <p>
+                Thankfully they all support MPEG-4 today. If we want to fall back to Flash for older browsers we need to keep every video in a second format as well. Below you can see the <em>video</em> tag in action:
+            </p>
+
+            <div class="video">
+                <video src="tractor.webm" width="160" height="120" controls poster="tractor.jpg">
+                    Video tag not supported
+                </video>
+                <br />
+                WebM
+            </div>
+
+            <div class="video">
+                <video src="tractor.ogv" width="160" height="120" controls poster="tractor.jpg">
+                    Video tag not supported
+                </video>
+                <br />
+                Ogg
+            </div>
+
+            <div class="video">
+                <video src="tractor.mp4" width="160" height="120" controls poster="tractor.jpg">
+                    Video tag not supported
+                </video>
+                <br />
+                MPEG-4
+            </div>
+
+            <div class="video">
+                <video width="160" height="120" controls poster="tractor.jpg">
+                    <source src="tractor.webm" type='video/webm; codecs="vp8, vorbis"' />
+                    <source src="tractor.ogv" type='video/ogg; codecs="theora, vorbis"' />
+                    <source src="tractor.mp4" type='video/mp4; codecs="avc1.42E01E, mp4a.40.2"' />
+                    Video tag not supported
+                </video>
+                <br />
+                WebM<br />
+                Ogg<br />
+                MPEG-4<br />
+            </div>
+
+            <pre><code class="html">&lt;video width="160" height="120" controls poster="tractor.jpg">
+  &lt;source src="tractor.webm" type='video/webm; codecs="vp8, vorbis"' />
+  &lt;source src="tractor.mp4" type='video/mp4; codecs="avc1.42E01E, mp4a.40.2"' />
+  Video tag not supported
+&lt;/video></code></pre>
+
+            <p>
+                In this example we set up a video with two sources. We specify the dimensions of the video to help the browser out just like we do with images. The <em>controls</em> attribute means that the browser will show its native controls for the user to control playback, set the volume etcetera. There is also a JavaScript interface for playback that you can use if you want to create your own controls.
+            </p>
+
+            <p>
+                The <em>poster</em> is an image that will be used as a placeholder until playback has been started. It should of course have the same dimensions as the video. In case the browser does not support the <em>video</em> tag we inform the user about it with a message. If we wanted to use a Flash player as a fallback we would have put it here instead of the message.
+            </p>
+
+            <p>
+                For each source we specify the MIME type and <a href="https://wiki.whatwg.org/wiki/Video_type_parameters">the codecs used</a>. This way the browser doesn’t have to download the file to determine if it can play it. You must also make sure that your web server provides the correct MIME type in the <em>Content-Type</em> HTTP header or it might not work properly.
+            </p>
+
+            <h2>Sound as well</h2>
+
+            <p>
+                HTML5 also have a new <em>audio</em> tag that works the same way. Again the browsers can’t agree on what formats to support.
+            </p>
+
+            <table>
+                <tbody>
+                    <tr>
+                        <td></td>
+                        <td><strong>Ogg</strong></td>
+                        <td><strong>MP3</strong></td>
+                        <td><strong>Wav</strong></td>
+                    </tr>
+                    <tr>
+                        <td><strong>Internet Explorer</strong></td>
+                        <td></td>
+                        <td>Supported</td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td><strong>Firefox</strong></td>
+                        <td>Supported</td>
+                        <td>Supported</td>
+                        <td>Supported</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Chrome</strong></td>
+                        <td>Supported</td>
+                        <td>Supported</td>
+                        <td>Supported</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Safari</strong></td>
+                        <td></td>
+                        <td>Supported</td>
+                        <td>Supported</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Opera</strong></td>
+                        <td>Supported</td>
+                        <td>Supported</td>
+                        <td>Supported</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <p>
+                Although they all support MP3 today. Below you can see the <em>audio</em> tag in action:
+            </p>
+
+            <div class="audio">
+                <audio src="future.oga" width="200" controls>
+                    Audio tag not supported
+                </audio>
+                <br />
+                Ogg
+            </div>
+            <div class="audio">
+                <audio src="future.mp3" width="200" controls>
+                    Audio tag not supported
+                </audio>
+                <br />
+                MP3
+            </div>
+            <div class="audio">
+                <audio src="future.wav" width="200" controls>
+                    Audio tag not supported
+                </audio>
+                <br />
+                Wav
+            </div>
+            <div class="audio">
+                <audio width="200" controls>
+                    <source src="future.oga" type='audio/ogg; codecs="vorbis"' />
+                    <source src="future.mp3" type='audio/mpeg' />
+                    <source src="future.wav" type='audio/wav' />
+                    Audio tag not supported
+                </audio>
+                <br />
+                Ogg<br />
+                MP3<br />
+                Wav<br />
+            </div>
+
+            <div></div>
+
+        </content>
+
+        <footer>
+            <span class="comment"></span>
+            <span class="author" itemprop="author">Henrik Ripa</span>
+        </footer>
+    </article>
+
+    <footer></footer>
+</body>
+</html>

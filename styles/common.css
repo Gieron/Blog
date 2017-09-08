@@ -190,6 +190,17 @@ body
             margin-right: auto;
         }
 
+        body > article > content > table
+        {
+            border-collapse: collapse;
+        }
+
+            body > article > content > table td
+            {
+                border: 1px solid gray;
+                padding: 2px 6px;
+            }
+
         body > article > footer
         {
             display: flex;
