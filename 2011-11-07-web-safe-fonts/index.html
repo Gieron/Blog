@@ -1,0 +1,103 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>Web safe all the fonts | Pseudorandom Knowledge</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="/styles/highlight.css" />
+    <link rel="stylesheet" href="/styles/common.css" />
+    <script src="/scripts/highlight.js"></script>
+    <script src="/scripts/common.js"></script>
+    <style>
+        @font-face
+        {
+            font-family: Spoiler;
+            src: url(spoiler.woff);
+        }
+        .spoiler
+        {
+            font-family: Spoiler, Arial;
+        }
+            .spoiler:hover
+            {
+                font-family: Arial;
+            }
+    </style>
+</head>
+<body>
+	<header>
+		<a href="/" rel="home">
+            <h1>Pseudorandom Knowledge</h1>
+        </a>
+    </header>
+
+    <article itemscope itemtype="http://schema.org/BlogPosting">
+        <header>
+            <h1 itemprop="headline name">Web safe all the fonts</h1>
+            <time class="published" itemprop="datePublished">2011-11-07</time>
+            <time class="modified" itemprop="dateModified">2017-09-09</time>
+        </header>
+
+        <content itemprop="articleBody text">
+
+            <p>
+                In CSS 3 you can use your own fonts instead of having to rely on whatever the user happens to have installed. With <em><a href="https://developer.mozilla.org/en-US/docs/Web/CSS/@font-face">@font-face</a></em> you can define a new font and tell the browser where to download it from.
+            </p>
+
+            <pre><code class="css">@font-face {
+  font-family: "My own font";
+  src: url(fonts/myownfont.woff);
+}</code></pre>
+
+            <p>
+                The best format to use for your fonts is <a href="https://www.w3.org/Fonts/WOFF-FAQ">WOFF</a> (Web Open Font Format). You can <a href="https://github.com/samboy/WOFF">easily convert</a> common TrueType or OpenType fonts to WOFF. Make sure that you have the proper license for the fonts you use.
+            </p>
+
+            <p>
+                The new font can then be used exactly like any other font in your style sheets. As usual we give alternative fonts that the browser can fall back on if it fails to download our font.
+            </p>
+
+            <pre><code class="css">body {
+  font-family: "My own font", Arial, Sans-Serif;
+}</code></pre>
+
+            <p>
+                The browser will also use the alternative fonts if it does not support the new technologies. Support exist in all <a href="http://caniuse.com/#feat=fontface">current browsers</a>. There are services on the web that can give you support for older browsers as well as take care of the licensing for you.
+            </p>
+
+            <p>
+                Below is an example where I use a font of my own creation to hide spoilers:
+            </p>
+
+            <br />
+
+            <p>
+                <em>Spoiler text:</em>
+                <span class="spoiler">
+                    This text will shown in a custom unreadable font until
+                    you hover over it. Then the font will be changed to Arial
+                    and be readable again. If your browser does not support
+                    @font-face or WOFF this will not work.
+                </span>
+            </p>
+
+            <p>
+                <em>PS:</em>
+                <span class="spoiler">
+                    This probably isn't the best way to implement a spoiler
+                    hiding feature.
+                </span>
+            </p>
+
+
+        </content>
+
+        <footer>
+            <span class="comment"></span>
+            <span class="author" itemprop="author">Henrik Ripa</span>
+        </footer>
+    </article>
+
+    <footer></footer>
+</body>
+</html>
