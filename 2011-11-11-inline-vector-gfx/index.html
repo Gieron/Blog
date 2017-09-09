@@ -1,0 +1,144 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>Inline vector graphics | Pseudorandom Knowledge</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="/styles/highlight.css" />
+    <link rel="stylesheet" href="/styles/common.css" />
+    <script src="/scripts/highlight.js"></script>
+    <script src="/scripts/common.js"></script>
+    <style>
+        svg
+        {
+            height: 85px;
+            border: 1px solid black;
+        }
+
+            svg + svg
+            {
+                margin-left: 5px;
+            }
+    </style>
+</head>
+<body>
+	<header>
+		<a href="/" rel="home">
+            <h1>Pseudorandom Knowledge</h1>
+        </a>
+    </header>
+
+    <article itemscope itemtype="http://schema.org/BlogPosting">
+        <header>
+            <h1 itemprop="headline name">Inline vector graphics</h1>
+            <time class="published" itemprop="datePublished">2011-11-11</time>
+            <time class="modified" itemprop="dateModified">2017-09-09</time>
+        </header>
+
+        <content itemprop="articleBody text">
+
+            <p>
+                Scalable Vector Graphics (SVG) is an <a href="https://developer.mozilla.org/en-US/docs/Web/SVG/Element">XML based image</a> format for vector images. With HTML5 we can use <a href="https://developer.mozilla.org/en-US/docs/Web/SVG/Element/svg">SVG inline</a> in HTML documents.
+            </p>
+
+            <pre><code class="html">&lt;svg id="flag" width="450" height="300" viewBox="0 0 18 12">
+  &lt;defs>
+    &lt;mask id="mask">
+      &lt;rect x="0" y="0" width="18" height="6" fill="#ffffff" />
+    &lt;/mask>
+  &lt;/defs>
+  &lt;rect x="0" y="0" width="18" height="12" fill="#ffffff" />
+  &lt;rect x="0" y="6" width="18" height="6" fill="#d00c33" />
+  &lt;circle cx="7" cy="6" r="4" fill="#ffffff" />
+  &lt;circle cx="7" cy="6" r="4" mask="url(#mask)" fill="#d00c33" />
+&lt;/svg></code></pre>
+
+            <p>
+                The <em>svg</em> element is used much like an <em>img</em> element but instead of referring to an external file we put the content directly in the document. The <em>viewbox</em> attribute defines the coordinate system we want to use for the SVG image. This should not be confused with the <em>height</em> and <em>width</em> attributes which determines the size of the image in the document. They should agree on the aspect ratio though.
+            </p>
+
+            <p>
+                Support for inline SVG is in <a href="http://caniuse.com/#search=inline%20svg">most current browsers</a>. Unfortunately, there is no good way of achieving compatibility with older browsers. Having SVG images in separate files has <a href="http://caniuse.com/#search=svg%20in%20html%20img">a bit more support</a> but Internet Explorer 8 or older still does not support it. This can be fixed with <a href="https://code.google.com/archive/p/svgweb/">external libraries</a> though.
+            </p>
+
+            <p>
+                Below are examples of SVG in action:
+            </p>
+
+            <br />
+
+            <!-- https://lagen.nu/1982:269 -->
+            <svg id="swedish_flag" viewBox="0 0 16 10">
+                <rect x="0" y="0" width="5" height="4" fill="#3256a1" />
+                <rect x="0" y="6" width="5" height="4" fill="#3256a1" />
+                <rect x="7" y="0" width="9" height="4" fill="#3256a1" />
+                <rect x="7" y="6" width="9" height="4" fill="#3256a1" />
+                <rect x="0" y="4" width="16" height="2" fill="#ffcb21" />
+                <rect x="5" y="0" width="2" height="10" fill="#ffcb21" />
+            </svg>
+
+            <!-- http://www.finlex.fi/sv/laki/ajantasa/1978/19780380 -->
+            <svg id="finnish_flag" viewBox="0 0 18 11">
+                <rect x="0" y="0" width="5" height="4" fill="#ffffff" />
+                <rect x="0" y="7" width="5" height="4" fill="#ffffff" />
+                <rect x="8" y="0" width="10" height="4" fill="#ffffff" />
+                <rect x="8" y="7" width="10" height="4" fill="#ffffff" />
+                <rect x="0" y="4" width="18" height="3" fill="#003580" />
+                <rect x="5" y="0" width="3" height="11" fill="#003580" />
+            </svg>
+
+            <!-- http://flagspot.net/flags/dk.html -->
+            <svg id="danish_flag" viewBox="0 0 37 28">
+                <rect x="0" y="0" width="12" height="12" fill="#d00c33" />
+                <rect x="0" y="16" width="12" height="12" fill="#d00c33" />
+                <rect x="16" y="0" width="21" height="12" fill="#d00c33" />
+                <rect x="16" y="16" width="21" height="12" fill="#d00c33" />
+                <rect x="0" y="12" width="37" height="4" fill="#ffffff" />
+                <rect x="12" y="0" width="4" height="28" fill="#ffffff" />
+            </svg>
+
+            <!-- http://www.lovdata.no/all/tl-18981210-001-0.html#1 -->
+            <svg id="norwegian_flag" viewBox="0 0 22 16">
+                <rect x="0" y="0" width="22" height="16" fill="#ffffff" />
+                <rect x="0" y="0" width="6" height="6" fill="#ef2b2d" />
+                <rect x="0" y="10" width="6" height="6" fill="#ef2b2d" />
+                <rect x="10" y="0" width="12" height="6" fill="#ef2b2d" />
+                <rect x="10" y="10" width="12" height="6" fill="#ef2b2d" />
+                <rect x="0" y="7" width="22" height="2" fill="#002868" />
+                <rect x="7" y="0" width="2" height="16" fill="#002868" />
+            </svg>
+
+            <!-- http://is.wikipedia.org/wiki/%C3%8Dslenski_f%C3%A1ninn -->
+            <svg id="icelandic_flag" viewBox="0 0 25 18">
+                <rect x="0" y="0" width="25" height="18" fill="#ffffff" />
+                <rect x="0" y="0" width="7" height="7" fill="#00529b" />
+                <rect x="0" y="11" width="7" height="7" fill="#00529b" />
+                <rect x="11" y="0" width="14" height="7" fill="#00529b" />
+                <rect x="11" y="11" width="14" height="7" fill="#00529b" />
+                <rect x="0" y="8" width="25" height="2" fill="#ee3423" />
+                <rect x="8" y="0" width="2" height="18" fill="#ee3423" />
+            </svg>
+
+            <svg id="greenland_flag" viewBox="0 0 18 12" width="450" height="300" style="display:none">
+                <defs>
+                    <mask id="mask">
+                        <rect x="0" y="0" width="18" height="6" fill="#ffffff" />
+                    </mask>
+                </defs>
+                <rect x="0" y="0" width="18" height="12" fill="#ffffff" />
+                <rect x="0" y="6" width="18" height="6" fill="#d00c33" />
+                <circle cx="7" cy="6" r="4" fill="#ffffff" />
+                <circle cx="7" cy="6" r="4" mask="url(#mask)" fill="#d00c33" />
+            </svg>
+
+        </content>
+
+        <footer>
+            <span class="comment"></span>
+            <span class="author" itemprop="author">Henrik Ripa</span>
+        </footer>
+    </article>
+
+    <footer></footer>
+</body>
+</html>
