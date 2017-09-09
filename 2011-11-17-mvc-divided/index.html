@@ -1,0 +1,95 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>MVC divided (into areas) | Pseudorandom Knowledge</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="/styles/highlight.css" />
+    <link rel="stylesheet" href="/styles/common.css" />
+    <script src="/scripts/highlight.js"></script>
+    <script src="/scripts/common.js"></script>
+</head>
+<body>
+	<header>
+		<a href="/" rel="home">
+            <h1>Pseudorandom Knowledge</h1>
+        </a>
+    </header>
+
+    <article itemscope itemtype="http://schema.org/BlogPosting">
+        <header>
+            <h1 itemprop="headline name">MVC divided (into areas)</h1>
+            <time class="published" itemprop="datePublished">2011-11-17</time>
+            <time class="modified" itemprop="dateModified">2017-09-09</time>
+        </header>
+
+        <content itemprop="articleBody text">
+
+            <p>
+                Large ASP.NET MVC projects with many controllers and views can become difficult to handle. One solution may be to <a href="https://msdn.microsoft.com/en-us/library/ee671793(v=vs.98).aspx">divide your MVC project into areas</a>.
+            </p>
+
+            <p>
+                An area in ASP.NET MVC is a directory with its own MVC directory structure. You can use areas in addition to the default directory structure or you can remove the default directory structure and rely solely on areas.
+            </p>
+
+            <img src="structure.png" />
+
+            <p>
+                Here is the directory structure of an area called <em>Public</em>. You can add areas in Visual Studio by right clicking the project in the solution explorer and selecting the appropriate menu item.
+            </p>
+
+            <pre><code class="csharp">public class PublicAreaRegistration : AreaRegistration
+{
+    public override string AreaName
+    {
+        get
+        {
+            return "Public";
+        }
+    }
+ 
+    public override void RegisterArea(AreaRegistrationContext context)
+    {
+        context.MapRoute(
+            "Frontpage",
+            "",
+            new { controller = "Home", action = "Frontpage" }
+        );
+    }
+}</code></pre>
+
+            <p>
+                For each area we need an area registration class with a <em>RegisterArea</em> method. In this method we put our routes for the area. Make sure your routes are unique across all areas.
+            </p>
+
+            <pre><code class="csharp">protected void Application_Start()
+{
+    AreaRegistration.RegisterAllAreas();
+}</code></pre>
+
+            <p>
+                The code above, which should be in the <em>Global.asax</em> file, takes care of registering all the areas when the application is started.
+            </p>
+
+            <pre><code class="csharp">@Html.ActionLink("Go back", "Frontpage", "Home", new { area = "Public" }, null)</code></pre>
+
+            <p>
+                One complication you will run into is how to link to a page in another area. Above is how you would insert a link to the <em>Frontpage</em> view in the <em>Public</em> area using razor syntax.
+            </p>
+
+            <p>
+                Areas may also be helpful if you are trying <a href="http://www.beletsky.net/2011/10/integrating-aspnet-mvc-into-legacy-web.html">integrate ASP.NET MVC into a legacy ASP.NET Web Forms project</a>.
+            </p>
+
+        </content>
+
+        <footer>
+            <span class="comment"></span>
+            <span class="author" itemprop="author">Henrik Ripa</span>
+        </footer>
+    </article>
+
+    <footer></footer>
+</body>
+</html>
