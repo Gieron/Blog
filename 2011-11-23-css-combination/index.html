@@ -1,0 +1,425 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>A demonstration of combination | Pseudorandom Knowledge</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="/styles/common.css" />
+    <script src="/scripts/common.js"></script>
+    <style>
+        .testarea
+        {
+            border: 1px solid;
+            width: 200px;
+            border: 4px solid;
+            font-weight: bold;
+            font-size: 1.2em;
+            text-align: center;
+            float: left;
+            margin-top: 8px;
+        }
+
+            .testarea:nth-child(3n + 1),
+            .testarea:nth-child(3n + 2)
+            {
+                margin-left: 8px;
+            }
+
+        .parent,
+        .child,
+        .grandchild,
+        .sibling
+        {
+            border: 1px solid;
+            margin: 4px;
+            padding: 4px;
+            color: #000000;
+            background-color: #ffffff;
+            font-weight: normal;
+            text-align: left;
+            font-size: small;
+        }
+
+        .parent
+        {
+            width: 180px;
+        }
+
+        .child
+        {
+            width: 160px;
+        }
+
+        .grandchild
+        {
+            width: 140px;
+        }
+
+        .sibling
+        {
+            width: 180px;
+        }
+
+        .end-of-tests
+        {
+            clear: both;
+        }
+    </style>
+</head>
+<body>
+	<header>
+		<a href="/" rel="home">
+            <h1>Pseudorandom Knowledge</h1>
+        </a>
+    </header>
+
+    <article itemscope itemtype="http://schema.org/BlogPosting">
+        <header>
+            <h1 itemprop="headline name">A demonstration of combination</h1>
+            <time class="published" itemprop="datePublished">2011-11-23</time>
+            <time class="modified" itemprop="dateModified">2017-09-10</time>
+        </header>
+
+        <content itemprop="articleBody text">
+
+            <p>
+                CSS <a href="https://developer.mozilla.org/en-US/docs/Learn/CSS/Introduction_to_CSS/Combinators_and_multiple_selectors">selector combinators</a> are used when you need to refer to elements via their relationship to other elements. Possible relationships are descendants, children and siblings.
+            </p>
+
+            <p>
+                Below you can see the combinator syntax as well as what they do. There are a couple more relevant <a href="https://developer.mozilla.org/en-US/docs/Web/CSS/Pseudo-classes">pseudo-classes</a> that I didn’t include.
+            </p>
+
+            <div class="testarea">
+                <style>
+                    #test00
+                    {
+                        color: #ff0000;
+                        background-color: #fff0f0;
+                    }
+                </style>
+                #parent
+                <div id="test00" class="parent">
+                    Parent
+                    <div class="child">
+                        Child
+                        <div class="grandchild">Grandchild</div>
+                        <div class="grandchild">Grandchild</div>
+                        <div class="grandchild">Grandchild</div>
+                    </div>
+                    <div class="child">
+                        Child
+                        <div class="grandchild">Grandchild</div>
+                        <div class="grandchild">Grandchild</div>
+                        <div class="grandchild">Grandchild</div>
+                    </div>
+                    <div class="child">
+                        Child
+                        <div class="grandchild">Grandchild</div>
+                        <div class="grandchild">Grandchild</div>
+                        <div class="grandchild">Grandchild</div>
+                    </div>
+                </div>
+                <div class="sibling">Sibling</div>
+                <div class="sibling">Sibling</div>
+                <div class="sibling">Sibling</div>
+            </div>
+
+            <div class="testarea">
+                <style>
+                    #test01 div
+                    {
+                        color: #ff0000;
+                        background-color: #fff0f0;
+                    }
+                </style>
+                #parent div
+                <div id="test01" class="parent">
+                    Parent
+                    <div class="child">
+                        Child
+                        <div class="grandchild">Grandchild</div>
+                        <div class="grandchild">Grandchild</div>
+                        <div class="grandchild">Grandchild</div>
+                    </div>
+                    <div class="child">
+                        Child
+                        <div class="grandchild">Grandchild</div>
+                        <div class="grandchild">Grandchild</div>
+                        <div class="grandchild">Grandchild</div>
+                    </div>
+                    <div class="child">
+                        Child
+                        <div class="grandchild">Grandchild</div>
+                        <div class="grandchild">Grandchild</div>
+                        <div class="grandchild">Grandchild</div>
+                    </div>
+                </div>
+                <div class="sibling">Sibling</div>
+                <div class="sibling">Sibling</div>
+                <div class="sibling">Sibling</div>
+            </div>
+
+            <div class="testarea">
+                <style>
+                    #test02 > div
+                    {
+                        color: #ff0000;
+                        background-color: #fff0f0;
+                    }
+                </style>
+                #parent > div
+                <div id="test02" class="parent">
+                    Parent
+                    <div class="child">
+                        Child
+                        <div class="grandchild">Grandchild</div>
+                        <div class="grandchild">Grandchild</div>
+                        <div class="grandchild">Grandchild</div>
+                    </div>
+                    <div class="child">
+                        Child
+                        <div class="grandchild">Grandchild</div>
+                        <div class="grandchild">Grandchild</div>
+                        <div class="grandchild">Grandchild</div>
+                    </div>
+                    <div class="child">
+                        Child
+                        <div class="grandchild">Grandchild</div>
+                        <div class="grandchild">Grandchild</div>
+                        <div class="grandchild">Grandchild</div>
+                    </div>
+                </div>
+                <div class="sibling">Sibling</div>
+                <div class="sibling">Sibling</div>
+                <div class="sibling">Sibling</div>
+            </div>
+
+            <div class="testarea">
+                <style>
+                    #test03 + div
+                    {
+                        color: #ff0000;
+                        background-color: #fff0f0;
+                    }
+                </style>
+                #parent + div
+                <div id="test03" class="parent">
+                    Parent
+                    <div class="child">
+                        Child
+                        <div class="grandchild">Grandchild</div>
+                        <div class="grandchild">Grandchild</div>
+                        <div class="grandchild">Grandchild</div>
+                    </div>
+                    <div class="child">
+                        Child
+                        <div class="grandchild">Grandchild</div>
+                        <div class="grandchild">Grandchild</div>
+                        <div class="grandchild">Grandchild</div>
+                    </div>
+                    <div class="child">
+                        Child
+                        <div class="grandchild">Grandchild</div>
+                        <div class="grandchild">Grandchild</div>
+                        <div class="grandchild">Grandchild</div>
+                    </div>
+                </div>
+                <div class="sibling">Sibling</div>
+                <div class="sibling">Sibling</div>
+                <div class="sibling">Sibling</div>
+            </div>
+
+            <div class="testarea">
+                <style>
+                    #test04 ~ div
+                    {
+                        color: #ff0000;
+                        background-color: #fff0f0;
+                    }
+                </style>
+                #parent ~ div
+                <div id="test04" class="parent">
+                    Parent
+                    <div class="child">
+                        Child
+                        <div class="grandchild">Grandchild</div>
+                        <div class="grandchild">Grandchild</div>
+                        <div class="grandchild">Grandchild</div>
+                    </div>
+                    <div class="child">
+                        Child
+                        <div class="grandchild">Grandchild</div>
+                        <div class="grandchild">Grandchild</div>
+                        <div class="grandchild">Grandchild</div>
+                    </div>
+                    <div class="child">
+                        Child
+                        <div class="grandchild">Grandchild</div>
+                        <div class="grandchild">Grandchild</div>
+                        <div class="grandchild">Grandchild</div>
+                    </div>
+                </div>
+                <div class="sibling">Sibling</div>
+                <div class="sibling">Sibling</div>
+                <div class="sibling">Sibling</div>
+            </div>
+
+            <div class="testarea">
+                <style>
+                    #test05 > div:first-child
+                    {
+                        color: #ff0000;
+                        background-color: #fff0f0;
+                    }
+                </style>
+                #parent > div:first-child
+                <div id="test05" class="parent">
+                    Parent
+                    <div class="child">
+                        Child
+                        <div class="grandchild">Grandchild</div>
+                        <div class="grandchild">Grandchild</div>
+                        <div class="grandchild">Grandchild</div>
+                    </div>
+                    <div class="child">
+                        Child
+                        <div class="grandchild">Grandchild</div>
+                        <div class="grandchild">Grandchild</div>
+                        <div class="grandchild">Grandchild</div>
+                    </div>
+                    <div class="child">
+                        Child
+                        <div class="grandchild">Grandchild</div>
+                        <div class="grandchild">Grandchild</div>
+                        <div class="grandchild">Grandchild</div>
+                    </div>
+                </div>
+                <div class="sibling">Sibling</div>
+                <div class="sibling">Sibling</div>
+                <div class="sibling">Sibling</div>
+            </div>
+
+            <div class="testarea">
+                <style>
+                    #test06 > div:nth-child(3)
+                    {
+                        color: #ff0000;
+                        background-color: #fff0f0;
+                    }
+                </style>
+                #parent > div:nth-child(3)
+                <div id="test06" class="parent">
+                    Parent
+                    <div class="child">
+                        Child
+                        <div class="grandchild">Grandchild</div>
+                        <div class="grandchild">Grandchild</div>
+                        <div class="grandchild">Grandchild</div>
+                    </div>
+                    <div class="child">
+                        Child
+                        <div class="grandchild">Grandchild</div>
+                        <div class="grandchild">Grandchild</div>
+                        <div class="grandchild">Grandchild</div>
+                    </div>
+                    <div class="child">
+                        Child
+                        <div class="grandchild">Grandchild</div>
+                        <div class="grandchild">Grandchild</div>
+                        <div class="grandchild">Grandchild</div>
+                    </div>
+                </div>
+                <div class="sibling">Sibling</div>
+                <div class="sibling">Sibling</div>
+                <div class="sibling">Sibling</div>
+            </div>
+
+            <div class="testarea">
+                <style>
+                    #test07 > div:nth-child(odd)
+                    {
+                        color: #ff0000;
+                        background-color: #fff0f0;
+                    }
+                </style>
+                #parent > div:nth-child(odd)
+                <div id="test07" class="parent">
+                    Parent
+                    <div class="child">
+                        Child
+                        <div class="grandchild">Grandchild</div>
+                        <div class="grandchild">Grandchild</div>
+                        <div class="grandchild">Grandchild</div>
+                    </div>
+                    <div class="child">
+                        Child
+                        <div class="grandchild">Grandchild</div>
+                        <div class="grandchild">Grandchild</div>
+                        <div class="grandchild">Grandchild</div>
+                    </div>
+                    <div class="child">
+                        Child
+                        <div class="grandchild">Grandchild</div>
+                        <div class="grandchild">Grandchild</div>
+                        <div class="grandchild">Grandchild</div>
+                    </div>
+                </div>
+                <div class="sibling">Sibling</div>
+                <div class="sibling">Sibling</div>
+                <div class="sibling">Sibling</div>
+            </div>
+
+            <div class="testarea">
+                <style>
+                    #test08 div:not(.child)
+                    {
+                        color: #ff0000;
+                        background-color: #fff0f0;
+                    }
+                </style>
+                #parent div:not(.child)
+                <div id="test08" class="parent">
+                    Parent
+                    <div class="child">
+                        Child
+                        <div class="grandchild">Grandchild</div>
+                        <div class="grandchild">Grandchild</div>
+                        <div class="grandchild">Grandchild</div>
+                    </div>
+                    <div class="child">
+                        Child
+                        <div class="grandchild">Grandchild</div>
+                        <div class="grandchild">Grandchild</div>
+                        <div class="grandchild">Grandchild</div>
+                    </div>
+                    <div class="child">
+                        Child
+                        <div class="grandchild">Grandchild</div>
+                        <div class="grandchild">Grandchild</div>
+                        <div class="grandchild">Grandchild</div>
+                    </div>
+                </div>
+                <div class="sibling">Sibling</div>
+                <div class="sibling">Sibling</div>
+                <div class="sibling">Sibling</div>
+            </div>
+
+            <div class="end-of-tests"></div>
+
+            <p>
+                If you need to support really old versions of Internet Explorer you have to be careful. IE 6.0 or older does <a href="http://caniuse.com/#search=css%202.1%20selectors">not support CSS 2.1</a> selectors while IE 8.0 or older does <a href="http://caniuse.com/#search=css3%20selectors">not support CSS3 selectors</a>.
+            </p>
+
+
+        </content>
+
+        <footer>
+            <span class="comment"></span>
+            <span class="author" itemprop="author">Henrik Ripa</span>
+        </footer>
+    </article>
+
+    <footer></footer>
+</body>
+</html>

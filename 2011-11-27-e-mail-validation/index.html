@@ -1,0 +1,82 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>E-mail address validation ad nauseam | Pseudorandom Knowledge</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="/styles/highlight.css" />
+    <link rel="stylesheet" href="/styles/common.css" />
+    <script src="/scripts/highlight.js"></script>
+    <script src="/scripts/common.js"></script>
+</head>
+<body>
+	<header>
+		<a href="/" rel="home">
+            <h1>Pseudorandom Knowledge</h1>
+        </a>
+    </header>
+
+    <article itemscope itemtype="http://schema.org/BlogPosting">
+        <header>
+            <h1 itemprop="headline name">E-mail address validation ad nauseam</h1>
+            <time class="published" itemprop="datePublished">2011-11-27</time>
+            <time class="modified" itemprop="dateModified">2017-09-10</time>
+        </header>
+
+        <content itemprop="articleBody text">
+
+            <p>
+                Validating e-mail addresses is kind of a <a href="http://bikeshed.com/">bike shed problem</a>. If you search for a solution on the Internet you will find endless amounts of regular expressions and discussions. For example: <a href="https://stackoverflow.com/questions/6449367/c-sharp-email-address-validation/6449397#6449397">[1]</a> <a href="https://stackoverflow.com/questions/1903356/email-validation-regular-expression/1903368#1903368">[2]</a> <a href="https://thedailywtf.com/articles/comments/Email-Validation-Validity/2#comment-345504">[3]</a> <a href="http://www.ex-parrot.com/pdw/Mail-RFC822-Address.html">[4]</a> <a href="https://thedailywtf.com/articles/comments/Email-Validation-Validity/2#comment-345479">[5]</a> <a href="https://stackoverflow.com/questions/46155/validate-email-address-in-javascript/46181#46181">[6]</a> <a href="http://haacked.com/archive/2007/08/21/i-knew-how-to-validate-an-email-address-until-i.aspx">[7]</a> <a href="https://stackoverflow.com/questions/201323/what-is-the-best-regular-expression-for-validating-email-addresses/201378#201378">[8]</a> <a href="http://isemail.info/about">[9]</a>
+            </p>
+
+            <p>
+                There are three reasons I can think of for why we want to validate an e-mail address. We want to catch users who:
+            </p>
+
+            <ol>
+                <li>Input malicious data</li>
+                <li>Don’t want to give us their real e-mail address</li>
+                <li>Make mistakes</li>
+            </ol>
+
+            <p>
+                E-mail addresses falls under the same category as all other user inputted data. You cannot trust it. You should check whether your SMTP client will handle it properly or if you need to sanitize the input beforehand.
+            </p>
+
+            <p>
+                If we have users who doesn’t want to give us their real e-mail address we should consider whether to require an e-mail address at all. However, if we do need it the only way we can be sure is to send an e-mail to the user with a unique verification URL that they can visit.
+            </p>
+
+            <p>
+                Sending verification e-mails is also the only way to make sure users haven’t made mistakes when they enter their e-mail address. Since it is possible to mistype an e-mail address in such a way that the result is a valid e-mail address. For example, if you mistype <em>johan@example.com</em> as <em>john@example.com</em> it is still valid even if it is wrong.
+            </p>
+
+            <p>
+                Finally we have the scenario where <strong>a user mistypes his e-mail address in such a way that the result is not a valid e-mail address</strong>. This is the only situation where it is helpful to validate that the string a user has entered is a valid e-mail address.
+            </p>
+
+            <p>
+                This simple problem can easily take up way too much of your time. There will always be a tradeoff between accepting invalid e-mail addresses and rejecting valid e-mail addresses. Complex regular expressions are hard to debug. Using proper libraries to parse the address is better but may not be available both client and server side.
+            </p>
+
+            <p>
+                I suggest doing something simple that takes little time to implement, little time to debug, accepts all valid e-mail addresses and still rejects the input if the user misunderstands and puts in his postal code or shoe size. I suggest this:
+            </p>
+
+            <pre><code class="javascript">if (email.indexOf("@") != -1)</code></pre>
+
+            <p>
+                And the bike shed should be purple.
+            </p>
+
+        </content>
+
+        <footer>
+            <span class="comment"></span>
+            <span class="author" itemprop="author">Henrik Ripa</span>
+        </footer>
+    </article>
+
+    <footer></footer>
+</body>
+</html>

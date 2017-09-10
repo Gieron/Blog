@@ -1,0 +1,70 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>SOLID: principles with an acronym | Pseudorandom Knowledge</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="/styles/common.css" />
+    <script src="/scripts/common.js"></script>
+</head>
+<body>
+	<header>
+		<a href="/" rel="home">
+            <h1>Pseudorandom Knowledge</h1>
+        </a>
+    </header>
+
+    <article itemscope itemtype="http://schema.org/BlogPosting">
+        <header>
+            <h1 itemprop="headline name">SOLID: principles with an acronym</h1>
+            <time class="published" itemprop="datePublished">2012-04-15</time>
+            <time class="modified" itemprop="dateModified">2017-09-10</time>
+        </header>
+
+        <content itemprop="articleBody text">
+
+            <p>
+                SOLID is a set of five principles for object oriented program design. The principles are carefully selected to result in a cool acronym.
+            </p>
+
+            <h2>Single Responsibility Principle</h2>
+
+            <p>
+                Every class should have a single responsibility. Many have realized this. One put a name on it.
+            </p>
+
+            <h2>Open Closed Principle</h2>
+
+            <p>
+                Classes should be open for extension but closed for modification. Originally this meant that new functionality should be put in new classes that inherit from older classes. However, since this is likely to cause a mess the principle was redefined. It now refers to some sort of design pattern involving abstract classes.
+            </p>
+
+            <h2>Liskov Substitution Principle</h2>
+
+            <p>
+                If you create a derived class from a base class the derived class should be able to stand in for the base class in all existing code. This means that if you create a car that teleports to the moon when you turn left you probably shouldn’t go around calling it a car. This principle is always explained by giving <a href="https://stackoverflow.com/a/56904/12031">examples</a> <a href="https://en.wikipedia.org/wiki/Circle-ellipse_problem">of</a> <a href="http://opensourceforu.com/2012/02/joy-of-programming-liskovs-substitution-principle/">where</a> <a href="https://dzone.com/articles/the-liskov-substitution-principle-with-examples">it</a> <a href="https://www.sitepoint.com/liskov-substitution-principle/">isn’t</a> <a href="https://youtu.be/Mmy1EUKC_iE?t=2m18s">applied</a>.
+            </p>
+
+            <h2>Interface Segregation Principle</h2>
+
+            <p>
+                Clients shouldn’t have to depend on interfaces they don’t use. This is almost the same as the single responsibility principle but it refers to interfaces instead of classes. If you are creative it is possible to violate one but not the other.
+            </p>
+
+            <h2>Dependency Inversion Principle</h2>
+
+            <p>
+                High-level modules should not depend on low-level modules, both should depend on abstractions. The ubiquitous example of this is Dependency Injection where you <a href="https://stackoverflow.com/a/2132859/12031">pass a dependency to a dependent module</a> instead of letting the module create it itself. When taken to its extreme you get an <a href="https://weblogs.asp.net/sfeldman/understanding-ioc-container">IoC Container</a>.
+            </p>
+
+        </content>
+
+        <footer>
+            <span class="comment"></span>
+            <span class="author" itemprop="author">Henrik Ripa</span>
+        </footer>
+    </article>
+
+    <footer></footer>
+</body>
+</html>

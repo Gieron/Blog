@@ -1,0 +1,100 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>Prototype: in the shadow of jQuery | Pseudorandom Knowledge</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="/styles/highlight.css" />
+    <link rel="stylesheet" href="/styles/common.css" />
+    <script src="/scripts/highlight.js"></script>
+    <script src="/scripts/common.js"></script>
+</head>
+<body>
+	<header>
+		<a href="/" rel="home">
+            <h1>Pseudorandom Knowledge</h1>
+        </a>
+    </header>
+
+    <article itemscope itemtype="http://schema.org/BlogPosting">
+        <header>
+            <h1 itemprop="headline name">Prototype: in the shadow of jQuery</h1>
+            <time class="published" itemprop="datePublished">2012-03-19</time>
+            <time class="modified" itemprop="dateModified">2017-09-10</time>
+        </header>
+
+        <content itemprop="articleBody text">
+
+            <p>
+                <a href="http://prototypejs.org/">Prototype</a> is a rival to jQuery. Not that there is much contest. jQuery is in much wider use and much more actively developed. Still, Prototype does exist and similar things to what jQuery does.
+            </p>
+
+            <p>
+                The syntax and usage of Prototype show both similarities and differences to jQuery. You can compare the following pieces of Prototype code to what I wrote about jQuery in an <a href="/2011-07-24-jquery-basics">earlier blog post</a>. Before we begin using Prototype to manipulate the DOM we need to make sure it is loaded.
+            </p>
+
+            <pre><code class="javascript">document.observe('dom:loaded', function ()
+{
+    // The DOM has been loaded
+});</code></pre>
+
+            <p>
+                There are two element selectors in Prototype. The first only selects based on ID. The second uses CSS syntax.
+            </p>
+
+            <pre><code class="javascript">$("bottom");        // by ID
+$$("hgroup");       // by tag
+$$(".ticket");      // by class
+$$("em:empty");     // by pseudo class
+$$("h2[title]");    // by tag, has attribute
+$$("img[alt='']");  // by tag, has attribute value
+$$("a.dead:empty"); // combination of selectors</code></pre>
+
+            <p>
+                The ID selector will always refer to a single element, since IDs are unique. The CSS selector will always give back an array of elements. To apply some function to them we have to iterate over them or apply a map.
+            </p>
+
+            <pre><code class="javascript">$$(".warning").each(function (element) {
+    element.insert({ before: "Warning: " });
+});
+ 
+$$(".error").invoke("insert", { before: "Error: " });</code></pre>
+
+            <p>
+                For the rest of the Prototype’s functionality I refer you to the <a href="http://api.prototypejs.org/">Prototype API documentation</a>.
+            </p>
+
+            <h2>Ajax via Prototype</h2>
+
+            <p>
+                Of course Prototype can do Ajax as well.
+            </p>
+
+            <pre><code class="javascript">$("button").observe("click", function () {
+    $("output").innerHTML = "processing...";
+    new Ajax.Request("Page.aspx/Uppercase", {
+        method: "POST",
+        contentType: "application/json",
+        encoding: "utf-8",
+        postBody: Object.toJSON({ text: $("input").value }),
+        onSuccess: function (response) {
+            $("output").innerHTML = response.responseJSON.d.Text;
+        }
+    });
+});</code></pre>
+
+            <p>
+                This is the Prototype version of the client side code when calling a web method in ASP.NET Web Forms as I described in <a href="/2011-08-03-ajax-jquery-aspnet">another blog post</a>.
+            </p>
+
+        </content>
+
+        <footer>
+            <span class="comment"></span>
+            <span class="author" itemprop="author">Henrik Ripa</span>
+        </footer>
+    </article>
+
+    <footer></footer>
+</body>
+</html>
