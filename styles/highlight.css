@@ -95,17 +95,7 @@
 
 .hljs-section
 {
-    color: gold;
-}
-
-.hljs-emphasis
-{
-    font-style: italic;
-}
-
-.hljs-strong
-{
-    font-weight: bold;
+    background-color: gold;
 }
 
 .hljs-addition
@@ -118,6 +108,23 @@
 .hljs-deletion
 {
     background-color: #600;
+    display: inline-block;
+    width: 100%;
+}
+
+.hljs-emphasis
+{
+    font-style: italic;
+}
+
+.hljs-strong
+{
+    font-weight: bold;
+}
+
+.hljs .highlight-line
+{
+    background-color: #afa;
     display: inline-block;
     width: 100%;
 }
