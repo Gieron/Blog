@@ -1,0 +1,82 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>PowerShell to the people | Pseudorandom Knowledge</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="/styles/highlight.css" />
+    <link rel="stylesheet" href="/styles/common.css" />
+    <script src="/scripts/highlight.js"></script>
+    <script src="/scripts/common.js"></script>
+</head>
+<body>
+	<header>
+		<a href="/" rel="home">
+            <h1>Pseudorandom Knowledge</h1>
+        </a>
+    </header>
+
+    <article itemscope itemtype="http://schema.org/BlogPosting">
+        <header>
+            <h1 itemprop="headline name">PowerShell to the people</h1>
+            <time class="published" itemprop="datePublished">2012-07-24</time>
+            <time class="modified" itemprop="dateModified">2017-09-14</time>
+        </header>
+
+        <content itemprop="articleBody text">
+
+            <p>
+                Windows PowerShell was created by Microsoft to be used for administration of Windows, Exchange, SQL Server and so on. But it is also a replacement for the old Command Prompt. With it the Windows command line goes from something vastly inferior to *nix shells to something that in many ways surpasses it. So, if you haven’t already, set aside <a href="https://www.youtube.com/watch?v=-Ya1dQ1Igkc">four hours and learn the basics</a>.
+            </p>
+
+            <p>
+                PowerShell is built on and tightly integrated with .NET. Functionality in PowerShell is generally provided by special .NET classes called <em>cmdlets</em> (a Microsoft madeuppy word). You also have access to .NET’s whole base class library. Although the syntax is a bit different than you may be used to.
+            </p>
+
+            <pre><code class="powershell">[String]::Format("{0:#.##}", [Math]::PI * 2)
+ 
+(Get-Date).ToString("dddd", [Globalization.CultureInfo]::InvariantCulture)
+ 
+$web = New-Object System.Net.WebClient
+$web.DownloadString("http://blog.gieron.info/Blog.sln")</code></pre>
+
+            <h2>Customize your shell</h2>
+
+            <p>
+                The default console window for PowerShell is the same as for cmd.exe. It’s not very impressive. You can change the window size and the colors but that’s about it. There is however a third party <a href="https://sourceforge.net/projects/console/">alternative called Console</a> which has some nice features such as transparency and tabs.
+            </p>
+
+            <img src="powershell-with-console.png" width="550" />
+
+            <p>
+                PowerShell executes a script file when it starts where you can put anything you want to run whenever you open a new shell. The path to this file is contained in the variable <em>$profile</em>. Here is mine:
+            </p>
+
+            <pre><code class="powershell">$host.UI.RawUI.ForegroundColor = "White"
+ 
+function Prompt
+{
+  $path = $pwd -Replace "^Microsoft\.PowerShell\.Core\\FileSystem\:\:", ""
+  $shortpath = $path
+  $shortpath = $shortpath -Replace "^(.:\\)....+(.{20})$", "`$1...`$2"
+  $shortpath = $shortpath -Replace "^(....:\\)....+(.{17})$", "`$1...`$2"
+  $shortpath = $shortpath -Replace "^....+(.{23})$", "...`$1"
+ 
+  Write-Host -ForegroundColor Green -NoNewLine $shortpath
+  Write-Host -ForegroundColor DarkGreen -NoNewLine '>'
+ 
+  $host.UI.RawUI.WindowTitle = $path
+  return " "
+}</code></pre>
+
+        </content>
+
+        <footer>
+            <span class="comment"></span>
+            <span class="author" itemprop="author">Henrik Ripa</span>
+        </footer>
+    </article>
+
+    <footer></footer>
+</body>
+</html>

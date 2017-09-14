@@ -1,0 +1,98 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>A style for every media | Pseudorandom Knowledge</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="/styles/highlight.css" />
+    <link rel="stylesheet" href="/styles/common.css" />
+    <script src="/scripts/highlight.js"></script>
+    <script src="/scripts/common.js"></script>
+</head>
+<body>
+	<header>
+		<a href="/" rel="home">
+            <h1>Pseudorandom Knowledge</h1>
+        </a>
+    </header>
+
+    <article itemscope itemtype="http://schema.org/BlogPosting">
+        <header>
+            <h1 itemprop="headline name">A style for every media</h1>
+            <time class="published" itemprop="datePublished">2012-09-30</time>
+            <time class="modified" itemprop="dateModified">2017-09-14</time>
+        </header>
+
+        <content itemprop="articleBody text">
+
+            <p>
+                CSS media rules are used for styling a web site differently depending on the capabilities of the device used to access it. For example different style sheets can be used for viewing and printing a web site by <a href="https://www.w3.org/TR/CSS2/media.html">specifying a media type</a> when linking to them.
+            </p>
+
+            <pre><code class="html">&lt;link href="default.css" rel="stylesheet" type="text/css" media="screen" />
+&lt;link href="print.css" rel="stylesheet" type="text/css" media="print" /></code></pre>
+
+            <p>
+                Another example is responsive web sites that adapt to the available space. <a href="https://developer.mozilla.org/en-US/docs/Web/CSS/Media_Queries/Using_media_queries">Media queries</a> can be used to import different style sheets depending on the width of the browser window.
+            </p>
+
+            <pre><code class="css">@import url("phone.css") (max-width: 320px);
+@import url("pad.css") (min-width: 321px) and (max-width: 639px);
+@import url("pc.css") (min-width: 640px);</code></pre>
+
+            <p>
+                We can also use media rules to include or exclude CSS rules inside a style sheet. But that is also the most granular we can get, media rules are <a href="https://stackoverflow.com/q/4102917/12031">not supported inside the style attribute</a>. The following example shows how we can set the text color to black when printing to a non-color printer (though browser support for this is a bit lacking).
+            </p>
+
+            <pre><code class="css">@media print and (monochrome) {
+    body { color: Black; }
+}
+@media not print, print and (monochrome: 0) {
+    body { color: Navy; }
+}</code></pre>
+
+            <p>
+                A media query consist of a media type and zero or more conditions separated by <em>and</em>. The media type is optional and is assumed to be <em>all</em> when missing. A condition is always enclosed in parentheses. In its basic form it is made up of a name and a value. For numerical values you can use <em>min-</em> and <em>max-</em> prefixes or omit the value if you just want to check that it is non-zero.
+            </p>
+
+            <pre><code class="css">@media projection { }
+@media (min-resolution: 80dpi) { }
+@media handheld and (orientation: portrait) { } 
+@media screen and (width: 640px) and (height: 480px) { }
+@media tv and (aspect-ratio: 16/9), tv and (aspect-ratio: 16/10) { }
+@media not all and (scan: interlace) { }
+@media only print and (color) { }</code></pre>
+
+            <p>
+                Note that <em>min</em> and <em>max</em> prefixes are always inclusive. Be careful that you don’t accidentally match two media rules when using ranges. The keyword <em>not</em> can be used to negate the whole media rule. If you need to hide a style sheet from browsers that only support media types and not media queries you can use the keyword <em>only</em>. The media type is not optional when using <em>not</em> or <em>only</em>.
+            </p>
+
+            <p>
+                A comma is used to separate a list of queries within a rule. The whole rule will match if at least one query matches (i.e. it is an <em>or</em> operator). There is no <em>or</em> inside a query so sometimes you have to write somewhat repetitively.
+            </p>
+
+            <h2>Browser support</h2>
+
+            <p>
+                Media types is an old CSS2 standard and is widely supported. Full media queries is from CSS3, it is <a href="http://caniuse.com/#feat=css-mediaqueries">not supported by Internet Explorer 8</a> and below. For other browsers there is at least some sort of support. Things like <em>min-width</em> is probably no problem but when you delve into the more odd features you should test it properly, not every browser may interpret it equally.
+            </p>
+
+            <p>
+                I have put together <a href="media.html">a page that shows which media query rules are matched</a> on your browser. Trying it out on handheld devices can be very educational. Current smart phones will not use the media type <em>handheld</em> for example. This is part of the reason why the current trend is to design around the width of the screen and not the type of device.
+            </p>
+
+            <p>
+                A word of warning if you are trying to minimize download size of your site. Even if a browser won’t use style sheet that is linked to with a media query <a href="https://stackoverflow.com/q/6311235/12031">it may still download it</a>.
+            </p>
+
+        </content>
+
+        <footer>
+            <span class="comment"></span>
+            <span class="author" itemprop="author">Henrik Ripa</span>
+        </footer>
+    </article>
+
+    <footer></footer>
+</body>
+</html>
