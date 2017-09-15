@@ -1,0 +1,126 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>SQL Server: recursion in queries | Pseudorandom Knowledge</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="/styles/highlight.css" />
+    <link rel="stylesheet" href="/styles/common.css" />
+    <script src="/scripts/highlight.js"></script>
+    <script src="/scripts/common.js"></script>
+</head>
+<body>
+	<header>
+		<a href="/" rel="home">
+            <h1>Pseudorandom Knowledge</h1>
+        </a>
+    </header>
+
+    <article itemscope itemtype="http://schema.org/BlogPosting">
+        <header>
+            <h1 itemprop="headline name">SQL Server: recursion in queries</h1>
+            <time class="published" itemprop="datePublished">2013-04-07</time>
+            <time class="modified" itemprop="dateModified">2017-09-16</time>
+        </header>
+
+        <content itemprop="articleBody text">
+
+            <p>
+                Some data is hierarchical or recursive in nature. Such data can be stored in a table by having it point back to itself.
+            </p>
+
+            <table>
+                <tr>
+                    <td><strong>Id</strong></td>
+                    <td><strong>ParentId</strong></td>
+                    <td><strong>Name</strong></td>
+                </tr>
+                <tr>
+                    <td>1</td>
+                    <td><em>NULL</em></td>
+                    <td>/</td>
+                </tr>
+                <tr>
+                    <td>2</td>
+                    <td>1</td>
+                    <td>var/</td>
+                </tr>
+                <tr>
+                    <td>3</td>
+                    <td>1</td>
+                    <td>boot/</td>
+                </tr>
+                <tr>
+                    <td>4</td>
+                    <td>3</td>
+                    <td>vmlinuz</td>
+                </tr>
+                <tr>
+                    <td>5</td>
+                    <td>3</td>
+                    <td>initrd.img</td>
+                </tr>
+            </table>
+
+            <p>
+                To query this table recursively we can use <a href="https://docs.microsoft.com/en-us/sql/t-sql/queries/with-common-table-expression-transact-sql">the WITH clause</a> to create a <a href="https://msdn.microsoft.com/en-us/library/ms190766.aspx">Common Table Expression</a>. A CTE can be useful instead of temporary tables or sub queries. But here we use it for its desirable property of being able to reference itself.
+            </p>
+
+            <pre><code class="sql">WITH Branches (Id, Name)
+AS
+(
+    SELECT t.Id, CAST(t.Name AS VARCHAR(512))
+    FROM Tree t
+    WHERE t.ParentId IS NULL
+ 
+    UNION ALL
+ 
+    SELECT t.Id, CAST(b.Name + t.Name AS VARCHAR(512)) AS Name
+    FROM Tree t INNER JOIN Branches b ON t.ParentId = b.Id
+)
+SELECT Name FROM Branches ORDER BY Name</code></pre>
+
+            <p>
+                A recursive WITH query consists of three parts. First we select all the root elements. In this case there’s just one but it could be many more.
+            </p>
+
+            <p>
+                Secondly we select all the children. This is where the magic happens because the second SELECT will be called recursively until there are no more children. By the way, the CASTs are necessary when concatenating strings.
+            </p>
+
+            <p>
+                Finally we use the result in an ordinary SELECT query.
+            </p>
+
+            <table>
+                <tr>
+                    <td><strong>Name</strong></td>
+                </tr>
+                <tr>
+                    <td>/</td>
+                </tr>
+                <tr>
+                    <td>/boot/</td>
+                </tr>
+                <tr>
+                    <td>/boot/initrd.img</td>
+                </tr>
+                <tr>
+                    <td>/boot/vmlinuz</td>
+                </tr>
+                <tr>
+                    <td>/var/</td>
+                </tr>
+            </table>
+
+        </content>
+
+        <footer>
+            <span class="comment"></span>
+            <span class="author" itemprop="author">Henrik Ripa</span>
+        </footer>
+    </article>
+
+    <footer></footer>
+</body>
+</html>
