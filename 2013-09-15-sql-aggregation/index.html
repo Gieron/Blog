@@ -1,0 +1,557 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>SQL Server: aggregative queries | Pseudorandom Knowledge</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="/styles/highlight.css" />
+    <link rel="stylesheet" href="/styles/common.css" />
+    <script src="/scripts/highlight.js"></script>
+    <script src="/scripts/common.js"></script>
+</head>
+<body>
+	<header>
+		<a href="/" rel="home">
+            <h1>Pseudorandom Knowledge</h1>
+        </a>
+    </header>
+
+    <article itemscope itemtype="http://schema.org/BlogPosting">
+        <header>
+            <h1 itemprop="headline name">SQL Server: aggregative queries</h1>
+            <time class="published" itemprop="datePublished">2013-09-15</time>
+            <time class="modified" itemprop="dateModified">2017-09-16</time>
+        </header>
+
+        <content itemprop="articleBody text">
+
+            <p>
+                Quite often we need to aggregate results from many rows. Here are a couple of techniques for doing this in Transact-SQL, most of these queries will probably only work in SQL Server.
+            </p>
+
+            <table>
+                <tr>
+                    <td><strong>Id</strong></td>
+                    <td><strong>Name</strong></td>
+                </tr>
+                <tr>
+                    <td>1</td>
+                    <td>Denmark</td>
+                </tr>
+                <tr>
+                    <td>2</td>
+                    <td>Finland</td>
+                </tr>
+                <tr>
+                    <td>3</td>
+                    <td>Iceland</td>
+                </tr>
+                <tr>
+                    <td>4</td>
+                    <td>Norway</td>
+                </tr>
+                <tr>
+                    <td>5</td>
+                    <td>Sweden</td>
+                </tr>
+            </table>
+
+            <p>
+                In order to have some data to play with I have made up some competition results between the five Nordic countries. The data is held in two tables; <strong>Nations</strong> (above) and <strong>Medals</strong> (below). For simplicity’s sake the medal values are stored as CHAR(6) with a <a href="https://msdn.microsoft.com/en-us/library/ms188258(v=sql.105).aspx">CHECK constraint</a> instead of adding another table.
+            </p>
+
+            <table>
+                <tr>
+                    <td><strong>Id</strong></td>
+                    <td><strong>NationId</strong></td>
+                    <td><strong>Value</strong></td>
+                </tr>
+                <tr>
+                    <td>1</td>
+                    <td>1</td>
+                    <td>Gold</td>
+                </tr>
+                <tr>
+                    <td>2</td>
+                    <td>1</td>
+                    <td>Gold</td>
+                </tr>
+                <tr>
+                    <td>3</td>
+                    <td>1</td>
+                    <td>Silver</td>
+                </tr>
+                <tr>
+                    <td>4</td>
+                    <td>1</td>
+                    <td>Silver</td>
+                </tr>
+                <tr>
+                    <td>5</td>
+                    <td>1</td>
+                    <td>Bronze</td>
+                </tr>
+                <tr>
+                    <td>6</td>
+                    <td>1</td>
+                    <td>Bronze</td>
+                </tr>
+                <tr>
+                    <td>7</td>
+                    <td>1</td>
+                    <td>Bronze</td>
+                </tr>
+                <tr>
+                    <td>8</td>
+                    <td>2</td>
+                    <td>Gold</td>
+                </tr>
+                <tr>
+                    <td>9</td>
+                    <td>2</td>
+                    <td>Gold</td>
+                </tr>
+                <tr>
+                    <td>10</td>
+                    <td>4</td>
+                    <td>Gold</td>
+                </tr>
+                <tr>
+                    <td>11</td>
+                    <td>4</td>
+                    <td>Gold</td>
+                </tr>
+                <tr>
+                    <td>12</td>
+                    <td>4</td>
+                    <td>Bronze</td>
+                </tr>
+                <tr>
+                    <td>13</td>
+                    <td>4</td>
+                    <td>Bronze</td>
+                </tr>
+                <tr>
+                    <td>14</td>
+                    <td>4</td>
+                    <td>Bronze</td>
+                </tr>
+                <tr>
+                    <td>15</td>
+                    <td>5</td>
+                    <td>Silver</td>
+                </tr>
+                <tr>
+                    <td>16</td>
+                    <td>5</td>
+                    <td>Silver</td>
+                </tr>
+                <tr>
+                    <td>17</td>
+                    <td>5</td>
+                    <td>Silver</td>
+                </tr>
+                <tr>
+                    <td>18</td>
+                    <td>5</td>
+                    <td>Silver</td>
+                </tr>
+            </table>
+
+            <h2>GROUP BY</h2>
+
+            <p>
+                First of we have the standard <a href="https://docs.microsoft.com/en-us/sql/t-sql/queries/select-group-by-transact-sql">GROUP BY</a> clause. This trivial example counts the total amount of medals for each nation.
+            </p>
+
+            <pre><code class="sql">SELECT
+    n.Name AS Nation,
+    COUNT(m.Value) AS Medals
+FROM
+    Nations n
+    LEFT JOIN Medals m ON m.NationId = n.Id
+GROUP BY
+    n.Name
+ORDER BY
+    Medals DESC,
+    Nation</code></pre>
+
+            <table>
+                <tr>
+                    <td><strong>Nation</strong></td>
+                    <td><strong>Medals</strong></td>
+                </tr>
+                <tr>
+                    <td>Denmark</td>
+                    <td>7</td>
+                </tr>
+                <tr>
+                    <td>Norway</td>
+                    <td>5</td>
+                </tr>
+                <tr>
+                    <td>Sweden</td>
+                    <td>4</td>
+                </tr>
+                <tr>
+                    <td>Finland</td>
+                    <td>2</td>
+                </tr>
+                <tr>
+                    <td>Iceland</td>
+                    <td>0</td>
+                </tr>
+            </table>
+
+            <h2>XML PATH</h2>
+
+            <p>
+                <a href="https://docs.microsoft.com/en-us/sql/relational-databases/xml/for-xml-sql-server">FOR XML</a> is intended to be used to transform result sets into XML. But it can also be <a href="https://stackoverflow.com/a/35172160/12031">abused to concatenate text</a>. For example a comma separated list of medals. Here the <a href="https://msdn.microsoft.com/en-us/library/ms188043(v=sql.110).aspx">STUFF</a> function takes care of the leading comma and the <a href="https://msdn.microsoft.com/en-us/library/ms187748(v=sql.110).aspx">SUBSTRING</a> call is a simple trick to sort the medal values in the natural order (Gold, Silver, Bronze).
+            </p>
+
+            <pre><code class="sql">SELECT
+    n.Name AS Nation,
+    COALESCE(STUFF((
+        SELECT
+            ', ' + CAST(COUNT(m.Value) AS VARCHAR(5))
+                + ' ' + RTRIM(m.Value)
+        FROM
+            Medals m
+        WHERE
+            m.NationId = n.Id
+        GROUP BY
+            m.Value
+        ORDER BY
+            SUBSTRING(m.Value, 3, 2)
+        FOR XML PATH('')
+    ), 1, 2, ''), '') AS Medals
+FROM
+    Nations n
+ORDER BY
+    Nation</code></pre>
+
+            <table>
+                <tr>
+                    <td><strong>Nation</strong></td>
+                    <td><strong>Medals</strong></td>
+                </tr>
+                <tr>
+                    <td>Denmark</td>
+                    <td>2 Gold, 2 Silver, 3 Bronze</td>
+                </tr>
+                <tr>
+                    <td>Finland</td>
+                    <td>2 Gold</td>
+                </tr>
+                <tr>
+                    <td>Iceland</td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td>Norway</td>
+                    <td>2 Gold, 3 Bronze</td>
+                </tr>
+                <tr>
+                    <td>Sweden</td>
+                    <td>4 Silver</td>
+                </tr>
+            </table>
+
+            <h2>PIVOT</h2>
+
+            <p>
+                Sometimes we may want to rotate rows to columns or columns to rows. This is kind of what the <a href="https://technet.microsoft.com/en-us/library/ms177410(v=sql.105).aspx">PIVOT and UNPIVOT</a> operators in a <a href="https://technet.microsoft.com/en-us/library/ms177634(v=sql.110).aspx">FROM</a> clause do. Here the result is a pretty useful medal table.
+            </p>
+
+            <pre><code class="sql">SELECT
+    p.Nation,
+    COALESCE(p.Gold, 0) AS Gold,
+    COALESCE(p.Silver, 0) AS Silver,
+    COALESCE(p.Bronze, 0) AS Bronze
+FROM
+    (SELECT
+        n.Name AS Nation,
+        m.Value
+    FROM
+        Nations n
+        LEFT JOIN Medals m ON m.NationId = n.Id
+    ) o
+    PIVOT(
+        COUNT(o.Value)
+    FOR
+        o.Value IN (Gold, Silver, Bronze)
+    ) p
+ORDER BY
+    Gold DESC,
+    Silver DESC,
+    Bronze DESC,
+    Nation</code></pre>
+
+            <table>
+                <tr>
+                    <td><strong>Nation</strong></td>
+                    <td><strong>Gold</strong></td>
+                    <td><strong>Silver</strong></td>
+                    <td><strong>Bronze</strong></td>
+                </tr>
+                <tr>
+                    <td>Denmark</td>
+                    <td>2</td>
+                    <td>2</td>
+                    <td>3</td>
+                </tr>
+                <tr>
+                    <td>Norway</td>
+                    <td>2</td>
+                    <td>0</td>
+                    <td>3</td>
+                </tr>
+                <tr>
+                    <td>Finland</td>
+                    <td>2</td>
+                    <td>0</td>
+                    <td>0</td>
+                </tr>
+                <tr>
+                    <td>Sweden</td>
+                    <td>0</td>
+                    <td>4</td>
+                    <td>0</td>
+                </tr>
+                <tr>
+                    <td>Iceland</td>
+                    <td>0</td>
+                    <td>0</td>
+                    <td>0</td>
+                </tr>
+            </table>
+
+            <h2>GROUPING SETS</h2>
+
+            <p>
+                The <a href="https://msdn.microsoft.com/en-us/library/bb522495(v=sql.105).aspx">GROUPING SETS, CUBE and ROLLUP</a> operators are extensions to the GROUP BY clause that allows grouping by more than one set. This example uses it to include a total of all awarded medals per nation together with the totals for each value. The <a href="https://docs.microsoft.com/en-us/sql/t-sql/functions/grouping-transact-sql">GROUPING</a> function provides a way to distinguish between a NULLs that are the result of missing data and NULLs that are the result of grouping.
+            </p>
+
+            <pre><code class="sql">SELECT
+    n.Name AS Nation,
+    COUNT(m.Value) AS Quantity,
+    COALESCE(m.Value, 'Total') AS Value
+FROM
+    Nations n
+    LEFT JOIN Medals m ON m.NationId = n.Id
+GROUP BY GROUPING SETS
+    (
+        (n.Name, m.Value),
+        (n.Name)
+    )
+HAVING
+    m.Value IS NOT NULL
+    OR GROUPING(m.Value) = 1
+ORDER BY
+    Nation,
+    COALESCE(SUBSTRING(m.Value, 3, 2), 'Z')</code></pre>
+
+            <table>
+                <tr>
+                    <td><strong>Nation</strong></td>
+                    <td><strong>Quantity</strong></td>
+                    <td><strong>Value</strong></td>
+                </tr>
+                <tr>
+                    <td>Denmark</td>
+                    <td>2</td>
+                    <td>Gold</td>
+                </tr>
+                <tr>
+                    <td>Denmark</td>
+                    <td>2</td>
+                    <td>Silver</td>
+                </tr>
+                <tr>
+                    <td>Denmark</td>
+                    <td>3</td>
+                    <td>Bronze</td>
+                </tr>
+                <tr>
+                    <td>Denmark</td>
+                    <td>7</td>
+                    <td>Total</td>
+                </tr>
+                <tr>
+                    <td>Finland</td>
+                    <td>2</td>
+                    <td>Gold</td>
+                </tr>
+                <tr>
+                    <td>Finland</td>
+                    <td>2</td>
+                    <td>Total</td>
+                </tr>
+                <tr>
+                    <td>Iceland</td>
+                    <td>0</td>
+                    <td>Total</td>
+                </tr>
+                <tr>
+                    <td>Norway</td>
+                    <td>2</td>
+                    <td>Gold</td>
+                </tr>
+                <tr>
+                    <td>Norway</td>
+                    <td>3</td>
+                    <td>Bronze</td>
+                </tr>
+                <tr>
+                    <td>Norway</td>
+                    <td>5</td>
+                    <td>Total</td>
+                </tr>
+                <tr>
+                    <td>Sweden</td>
+                    <td>4</td>
+                    <td>Silver</td>
+                </tr>
+                <tr>
+                    <td>Sweden</td>
+                    <td>4</td>
+                    <td>Total</td>
+                </tr>
+            </table>
+
+            <h2>APPLY</h2>
+
+            <p>
+                <a href="https://technet.microsoft.com/en-us/library/ms175156.aspx">CROSS APPLY and OUTER APPLY</a> are similar to INNER JOIN and OUTER JOIN but with the difference that the left side is always evaluated first. This allows for some queries that are <a href="https://stackoverflow.com/a/5180700/12031">impossible otherwise</a> or can give <a href="https://stackoverflow.com/a/1139231/12031">performance benefits</a> over alternative queries. Here it is used to get the top 3 medals for each nation, something that may be complicated to do in other ways.
+            </p>
+
+            <pre><code class="sql">SELECT
+    n.Name AS Nation,
+    t.Value
+FROM
+    Nations n
+    CROSS APPLY
+    (SELECT
+        TOP 3
+        m.Value
+    FROM
+        Medals m
+    WHERE
+        m.NationId = n.Id
+    ORDER BY
+        SUBSTRING(m.Value, 3, 2)
+    ) t
+ORDER BY
+    Nation</code></pre>
+
+            <table>
+                <tr>
+                    <td><strong>Nation</strong></td>
+                    <td><strong>Value</strong></td>
+                </tr>
+                <tr>
+                    <td>Denmark</td>
+                    <td>Gold</td>
+                </tr>
+                <tr>
+                    <td>Denmark</td>
+                    <td>Gold</td>
+                </tr>
+                <tr>
+                    <td>Denmark</td>
+                    <td>Silver</td>
+                </tr>
+                <tr>
+                    <td>Finland</td>
+                    <td>Gold</td>
+                </tr>
+                <tr>
+                    <td>Finland</td>
+                    <td>Gold</td>
+                </tr>
+                <tr>
+                    <td>Norway</td>
+                    <td>Gold</td>
+                </tr>
+                <tr>
+                    <td>Norway</td>
+                    <td>Gold</td>
+                </tr>
+                <tr>
+                    <td>Norway</td>
+                    <td>Bronze</td>
+                </tr>
+                <tr>
+                    <td>Sweden</td>
+                    <td>Silver</td>
+                </tr>
+                <tr>
+                    <td>Sweden</td>
+                    <td>Silver</td>
+                </tr>
+                <tr>
+                    <td>Sweden</td>
+                    <td>Silver</td>
+                </tr>
+            </table>
+
+            <h2>OVER</h2>
+
+            <p>
+                The <a href="https://msdn.microsoft.com/en-us/library/ms189461(v=sql.110).aspx">OVER</a> clause is used to apply a function over its own range. This would normally be a <a href="https://stackoverflow.com/q/6218902/12031">partitioned range</a> for aggregative functions or an ordered range for <a href="https://docs.microsoft.com/en-us/sql/t-sql/functions/ranking-functions-transact-sql">ranking functions</a>. In this case we use it to return the total amount of medals awarded in the competition and then calculate how many percent of the total each nation has earned.
+            </p>
+
+            <pre><code class="sql">SELECT
+    n.Name AS Nation,
+    CAST(ROUND(
+        100.0
+        * COUNT(m.Value)
+        / SUM(COUNT(m.Value)) OVER ()
+    , 0) AS INT) AS Percentage
+FROM
+    Nations n
+    LEFT JOIN Medals m ON m.NationId = n.Id
+GROUP BY
+    n.Name
+ORDER BY
+    Percentage DESC,
+    Nation</code></pre>
+
+            <table>
+                <tr>
+                    <td><strong>Nation</strong></td>
+                    <td><strong>Percentage</strong></td>
+                </tr>
+                <tr>
+                    <td>Denmark</td>
+                    <td>39</td>
+                </tr>
+                <tr>
+                    <td>Norway</td>
+                    <td>28</td>
+                </tr>
+                <tr>
+                    <td>Sweden</td>
+                    <td>22</td>
+                </tr>
+                <tr>
+                    <td>Finland</td>
+                    <td>11</td>
+                </tr>
+                <tr>
+                    <td>Iceland</td>
+                    <td>0</td>
+                </tr>
+            </table>
+
+        </content>
+
+        <footer>
+            <span class="comment"></span>
+            <span class="author" itemprop="author">Henrik Ripa</span>
+        </footer>
+    </article>
+
+    <footer></footer>
+</body>
+</html>

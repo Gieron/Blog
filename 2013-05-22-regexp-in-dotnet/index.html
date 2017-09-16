@@ -1,0 +1,95 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>Regular expressions in \.NET | Pseudorandom Knowledge</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="/styles/highlight.css" />
+    <link rel="stylesheet" href="/styles/common.css" />
+    <script src="/scripts/highlight.js"></script>
+    <script src="/scripts/common.js"></script>
+</head>
+<body>
+	<header>
+		<a href="/" rel="home">
+            <h1>Pseudorandom Knowledge</h1>
+        </a>
+    </header>
+
+    <article itemscope itemtype="http://schema.org/BlogPosting">
+        <header>
+            <h1 itemprop="headline name">Regular expressions in \.NET</h1>
+            <time class="published" itemprop="datePublished">2013-05-22</time>
+            <time class="modified" itemprop="dateModified">2017-09-16</time>
+        </header>
+
+        <content itemprop="articleBody text">
+
+            <p>
+                The <a href="https://msdn.microsoft.com/en-us/library/system.string.aspx">String class</a> in .NET provides plenty of methods for dealing with text. But when they fall short we can turn to the <a href="https://msdn.microsoft.com/en-us/library/system.text.regularexpressions.regex.aspx">Regex class</a>.
+            </p>
+
+            <pre><code class="csharp">bool valid = Regex.IsMatch(identifier, @"^[a-z][a-z0-9]*$");
+ 
+string episode = Regex.Match(filename, @"S\d{2}E\d{2}").Groups[0].Value;
+ 
+Match match = Regex.Match(url, @"^http://(?&lt;domain>[^:]+):(?&lt;port>[0-9]+)");
+if (match.Success)
+{
+    string domain = match.Groups["domain"].Value;
+    string port = match.Groups["port"].Value;
+}
+ 
+MatchCollection matches = Regex.Matches(users, @" (\w+),?");
+foreach (Match match in matches)
+{
+    string user = match.Groups[1].Value;
+}
+ 
+Match match = Regex.Match(users, @"Users: ((\w+)(, )?)*");
+foreach (Capture capture in match.Groups[2].Captures)
+{
+    string user = capture.Value;
+}</code></pre>
+
+            <p>
+                The <a href="https://docs.microsoft.com/en-us/dotnet/standard/base-types/regular-expression-language-quick-reference">syntax for regular expressions in .NET</a> is fairly standard. Character classes uses Unicode unless you pass the <em>ECMAScript</em> flag. Remember to escape backslashes or use verbatim string literals. The last example uses captures, which is a way to <a href="https://stackoverflow.com/a/3320890/12031">get history when multiple matches are made</a>.
+            </p>
+
+            <pre><code class="csharp">Regex regex = new Regex(@"^\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2} (.+)$",
+    RegexOptions.ECMAScript | RegexOptions.Compiled);
+ 
+foreach (string line in log)
+{
+    Match match = regex.Match(line);
+    if (!match.Success) { continue; }
+    string message = match.Groups[1].Value;
+}</code></pre>
+
+            <p>
+                The Regex methods can be called statically, like in the earlier examples, or the class can be instantiated as in the latter example. Since a regular expression have to be processed before it can be used it makes sense to reuse it. However, when used statically the Regex class uses <a href="https://stackoverflow.com/a/414411/12031">an internal cache</a>, so the static usage isn’t as bad as it may seem.
+            </p>
+
+            <p>
+                Regex objects can also be processed further by passing the <em>Compiled</em> flag. The regular expression is then <a href="https://stackoverflow.com/a/416587/12031">turned into an assembly</a>. This makes string matching faster but comes at a significant <a href="https://docs.microsoft.com/en-us/dotnet/standard/base-types/compilation-and-reuse-in-regular-expressions">startup and memory cost</a>. You can even go all out and turn a regular expression into <a href="https://msdn.microsoft.com/en-us/library/9ek5zak6.aspx">a permanent assembly</a>.
+            </p>
+
+            <h2>Regular expressions in Visual Studio</h2>
+
+            <img src="find-and-replace.png" width="300" />
+
+            <p>
+                As useful as regular expressions are in code it can be even more useful as a tool when writing code. But for reasons unknown <a href="https://msdn.microsoft.com/en-us/library/2k3te2cs.aspx">the syntax used in Visual Studio</a> is very different from that in .NET. For example, tags are enclosed with <strong>{ }</strong> instead of <strong>( )</strong>, character classes are prefixed with <strong>:</strong> instead of <strong>\</strong> and repetitions are expressed as <strong>^<em>n</em></strong> instead of <strong>{<em>n</em>}</strong>.
+            </p>
+
+        </content>
+
+        <footer>
+            <span class="comment"></span>
+            <span class="author" itemprop="author">Henrik Ripa</span>
+        </footer>
+    </article>
+
+    <footer></footer>
+</body>
+</html>
