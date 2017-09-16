@@ -1,0 +1,96 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>Let the client do the work | Pseudorandom Knowledge</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="/styles/highlight.css" />
+    <link rel="stylesheet" href="/styles/common.css" />
+    <script src="/scripts/highlight.js"></script>
+    <script src="/scripts/common.js"></script>
+</head>
+<body>
+	<header>
+		<a href="/" rel="home">
+            <h1>Pseudorandom Knowledge</h1>
+        </a>
+    </header>
+
+    <article itemscope itemtype="http://schema.org/BlogPosting">
+        <header>
+            <h1 itemprop="headline name">Let the client do the work</h1>
+            <time class="published" itemprop="datePublished">2014-02-02</time>
+            <time class="modified" itemprop="dateModified">2017-09-16</time>
+        </header>
+
+        <content itemprop="articleBody text">
+
+            <p>
+                Websites are increasingly built using Ajax and JavaScript. This has culminated in the <a href="https://en.wikipedia.org/wiki/Single-page_application">single page application</a> design. These are websites where the server is used only as a data store and all the heavy lifting is done in the client.
+            </p>
+
+            <p>
+                Writing this much client side code would be difficult without a good framework. Fortunately, there are <a href="http://todomvc.com/">many to choose from</a>. Unfortunately, there are <a href="https://www.smashingmagazine.com/2012/07/journey-through-the-javascript-mvc-jungle/">many to choose from</a>. Most, if not all, of them are built on MV* principles, where the * stands for the fact that they often deviate from the <a title="ASP.NET MVC from scratch | Pseudorandom Knowledge" href="/2011-07-31-aspnet-mvc-scratch">MVC pattern</a>.
+            </p>
+
+            <h2>Backbone.js</h2>
+
+            <pre><code class="javascript">$(function () {
+    var MainModel = Backbone.Model.extend({
+        defaults: {
+            greeting: 'Hello world'
+        }
+    });
+ 
+    var MainView = Backbone.View.extend({
+        tagName: 'h2',
+        initialize: function () {
+            this.model.on('change', this.render, this);
+            this.render();
+        },
+        render: function () {
+            this.$el.html(this.model.get('greeting'));
+            $('body').html(this.$el);
+        }
+    });
+ 
+    var AppRouter = Backbone.Router.extend({
+        routes: {
+            '': 'main'
+        },
+        main: function () {
+            var model = new MainModel();
+            var view = new MainView({ model: model });
+            setTimeout(function () {
+                model.set('greeting', 'Cruel world');
+            }, 1700);
+        }
+    });
+ 
+    new AppRouter();
+    Backbone.history.start();
+});</code></pre>
+
+            <p>
+                <a href="http://backbonejs.org/">Backbone</a> is one of the more popular frameworks. This example shows how models, views and routes are used to assemble the application. In addition there are collections which handle collections of models.
+            </p>
+
+            <p>
+                While some frameworks are very rigid in their structure Backbone is rather more flexible. There are some recommendations though. Use Underscore.js <a href="http://underscorejs.org/#template">templates</a> when rendering views. Use <a href="http://backbonejs.org/#Sync">REST</a> when getting data from the server. And you probably want to include jQuery even though the documentation likes to consider it optional.
+            </p>
+
+            <p>
+                There are plenty of <a href="https://code.tutsplus.com/tutorials/make-backbone-better-with-extensions--net-30723">extensions</a> to Backbone. Most of which can be served from <a href="https://cdnjs.com/">cdnjs</a> together with Backbone itself and its dependencies.
+            </p>
+
+        </content>
+
+        <footer>
+            <span class="comment"></span>
+            <span class="author" itemprop="author">Henrik Ripa</span>
+        </footer>
+    </article>
+
+    <footer></footer>
+</body>
+</html>
