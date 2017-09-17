@@ -201,6 +201,13 @@ body
                 padding: 2px 6px;
             }
 
+
+        body > article > content > pre.code-header
+        {
+            letter-spacing: 1px;
+            margin-bottom: 0;
+        }
+
         body > article > footer
         {
             display: flex;

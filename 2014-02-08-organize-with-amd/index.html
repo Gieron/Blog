@@ -1,0 +1,101 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>Organizing JavaScript with AMD | Pseudorandom Knowledge</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="/styles/highlight.css" />
+    <link rel="stylesheet" href="/styles/common.css" />
+    <script src="/scripts/highlight.js"></script>
+    <script src="/scripts/common.js"></script>
+</head>
+<body>
+	<header>
+		<a href="/" rel="home">
+            <h1>Pseudorandom Knowledge</h1>
+        </a>
+    </header>
+
+    <article itemscope itemtype="http://schema.org/BlogPosting">
+        <header>
+            <h1 itemprop="headline name">Organizing JavaScript with AMD</h1>
+            <time class="published" itemprop="datePublished">2014-02-08</time>
+            <time class="modified" itemprop="dateModified">2017-09-17</time>
+        </header>
+
+        <content itemprop="articleBody text">
+
+            <p>
+                <a href="https://github.com/amdjs/amdjs-api/wiki/AMD">Asynchronous Module Definition</a> is a standard for modularizing JavaScript code. <a href="http://requirejs.org/">RequireJS</a> is one implementation of AMD.
+            </p>
+
+            <pre class="code-header">/Scripts/app/constants.js</pre>
+
+            <pre><code class="javascript">define({
+    pi: 3.14159,
+    e: 2.71828
+});</code></pre>
+
+            <p>
+                A module in AMD consists of a a value and an identifier. The identifier is the name of the file that contains the module minus the base URL and the file ending.
+            </p>
+
+            <pre class="code-header">/Scripts/app/circle.js</pre>
+
+            <pre><code class="javascript">define(['app/constants'], function (constants) {
+    return function (radius) {
+        return {
+            radius: radius,
+            diameter: 2 * radius,
+            circumference: 2 * constants.pi * radius,
+            area: constants.pi * radius * radius
+        };
+    };
+});</code></pre>
+
+            <p>
+                When a module is defined with a function that function will be called and the result will be used as the value. That value can still be a function which is useful because it can be used as a constructor.
+            </p>
+
+            <p>
+                This also shows how one module can depend other modules. AMD will take care of loading the other modules and pass their values to the function. Hence a function is required in this case.
+            </p>
+
+            <pre class="code-header">/Scripts/app/main.js</pre>
+
+            <pre><code class="javascript">require.config({
+    baseUrl: '/Scripts',
+    paths: {
+        'jquery': 'http://code.jquery.com/jquery-2.1.0.min'
+    }
+});
+ 
+require(['jquery', 'app/circle'], function ($, circle) {
+    $('body').html(circle(5.3).area);
+})</code></pre>
+
+            <p>
+                In the main JavaScript file RequireJS is configured and the application is started. Since this does not define a module it uses <a href="https://stackoverflow.com/a/10994255/12031">require instead of define</a>.
+            </p>
+
+            <pre><code class="html">&lt;script src="/Scripts/lib/require.js" data-main="/Scripts/app/main">&lt;/script></code></pre>
+
+            <p>
+                The only file that has to be included in the traditional way is the one for RequireJS. It then needs to know which file to start the application with.
+            </p>
+
+            <p>
+                The drawback of AMD is that there can only be one module per file. While this is good for organizing code during development it means a lot of files to download to the browser. AMD does load files asynchronously when needed. However, when used <a href="https://stackoverflow.com/a/11563110/12031">in production</a> some way of combining JavaScript files is almost necessary.
+            </p>
+
+        </content>
+
+        <footer>
+            <span class="comment"></span>
+            <span class="author" itemprop="author">Henrik Ripa</span>
+        </footer>
+    </article>
+
+    <footer></footer>
+</body>
+</html>
