@@ -1,0 +1,84 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>Security in headers | Pseudorandom Knowledge</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="/styles/highlight.css" />
+    <link rel="stylesheet" href="/styles/common.css" />
+    <script src="/scripts/highlight.js"></script>
+    <script src="/scripts/common.js"></script>
+</head>
+<body>
+	<header>
+		<a href="/" rel="home">
+            <h1>Pseudorandom Knowledge</h1>
+        </a>
+    </header>
+
+    <article itemscope itemtype="http://schema.org/BlogPosting">
+        <header>
+            <h1 itemprop="headline name">Security in headers</h1>
+            <time class="published" itemprop="datePublished">2014-05-04</time>
+            <time class="modified" itemprop="dateModified">2017-09-25</time>
+        </header>
+
+        <content itemprop="articleBody text">
+
+            <p>
+                Cross site scripting (XSS) attacks can be difficult to prevent when developing web sites. However, the browser can be recruited in this struggle by sending it the appropriate headers. This example shows how this might be setup in the <em>web.config</em> file of a simple HTTPS enabled ASP.NET site.
+            </p>
+
+            <pre><code class="xml">&lt;configuration>
+  &lt;system.webServer>
+    &lt;httpProtocol>
+      &lt;customHeaders>
+        &lt;add name="Content-Security-Policy"
+          value="default-src 'none'; img-src 'self'; style-src 'self'; script-src 'self'" />
+        &lt;add name="X-Frame-Options" value="deny" />
+        &lt;add name="X-XSS-Protection" value="1; mode=block"/>
+        &lt;add name="X-Content-Type-Options" value="nosniff" />
+        &lt;add name="Strict-Transport-Security" value="max-age=31536000" />
+      &lt;/customHeaders>
+    &lt;/httpProtocol>
+  &lt;/system.webServer>
+  &lt;system.web>
+    &lt;httpCookies httpOnlyCookies="true" requireSSL="true" />
+  &lt;/system.web>
+&lt;/configuration></code></pre>
+
+            <p>
+                <a href="https://www.html5rocks.com/en/tutorials/security/content-security-policy/">Content-Security-Policy</a> tells the browser where content should be allowed from. In this example only images, style sheets and script files from the same origin as the page are allowed. Everything else is blocked, including inline scripts and styles. Other content that can be controlled are fonts, media, plugins, connections and frames. Internet Explorer lacks support for this header.
+            </p>
+
+            <p>
+                <a href="https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/X-Frame-Options">X-Frame-Options</a> provide the reverse control over frames. While <em>Content-Security-Policy</em> controls frames within the page this header controls the page within frames. In other words it can stop your page from being embedded inside someone else’s website.
+            </p>
+
+            <p>
+                <a href="https://blogs.msdn.microsoft.com/ieinternals/2011/01/31/controlling-the-xss-filter/">X-XSS-Protection</a> controls how Internet Explorer handles expected XSS attacks. This filter is already active by default but can be told to block pages completely instead of trying to sanitize them.
+            </p>
+
+            <p>
+                <a href="https://blog.fox-it.com/2012/05/08/mime-sniffing-feature-or-vulnerability/">X-Content-Type-Options</a> with its only valid option <em>nosniff</em> tells Internet Explorer to stop guessing MIME types and instead trust the server to set the content type correctly.
+            </p>
+
+            <p>
+                <a href="https://www.ibuildings.nl/node/234">Strict-Transport-Security</a> tells the browser that this host should be accessed via HTTPS. It is ignored when returned over HTTP. The normal use case for this header is to redirect users arriving via HTTP to HTTPS and return this header to tell the browser to connect directly via HTTPS in the future. This is not supported in Internet Explorer.
+            </p>
+
+            <p>
+                The last setting in the example tells ASP.NET to send cookies with the <a href="https://www.owasp.org/index.php/HttpOnly">HttpOnly</a> and <a href="https://www.owasp.org/index.php/SecureFlag">Secure</a> attributes. Together these tell the browser to only transmit the cookie over HTTPS and not expose it to client side scripts. Take care that you <a href="http://www.dotnetnoob.com/2010/11/how-to-secure-aspnet-cookies.html">only access the server via HTTPS when using requireSSL</a> because the ASP.NET session identifier will be recreated when the session cookie is not present in the request.
+            </p>
+
+        </content>
+
+        <footer>
+            <span class="comment"></span>
+            <span class="author" itemprop="author">Henrik Ripa</span>
+        </footer>
+    </article>
+
+    <footer></footer>
+</body>
+</html>

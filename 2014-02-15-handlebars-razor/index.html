@@ -1,0 +1,130 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>Trimming Handlebars with Razor | Pseudorandom Knowledge</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="/styles/highlight.css" />
+    <link rel="stylesheet" href="/styles/common.css" />
+    <script src="/scripts/highlight.js"></script>
+    <script src="/scripts/common.js"></script>
+</head>
+<body>
+	<header>
+		<a href="/" rel="home">
+            <h1>Pseudorandom Knowledge</h1>
+        </a>
+    </header>
+
+    <article itemscope itemtype="http://schema.org/BlogPosting">
+        <header>
+            <h1 itemprop="headline name">Trimming Handlebars with Razor</h1>
+            <time class="published" itemprop="datePublished">2014-02-15</time>
+            <time class="modified" itemprop="dateModified">2017-09-25</time>
+        </header>
+
+        <content itemprop="articleBody text">
+
+            <p>
+                In JavaScript heavy web applications it is important to generate HTML in an organized way. This is an idea on how to accomplish this with the <a href="http://handlebarsjs.com/">Handlebars</a> template library, ASP.NET MVC and Razor views.
+            </p>
+
+            <pre class="code-header">~/Views/Templates/Sport.cshtml</pre>
+
+            <pre><code class="html">&lt;div>
+  &lt;h2>{{name}}&lt;/h2>
+  &lt;ul>
+    {{#each events}}
+      &lt;li>{{> event}}&lt;/li>
+    {{/each}}
+  &lt;/ul>
+&lt;/div></code></pre>
+
+            <pre class="code-header">~/Views/Templates/Event.cshtml</pre>
+
+            <pre><code class="html">&lt;strong>{{name}}&lt;/strong></code></pre>
+
+            <p>
+                Each Handlebars template is put in a Razor file. By using Razor files we get some support from Visual Studio for writing the HTML. This also gives us access to the whole Razor engine, which could be used to handle localization among other things.
+            </p>
+
+            <pre><code class="csharp">[OutputCache(Duration=604800)]
+public ActionResult Compiled()
+{
+    string path = "~/Views/Templates/";
+ 
+    var files = Directory.EnumerateFiles(Server.MapPath(path));
+    var names = files.Select(f =>
+        Path.GetFileNameWithoutExtension(f).ToLowerInvariant());
+ 
+    var engine = new ScriptEngine();
+    engine.ExecuteFile(Server.MapPath("~/Scripts/handlebars.js"));
+    engine.Execute(@"var precompile = Handlebars.precompile;");
+ 
+    var compiled = new StringBuilder(10240);
+    compiled.Append("var templates = {");
+    foreach (string name in names)
+    {
+        string file = path + name + ".cshtml";
+        string template = RenderRazorViewToString(file);
+ 
+        compiled.Append(name);
+        compiled.Append(": Handlebars.template(");
+        compiled.Append(engine.CallGlobalFunction("precompile", template));
+        compiled.Append("),");
+    }
+    compiled.Append("};");
+ 
+    foreach (string name in names)
+    {
+        compiled.AppendFormat(
+            @"Handlebars.registerPartial(""{0}"", templates.{0});",
+            name);
+    }
+ 
+    return Content(compiled.ToString(), "text/javascript");
+}</code></pre>
+
+            <p>
+                Handlebars templates must be compiled before use. To increase performance we can <a href="http://ianobermiller.com/blog/2012/07/25/precompile-handlebars-template-in-net-using-jurassic/">compile them on the server</a>, combine them and cache the result. To run Handlebars on the server we use <a href="https://github.com/paulbartrum/jurassic">Jurassic</a>, an implementation of JavaScript for .NET. To get the templates from the Razor files see <a href="https://stackoverflow.com/a/2759898/12031">this implementation of RenderRazorViewToString</a>.
+            </p>
+
+            <p>
+                The second foreach loop registers every template as a <a href="http://blog.teamtreehouse.com/handlebars-js-part-2-partials-and-helpers">partial</a> in order to use it from another template with the <em>{{&gt; name}}</em> syntax. Only the templates used from other templates need to be registered but this just registers them all for simplicity.
+            </p>
+
+            <pre><code class="html">&lt;script src="~/Scripts/handlebars.runtime.js">&lt;/script>
+&lt;script src="~/Templates/Compiled">&lt;/script></code></pre>
+
+            <p>
+                Since the templates are already compiled we only need the runtime version of Handlebars on the client. The precompiled templates are included like any other script.
+            </p>
+
+            <pre><code class="javascript">(function () {
+    var skiing = {
+        name: 'Alpine',
+        events: [
+            { name: 'Downhill' },
+            { name: 'Slalom' },
+            { name: 'Super G' }
+        ]
+    };
+    var body = document.getElementById('body');
+    body.innerHTML = templates.sport(skiing);
+})();</code></pre>
+
+            <p>
+                Using the templates is easy. Combine this system with a JavaScript framework and a REST resource and it could be something.
+            </p>
+
+        </content>
+
+        <footer>
+            <span class="comment"></span>
+            <span class="author" itemprop="author">Henrik Ripa</span>
+        </footer>
+    </article>
+
+    <footer></footer>
+</body>
+</html>
