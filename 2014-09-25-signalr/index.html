@@ -1,0 +1,117 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>SignalR: talk to your clients | Pseudorandom Knowledge</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="/styles/highlight.css" />
+    <link rel="stylesheet" href="/styles/common.css" />
+    <script src="/scripts/highlight.js"></script>
+    <script src="/scripts/common.js"></script>
+</head>
+<body>
+	<header>
+		<a href="/" rel="home">
+            <h1>Pseudorandom Knowledge</h1>
+        </a>
+    </header>
+
+    <article itemscope itemtype="http://schema.org/BlogPosting">
+        <header>
+            <h1 itemprop="headline name">SignalR: talk to your clients</h1>
+            <time class="published" itemprop="datePublished">2014-09-25</time>
+            <time class="modified" itemprop="dateModified">2017-09-26</time>
+        </header>
+
+        <content itemprop="articleBody text">
+
+            <p>
+                In HTTP the browser is supposed to initiate all requests. This makes two way communication difficult. If the server wants to push data to the browser the browser has to poll for it. Possibly with the help of <a href="/2011-08-22-server-sent-events">Server-sent events</a>. There is a modern solution, however. It is called <a href="https://www.websocket.org/">WebSocket</a>. But even when it can be used all it provides is a low-level TCP connection.
+            </p>
+
+            <p>
+                <a href="http://signalr.net/">SignalR</a> takes care of both of these problems; It uses the best technology available and it provides a common easy-to-use interface regardless of the underlying connection. SignalR is intended to be used with ASP.NET and jQuery.
+            </p>
+
+            <pre><code class="html">Counter: &lt;span id="counter">-&lt;/span>
+&lt;button id="reset">Reset&lt;/button></code></pre>
+
+            <p>
+                For this demonstration I want to have a counter that repeatedly counts up and a button to reset the it to zero. The magic is that the same number is to be displayed on all connected browsers.
+            </p>
+
+            <pre><code class="html">&lt;script src="~/Scripts/jquery.min.js">&lt;/script>
+&lt;script src="~/Scripts/jquery.signalR.min.js">&lt;/script>
+&lt;script src="~/signalr/hubs">&lt;/script></code></pre>
+
+            <pre><code class="csharp">[assembly: OwinStartup(typeof(SignalRTest.Startup))]
+namespace SignalRTest
+{
+    public class Startup
+    {
+        public void Configuration(IAppBuilder app)
+        {
+            app.MapSignalR();
+        }
+    }
+}</code></pre>
+
+            <p>
+                First there are some infrastructure on the browser and server that needs to be in place before SignalR can be used. The <em>hubs</em> script is created by SignalR, it does not exist physically.
+            </p>
+
+            <pre><code class="javascript">$(function () {
+    $.connection.counterHub.client.update =
+        function (value) {
+            $("#counter").html(value);
+        };
+    $("#reset").on("click", function () {
+        $.connection.counterHub.server.reset();
+    });
+    $.connection.hub.start();
+});</code></pre>
+
+            <p>
+                This is all the JavaScript necessary for this little demonstration. The first part defines an <em>update</em> function to be called from the server. The second part binds the button to a call to a <em>reset</em> method on the server.
+            </p>
+
+            <pre><code class="csharp">public class CounterHub : Hub
+{
+    private static int value = 0;
+ 
+    public void Reset()
+    {
+        Interlocked.Exchange(ref value, 0);
+        Clients.All.writeTime(value);
+    }
+ 
+    public static void Increment()
+    {
+        Interlocked.Increment(ref value);
+        IHubContext context = GlobalHost.ConnectionManager
+            .GetHubContext&lt;CounterHub>();
+        context.Clients.All.update(value);
+    }
+}</code></pre>
+
+            <p>
+                On the server side is the <em>reset</em> method and a call to the <em>update</em> function. The <em>update</em> call is wrapped in a static method because it has to be called from outside the hub. <a href="https://docs.microsoft.com/en-us/aspnet/signalr/overview/guide-to-the-api/hubs-api-guide-server#callfromoutsidehub">This is the recommended way of doing it.</a>
+            </p>
+
+            <pre><code class="csharp">new Timer(o => CounterHub.Increment(), null, 0, 100);</code></pre>
+
+            <p>
+                I put this line in <em>Application_Start</em> in the <em>Global.asax.cs</em> file. It works for the demonstration. In a real scenario it should definitely <a href="https://haacked.com/archive/2011/10/16/the-dangers-of-implementing-recurring-background-tasks-in-asp-net.aspx/">be replaced with something more robust</a>.
+            </p>
+
+        </content>
+
+        <footer>
+            <span class="comment"></span>
+            <span class="author" itemprop="author">Henrik Ripa</span>
+        </footer>
+    </article>
+
+    <footer></footer>
+</body>
+</html>

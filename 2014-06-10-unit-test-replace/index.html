@@ -1,0 +1,108 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>Unit testing: replacing dependencies | Pseudorandom Knowledge</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="/styles/highlight.css" />
+    <link rel="stylesheet" href="/styles/common.css" />
+    <script src="/scripts/highlight.js"></script>
+    <script src="/scripts/common.js"></script>
+</head>
+<body>
+	<header>
+		<a href="/" rel="home">
+            <h1>Pseudorandom Knowledge</h1>
+        </a>
+    </header>
+
+    <article itemscope itemtype="http://schema.org/BlogPosting">
+        <header>
+            <h1 itemprop="headline name">Unit testing: replacing dependencies</h1>
+            <time class="published" itemprop="datePublished">2014-06-10</time>
+            <time class="modified" itemprop="dateModified">2017-09-26</time>
+        </header>
+
+        <content itemprop="articleBody text">
+
+            <p>
+                The point of unit testing is to test classes in isolation. This presents a problem when the class has dependencies. These dependencies must be replaced somehow.
+            </p>
+
+            <pre><code class="csharp">namespace SpaceGame
+{
+    public class Level
+    {
+        private IEnumerable&lt;IEnemy> enemies;
+ 
+        public Level(params IEnemy[] enemies)
+        {
+            this.enemies = enemies;
+        }
+ 
+        public bool Cleared
+        {
+            get { return !enemies.Any(e => e.Alive); }
+        }
+ 
+        public void Shoot(int damage)
+        {
+            damage = damage / enemies.Count();
+            foreach (var enemy in enemies)
+            {
+                enemy.Hit(damage);
+            }
+        }
+    }
+}</code></pre>
+
+            <p>
+                <a href="https://stackoverflow.com/q/130794/12031">Dependency injection</a> gives an opportunity to make those replacements. The dependencies are passed to the class instead of the class creating them itself. And by using interfaces the dependencies can be replaced with something else.
+            </p>
+
+            <pre><code class="csharp">namespace SpaceGame.UnitTests
+{
+    [TestFixture]
+    public class LevelTests
+    {
+        [Test]
+        public void OneEnemyNotAlive_IsCleared()
+        {
+            var enemy = Substitute.For&lt;IEnemy>();
+            enemy.Alive.Returns(false);
+ 
+            Level level = new Level(enemy);
+ 
+            Assert.IsTrue(level.Cleared);
+        }
+ 
+        [Test]
+        public void Shoot_TwoEnemies_DealsHalfDamageToEach()
+        {
+            var enemy1 = Substitute.For&lt;IEnemy>();
+            var enemy2 = Substitute.For&lt;IEnemy>();
+ 
+            Level level = new Level(enemy1, enemy2);
+            level.Shoot(100);
+ 
+            enemy1.Received().Hit(50);
+            enemy2.Received().Hit(50);
+        }
+    }
+}</code></pre>
+
+            <p>
+                Isolation frameworks provides a convenient way to create replacements for dependencies. The replacements can be configured to behave as needed for the test. They can also be used to check that they are called appropriately during the test. There are many <a href="http://nugetmusthaves.com/Tag/mocking">isolation frameworks available for .NET</a>. This example uses <a href="http://nsubstitute.github.io/">NSubstitute</a>.
+            </p>
+
+        </content>
+
+        <footer>
+            <span class="comment"></span>
+            <span class="author" itemprop="author">Henrik Ripa</span>
+        </footer>
+    </article>
+
+    <footer></footer>
+</body>
+</html>

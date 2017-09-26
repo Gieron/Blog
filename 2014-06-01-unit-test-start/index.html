@@ -1,0 +1,147 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>Unit testing: getting started | Pseudorandom Knowledge</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="/styles/highlight.css" />
+    <link rel="stylesheet" href="/styles/common.css" />
+    <script src="/scripts/highlight.js"></script>
+    <script src="/scripts/common.js"></script>
+</head>
+<body>
+	<header>
+		<a href="/" rel="home">
+            <h1>Pseudorandom Knowledge</h1>
+        </a>
+    </header>
+
+    <article itemscope itemtype="http://schema.org/BlogPosting">
+        <header>
+            <h1 itemprop="headline name">Unit testing: getting started</h1>
+            <time class="published" itemprop="datePublished">2014-06-01</time>
+            <time class="modified" itemprop="dateModified">2017-09-26</time>
+        </header>
+
+        <content itemprop="articleBody text">
+
+            <p>
+                <a href="http://artofunittesting.com/definition-of-a-unit-test/">Unit testing</a> is hailed by many as the best way to <a href="https://stackoverflow.com/a/67500/12031">write and maintain code</a>. Unit tests are written with the help of a unit testing framework. <a href="http://www.nunit.org/">NUnit</a> is the dominating framework in .NET.
+            </p>
+
+            <pre><code class="csharp">namespace SpaceGame
+{
+    public class Enemy
+    {
+        private int hitpoints;
+ 
+        public Enemy(int hitpoints)
+        {
+            this.hitpoints = hitpoints;
+        }
+ 
+        public bool Alive
+        {
+            get
+            {
+                return hitpoints > 0;
+            }
+        }
+ 
+        public void Hit(int damage)
+        {
+            if (damage &lt; 0)
+            {
+                throw new ArgumentOutOfRangeException("damage");
+            }
+            hitpoints -= damage;
+        }
+    }
+}</code></pre>
+
+            <p>
+                In NUnit tests are contained in its own class. Normally with a test class for each class under test. It is also practical to put all tests in a separate project and assembly.
+            </p>
+
+            <p>
+                To run the tests we need a test runner. NUnit has its own runner in the form of a console or GUI program. However, it is much more convenient to use a runner that integrates with Visual Studio. If you already use <a href="https://www.jetbrains.com/resharper/">ReSharper</a> or <a href="https://www.devexpress.com/Products/CodeRush/">CodeRush</a> they might be a good choice.
+            </p>
+
+            <pre><code class="csharp">namespace SpaceGame.UnitTests
+{
+    [TestFixture]
+    public class EnemyTests
+    {
+        private Enemy enemy;
+ 
+        [SetUp]
+        public void Setup()
+        {
+            enemy = new Enemy(100);
+        }
+ 
+        [Test]
+        public void NewEnemy_IsAlive()
+        {
+            Assert.IsTrue(enemy.Alive);
+        }
+ 
+        [TestCase(100)]
+        [TestCase(101)]
+        [TestCase(Int32.MaxValue)]
+        public void Hit_OnceForMoreThanHitpoints_Kills(int damage)
+        {
+            enemy.Hit(damage);
+            Assert.IsFalse(enemy.Alive);
+        }
+ 
+        [TestCase(0)]
+        [TestCase(1)]
+        [TestCase(50)]
+        [TestCase(99)]
+        public void Hit_OnceForLessThanHitpoints_RemainsAlive(int damage)
+        {
+            enemy.Hit(damage);
+            Assert.IsTrue(enemy.Alive);
+        }
+ 
+        [TestCase(-1)]
+        [TestCase(Int32.MinValue)]
+        public void Hit_OnceForNegativeDamage_ThrowsException(int damage)
+        {
+            Assert.Catch&lt;ArgumentOutOfRangeException>(() =>
+            {
+                enemy.Hit(damage);
+            });
+        }
+ 
+        [Test]
+        [Ignore("Currently fails due to bug 1")]
+        public void Hit_TwiceForMaxInteger_Kills()
+        {
+            enemy.Hit(Int32.MaxValue);
+            enemy.Hit(Int32.MaxValue);
+            Assert.IsFalse(enemy.Alive);
+        }
+    }
+}</code></pre>
+            
+            <p>
+                An important goal when writing unit tests is to make them readable. Each test should test for one thing only and tests should not contain any logic of their own. Contrary to regular programming hardcoded values are a good thing when writing tests.
+            </p>
+
+            <p>
+                The last part shows how a test can be ignored which may be useful when a bug is uncovered but there isn’t time to fix it yet. This should be used sparingly of course.
+            </p>
+
+        </content>
+
+        <footer>
+            <span class="comment"></span>
+            <span class="author" itemprop="author">Henrik Ripa</span>
+        </footer>
+    </article>
+
+    <footer></footer>
+</body>
+</html>
