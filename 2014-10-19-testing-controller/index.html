@@ -1,0 +1,133 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>Testing the controller | Pseudorandom Knowledge</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="/styles/highlight.css" />
+    <link rel="stylesheet" href="/styles/common.css" />
+    <script src="/scripts/highlight.js"></script>
+    <script src="/scripts/common.js"></script>
+</head>
+<body>
+	<header>
+		<a href="/" rel="home">
+            <h1>Pseudorandom Knowledge</h1>
+        </a>
+    </header>
+
+    <article itemscope itemtype="http://schema.org/BlogPosting">
+        <header>
+            <h1 itemprop="headline name">Testing the controller</h1>
+            <time class="published" itemprop="datePublished">2014-10-19</time>
+            <time class="modified" itemprop="dateModified">2017-09-27</time>
+        </header>
+
+        <content itemprop="articleBody text">
+
+            <p>
+                The controller is the most straightforward part of ASP.NET MVC to test.
+            </p>
+
+            <pre><code class="csharp">public class ShipController : Controller
+{
+    private readonly IShipRepository Repository;
+ 
+    public ShipController() : this(new ShipRepository()) { }
+ 
+    public ShipController(IShipRepository repository)
+    {
+        Repository = repository;
+    }
+ 
+    public ViewResult Index()
+    {
+        IEnumerable&lt;Ship> ships = Repository.GetList();
+        return View(ships);
+    }
+ 
+    public RedirectResult Create(Ship ship)
+    {
+        if (ModelState.IsValid)
+        {
+            Repository.Insert(ship);
+        }
+        return Redirect("/");
+    }
+}</code></pre>
+
+            <p>
+                The only thing this controller depends on is the repository which handles the model.
+            </p>
+
+            <pre><code class="csharp">[TestClass]
+public class ShipControllerTests
+{
+    [TestMethod]
+    public void IndexReturnsAllShips()
+    {
+        var ships = new List&lt;Ship>
+            {
+                new Ship { Name = "Ship 1"},
+                new Ship { Name = "Ship 2"}
+            };
+ 
+        // Arrange
+        var repository = Mock.Of&lt;IShipRepository>(r => r.GetList() == ships);
+        var controller = new ShipController(repository);
+ 
+        // Act
+        ViewResult result = controller.Index();
+ 
+        // Assert
+        Assert.AreEqual(ships, result.Model);
+    }
+ 
+    [TestMethod]
+    public void CreateInsertsShip()
+    {
+        Ship ship = new Ship { Name = "New Ship" };
+ 
+        // Arrange
+        var repository = Mock.Of&lt;IShipRepository>();
+        var controller = new ShipController(repository);
+ 
+        // Act
+        controller.Create(ship);
+ 
+        // Assert
+        Mock.Get(repository).Verify(m => m.Insert(ship));
+    }
+ 
+    [TestMethod]
+    public void CreateRedirectsToRoot()
+    {
+        Ship ship = new Ship { Name = "New Ship" };
+ 
+        // Arrange
+        var repository = Mock.Of&lt;IShipRepository>();
+        var controller = new ShipController(repository);
+ 
+        // Act
+        RedirectResult result = controller.Create(ship);
+ 
+        // Assert
+        Assert.AreEqual("/", result.Url);
+    }
+}</code></pre>
+
+            <p>
+                This is using <a href="https://github.com/Moq/moq4">Moq</a> to replace the repository and the <a href="http://defragdev.com/blog/?p=783">arrange-act-assert</a> pattern to perform the tests.
+            </p>
+
+        </content>
+
+        <footer>
+            <span class="comment"></span>
+            <span class="author" itemprop="author">Henrik Ripa</span>
+        </footer>
+    </article>
+
+    <footer></footer>
+</body>
+</html>

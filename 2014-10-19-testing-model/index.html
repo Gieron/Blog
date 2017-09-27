@@ -1,0 +1,178 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>Testing the model | Pseudorandom Knowledge</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="/styles/highlight.css" />
+    <link rel="stylesheet" href="/styles/common.css" />
+    <script src="/scripts/highlight.js"></script>
+    <script src="/scripts/common.js"></script>
+</head>
+<body>
+	<header>
+		<a href="/" rel="home">
+            <h1>Pseudorandom Knowledge</h1>
+        </a>
+    </header>
+
+    <article itemscope itemtype="http://schema.org/BlogPosting">
+        <header>
+            <h1 itemprop="headline name">Testing the model</h1>
+            <time class="published" itemprop="datePublished">2014-10-19</time>
+            <time class="modified" itemprop="dateModified">2017-09-27</time>
+        </header>
+
+        <content itemprop="articleBody text">
+
+            <p>
+                The model part of ASP.NET MVC is best tested in conjunction with the database.
+            </p>
+
+            <pre><code class="csharp">public class ShipRepository : IShipRepository
+{
+    private string ConnectionString;
+ 
+    public ShipRepository()
+    {
+        ConnectionString = ConfigurationManager
+            .ConnectionStrings["Database"].ToString();
+    }
+ 
+    public ShipRepository(string connectionString)
+    {
+        ConnectionString = connectionString;
+    }
+ 
+    public IEnumerable&lt;Ship> GetList()
+    {
+        const string query = "SELECT Name FROM Ships";
+        var ships = new List&lt;Ship>();
+        using (var connection = new SqlConnection(ConnectionString))
+        {
+            connection.Open();
+            using (var command = new SqlCommand(query, connection))
+            using (var reader = command.ExecuteReader())
+            {
+                while (reader.Read())
+                {
+                    ships.Add(new Ship { Name = reader.GetString(0) });
+                }
+            }
+        }
+        return ships;
+    }
+ 
+    public void Insert(Ship ship)
+    {
+        var ships = new List&lt;Ship>();
+        using (var connection = new SqlConnection(ConnectionString))
+        {
+            connection.Open();
+            using (var command = new SqlCommand("spInsertShip", connection))
+            {
+                command.CommandType = CommandType.StoredProcedure;
+                command.Parameters.AddWithValue("@Name", ship.Name);
+                command.ExecuteNonQuery();
+            }
+        }
+    }
+}</code></pre>
+
+            <p>
+                This class uses the <a href="https://docs.microsoft.com/en-us/aspnet/mvc/overview/older-versions/getting-started-with-ef-5-using-mvc-4/implementing-the-repository-and-unit-of-work-patterns-in-an-asp-net-mvc-application">repository pattern</a> to manage the model.
+            </p>
+
+            <pre><code class="csharp">[TestClass]
+public class ShipRepositoryTests
+{
+    [TestCleanup]
+    public void Cleanup()
+    {
+        RunNonQuery("TRUNCATE TABLE Ships");
+    }
+ 
+    [TestMethod]
+    public void GetListReturnsAllRows()
+    {
+        // Arrange
+        RunNonQuery("INSERT INTO Ships (Name) VALUES ('Ship 1')");
+        RunNonQuery("INSERT INTO Ships (Name) VALUES ('Ship 2')");
+        var repository = new ShipRepository(GetConnectionString());
+ 
+        // Act
+        IEnumerable&lt;Ship> ships = repository.GetList();
+ 
+        // Assert
+        Assert.AreEqual(2, ships.Count());
+        Assert.IsTrue(ships.Select(s => s.Name).Contains("Ship 1"));
+        Assert.IsTrue(ships.Select(s => s.Name).Contains("Ship 2"));
+    }
+ 
+    [TestMethod]
+    public void InsertShipInsertsRow()
+    {
+        // Arrange
+        var repository = new ShipRepository(GetConnectionString());
+ 
+        // Act
+        repository.Insert(new Ship { Name = "New Ship" });
+ 
+        // Assert
+        var shipNames = RunStringListQuery("SELECT Name FROM Ships");
+        Assert.AreEqual(1, shipNames.Count());
+        Assert.IsTrue(shipNames.Contains("New Ship"));
+    }
+ 
+    private string GetConnectionString()
+    {
+        return ConfigurationManager
+            .ConnectionStrings["Test"].ToString();
+    }
+ 
+    private void RunNonQuery(string query)
+    {
+        using (var connection = new SqlConnection(GetConnectionString()))
+        {
+            connection.Open();
+            using (var command = new SqlCommand(query, connection))
+            {
+                command.ExecuteNonQuery();
+            }
+        }
+    }
+ 
+    private IEnumerable&lt;string> RunStringListQuery(string query)
+    {
+        var result = new List&lt;string>();
+        using (var connection = new SqlConnection(GetConnectionString()))
+        {
+            connection.Open();
+            using (var command = new SqlCommand(query, connection))
+            using(var reader = command.ExecuteReader())
+            {
+                while(reader.Read())
+                {
+                    result.Add(reader.GetString(0));
+                }
+            }
+        }
+        return result;
+    }
+}</code></pre>
+
+            <p>
+                These tests are run against <a href="https://stackoverflow.com/a/20341372/12031">a separate test database</a> which is emptied after each test.
+            </p>
+
+        </content>
+
+        <footer>
+            <span class="comment"></span>
+            <span class="author" itemprop="author">Henrik Ripa</span>
+        </footer>
+    </article>
+
+    <footer></footer>
+</body>
+</html>
