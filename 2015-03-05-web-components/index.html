@@ -1,0 +1,144 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>Web components of HTML | Pseudorandom Knowledge</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="/styles/highlight.css" />
+    <link rel="stylesheet" href="/styles/common.css" />
+    <script src="/scripts/highlight.js"></script>
+    <script src="/scripts/common.js"></script>
+</head>
+<body>
+	<header>
+		<a href="/" rel="home">
+            <h1>Pseudorandom Knowledge</h1>
+        </a>
+    </header>
+
+    <article itemscope itemtype="http://schema.org/BlogPosting">
+        <header>
+            <h1 itemprop="headline name">Web components of HTML</h1>
+            <time class="published" itemprop="datePublished">2015-03-05</time>
+            <time class="modified" itemprop="dateModified">2017-09-28</time>
+        </header>
+
+        <content itemprop="articleBody text">
+
+            <p>
+                <a href="https://www.webcomponents.org/">Web Components</a> consists of four separate standards. Together they aim to facilitate the creation of reusable and self-contained pieces of HTML (with JavaScript and CSS). <a href="http://caniuse.com/#search=web%20components">Browser support is lacking</a> but can be polyfilled.
+            </p>
+
+            <h2>Templates</h2>
+
+            <p>
+                <a href="https://www.webcomponents.org/community/articles/introduction-to-template-element">The template tag</a> holds markup that can be used from JavaScript. It provides a browser native alternative to JavaScript templating libraries.
+            </p>
+
+            <pre><code class="html">&lt;div class="fact">All birds are animals&lt;/div>
+&lt;div class="fact">Some animals are dogs&lt;/div>
+ 
+&lt;template id="fact-box">
+    &lt;h1>Fact&lt;/h1>
+    &lt;p>&lt;/p>
+&lt;/template>
+ 
+&lt;script>
+    var template = document.querySelector("#fact-box").content;
+    var facts = document.querySelectorAll(".fact");
+    [].forEach.call(facts, function(fact) {
+        var clone = document.importNode(template, true);
+        clone.querySelector("p").innerHTML = fact.innerHTML;
+        fact.replaceChild(clone, fact.firstChild);
+    });
+&lt;/script></code></pre>
+
+            <h2>Shadow DOM</h2>
+
+            <p>
+                <a href="https://www.html5rocks.com/en/tutorials/webcomponents/shadowdom/">The shadow DOM</a> is a way to create nested DOMs. They can then be styled independently from the rest of the page. The content tag provides a way to enter content into the shadow DOM from the shadow root element.
+            </p>
+
+            <pre><code class="html">&lt;div class="fact">All birds are animals&lt;/div>
+&lt;div class="fact">Some animals are dogs&lt;/div>
+ 
+&lt;template id="fact-box">
+    &lt;h1>Fact&lt;/h1>
+<span class="highlight-line">    &lt;p>&lt;content>&lt;/content>&lt;/p></span>
+&lt;/template>
+ 
+&lt;script>
+    var template = document.querySelector("#fact-box").content;
+    var facts = document.querySelectorAll(".fact");
+    [].forEach.call(facts, function(fact) {
+        var clone = document.importNode(template, true);
+<span class="highlight-line">        fact.createShadowRoot().appendChild(clone);</span>
+    });
+&lt;/script></code></pre>
+
+            <h2>Custom elements</h2>
+
+            <p>
+                Creating <a href="https://www.html5rocks.com/en/tutorials/webcomponents/customelements/">custom elements</a> allow us to name our pieces of HTML. To distinguish user made tags from official tags the former must always contain a hyphen.
+            </p>
+
+            <pre><code class="html"><span class="highlight-line">&lt;fact-box>All birds are animals&lt;/fact-box></span>
+<span class="highlight-line">&lt;fact-box>Some animals are dogs&lt;/fact-box></span>
+ 
+&lt;template id="fact-box">
+    &lt;h1>Fact&lt;/h1>
+    &lt;p>&lt;content>&lt;/content>&lt;/p>
+&lt;/template>
+ 
+&lt;script>
+    var template = document.querySelector("#fact-box").content;
+<span class="highlight-line">    var prototype = Object.create(HTMLElement.prototype);</span>
+<span class="highlight-line">    prototype.createdCallback = function() {</span>
+        var clone = document.importNode(template, true);
+        this.createShadowRoot().appendChild(clone);
+    };
+<span class="highlight-line">    document.registerElement("fact-box", {prototype: prototype});</span>
+&lt;/script></code></pre>
+
+            <h2>HTML imports</h2>
+
+            <p>
+                Finally, with <a href="https://www.webcomponents.org/community/articles/introduction-to-html-imports">HTML imports</a>, the finished web component can be placed in an HTML file and imported where it is needed.
+            </p>
+
+            <pre><code class="html">&lt;head>
+<span class="highlight-line">    &lt;link rel="import" href="fact-box.html"></span>
+&lt;/head>
+ 
+&lt;fact-box>All birds are animals&lt;/fact-box>
+&lt;fact-box>Some animals are dogs&lt;/fact-box></code></pre>
+
+            <pre class="code-header">fact-box.html</pre>
+
+            <pre><code class="html">&lt;template id="fact-box">
+    &lt;h1>Fact&lt;/h1>
+    &lt;p>&lt;content>&lt;/content>&lt;/p>
+&lt;/template>
+ 
+&lt;script>
+<span class="highlight-line">    var thisDocument = document.currentScript.ownerDocument;</span>
+<span class="highlight-line">    var template = thisDocument.querySelector("#fact-box").content;</span>
+    var prototype = Object.create(HTMLElement.prototype);
+    prototype.createdCallback = function() {
+        var clone = document.importNode(template, true);
+        this.createShadowRoot().appendChild(clone);
+    };
+    document.registerElement("fact-box", {prototype: prototype});
+&lt;/script></code></pre>
+
+        </content>
+
+        <footer>
+            <span class="comment"></span>
+            <span class="author" itemprop="author">Henrik Ripa</span>
+        </footer>
+    </article>
+
+    <footer></footer>
+</body>
+</html>

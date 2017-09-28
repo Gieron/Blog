@@ -1,0 +1,132 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>Data in a web page | Pseudorandom Knowledge</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="/styles/highlight.css" />
+    <link rel="stylesheet" href="/styles/common.css" />
+    <script src="/scripts/highlight.js"></script>
+    <script src="/scripts/common.js"></script>
+</head>
+<body>
+	<header>
+		<a href="/" rel="home">
+            <h1>Pseudorandom Knowledge</h1>
+        </a>
+    </header>
+
+    <article itemscope itemtype="http://schema.org/BlogPosting">
+        <header>
+            <h1 itemprop="headline name">Data in a web page</h1>
+            <time class="published" itemprop="datePublished">2015-12-19</time>
+            <time class="modified" itemprop="dateModified">2017-09-28</time>
+        </header>
+
+        <content itemprop="articleBody text">
+
+            <p>
+                There are several places to store data for an ASP.NET web page. These places are far from interchangeable. Careless placement of data can lead to a poor web page and bad user experience. The following are some guide lines that I consider appropriate.
+            </p>
+
+            <h2>URL</h2>
+
+            <p>
+                <strong>Use for: </strong>Data that defines the web page. Such as the ID for a product or the terms for search results.
+            </p>
+
+            <p>
+                <strong>Remember: </strong>This becomes permanent if the page is bookmarked. Don’t store temporary modifiers in the URL. For example, if the user bookmarks the login page after a failed login attempt they shouldn’t have to see the error message every time they return.
+            </p>
+
+            <h2>DOM</h2>
+
+            <p>
+                <strong>Use for:</strong> Data that makes up the web page. Apart from the obvious, text and HTML, this can include JSON to be used by JavaScript.
+            </p>
+
+            <p>
+                <strong>Remember:</strong> Data attributes are a good place to store data for use in JavaScript.
+            </p>
+
+            <h2>Global JavaScript variables</h2>
+
+            <p>
+                <strong>Use for: </strong>Keeping state in single page applications or other long lived web pages with lots of JavaScript.
+            </p>
+
+            <p>
+                <strong>Remember: </strong>In JavaScript all scripts share the same namespace. Take care that your variables don’t clash with other scripts, for example by putting all your global variables into one global object. There are other ways to handle this as well.
+            </p>
+
+            <h2>Local storage</h2>
+
+            <p>
+                <strong>Use for: </strong>Applications where you can’t or don’t want to store data server side.
+            </p>
+
+            <p>
+                <strong>Remember: </strong>This data is stored permanently in the browser. The data won’t be available if the user returns with a different browser or device.
+            </p>
+
+            <h2>Cookie</h2>
+
+            <p>
+                <strong>Use for:</strong> Remembering users across visits on web sites requiring login. Or remembering user settings on web sites that does not use logins.
+            </p>
+
+            <p>
+                <strong>Remember:</strong> Current <a href="http://eur-lex.europa.eu/LexUriServ/LexUriServ.do?uri=CELEX:32002L0058:en:HTML">EU law</a> dictates that web sites targeting EU citizens must obtain user permission when setting cookies. Though there are <a href="http://ec.europa.eu/justice/data-protection/article-29/documentation/opinion-recommendation/files/2012/wp194_en.pdf">some exceptions</a>.
+            </p>
+
+            <h2>Session</h2>
+
+            <p>
+                <strong>Use for:</strong> Data related to the currently logged in user.
+            </p>
+
+            <p>
+                <strong>Remember:</strong> The session is controlled by a session cookie stored in the browser. ASP.NET takes care of this automatically. It is the browser that determines when the session ends by removing the cookie. Session cookies used for authentication purposes does not fall under the EU law described above.
+            </p>
+
+            <h2>TempData</h2>
+
+            <p>
+                <strong>Use for:</strong> Data you want to keep between page requests, but not longer. Good for showing the user that data has been saved for example.
+            </p>
+
+            <p>
+                <strong>Remember:</strong> This data is stored in the session but has the extra property that it disappears after being read.
+            </p>
+
+            <h2>Application data</h2>
+
+            <p>
+                <strong>Use for:</strong> As a cache for common data needed server side.
+            </p>
+
+            <p>
+                <strong>Remember:</strong> This data is common for all users and persists until the application reloads. The data must be handled in a thread safe manner.
+            </p>
+
+            <h2>Database</h2>
+
+            <p>
+                <strong>Use for:</strong> Everything that needs permanent storage.
+            </p>
+
+            <p>
+                <strong>Remember:</strong> Database design and management is a whole science in and of itself.
+            </p>
+
+        </content>
+
+        <footer>
+            <span class="comment"></span>
+            <span class="author" itemprop="author">Henrik Ripa</span>
+        </footer>
+    </article>
+
+    <footer></footer>
+</body>
+</html>
