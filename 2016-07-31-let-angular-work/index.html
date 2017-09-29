@@ -1,0 +1,85 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>Let Angular do the work | Pseudorandom Knowledge</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="/styles/highlight.css" />
+    <link rel="stylesheet" href="/styles/common.css" />
+    <script src="/scripts/highlight.js"></script>
+    <script src="/scripts/common.js"></script>
+</head>
+<body>
+	<header>
+		<a href="/" rel="home">
+            <h1>Pseudorandom Knowledge</h1>
+        </a>
+    </header>
+
+    <article itemscope itemtype="http://schema.org/BlogPosting">
+        <header>
+            <h1 itemprop="headline name">Let Angular do the work</h1>
+            <time class="published" itemprop="datePublished">2016-07-03</time>
+            <time class="modified" itemprop="dateModified">2017-09-29</time>
+        </header>
+
+        <content itemprop="articleBody text">
+
+            <p>
+                From the <a href="/2014-02-02-let-the-client-work">old battlefield of JavaScript frameworks</a> for single page applications, two seem to be emerging victorious. <a href="https://angular.io/">Angular</a> and <a href="https://facebook.github.io/react/">React</a>. With the former being the <a href="https://www.google.com/trends/explore#q=%2Fm%2F0j45p7w%2C%20%2Fm%2F012l1vxv&amp;date=1%2F2016%2012m&amp;cmpt=q&amp;tz=Etc%2FGMT-2">more popular of the two</a> and with Angular 2 out, it’s worth to take a look at.
+            </p>
+
+            <pre><code class="html">&lt;!DOCTYPE html>
+&lt;html>
+&lt;head>
+  &lt;title>Minimal one file Angular 2 example&lt;/title>
+  &lt;script src="node/core-js/client/shim.min.js">&lt;/script>
+  &lt;script src="node/zone.js/dist/zone.js">&lt;/script>
+  &lt;script src="node/reflect-metadata/Reflect.js">&lt;/script>
+  &lt;script src="node/rxjs/bundles/Rx.umd.js">&lt;/script>
+  &lt;script src="node/@angular/core/bundles/core.umd.js">&lt;/script>
+  &lt;script src="node/@angular/common/bundles/common.umd.js">&lt;/script>
+  &lt;script src="node/@angular/compiler/bundles/compiler.umd.js">&lt;/script>
+  &lt;script src="node/@angular/platform-browser/bundles/platform-browser.umd.js">&lt;/script>
+  &lt;script src="node/@angular/platform-browser-dynamic/bundles/platform-browser-dynamic.umd.js">&lt;/script>
+  &lt;script>
+    document.addEventListener('DOMContentLoaded', function() {
+      ng.platformBrowserDynamic.bootstrap(ng.core
+        .Component({
+          selector: 'angular-app',
+          template: '&lt;h2>{{greeting}}&lt;/h2>'
+        })
+        .Class({
+          constructor: function() {
+            var thisClass = this;
+            thisClass.greeting = 'Hello world';
+            setTimeout(function() { thisClass.greeting = 'Cruel world' }, 1700);
+          }
+        }));
+    });
+  &lt;/script>
+&lt;/head>
+&lt;body>
+  &lt;angular-app>Loading...&lt;/angular-app>
+&lt;/body>
+&lt;/html></code></pre>
+
+            <p>
+                In practice Angular 2 consists of numerous JavaScript files compiled from TypeScript. <a href="https://www.npmjs.com/">Npm</a> is used for getting these files to your computer. Which scripts you then use on your site depends on what you want to do. The set of scripts used in the example are taken from <a href="https://angular.io/guide/quickstart">the official quickstart guide</a>.
+            </p>
+
+            <p>
+                An Angular 2 application consists of a tree of components with one component at the top. The top component is then used to bootstrap the entire application. In the example there is only component defined directly into the bootstrap function.
+            </p>
+
+        </content>
+
+        <footer>
+            <span class="comment"></span>
+            <span class="author" itemprop="author">Henrik Ripa</span>
+        </footer>
+    </article>
+
+    <footer></footer>
+</body>
+</html>

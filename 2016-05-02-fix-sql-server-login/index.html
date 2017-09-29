@@ -1,0 +1,68 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>Fix SQL Server login after backup | Pseudorandom Knowledge</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="/styles/highlight.css" />
+    <link rel="stylesheet" href="/styles/common.css" />
+    <script src="/scripts/highlight.js"></script>
+    <script src="/scripts/common.js"></script>
+</head>
+<body>
+	<header>
+		<a href="/" rel="home">
+            <h1>Pseudorandom Knowledge</h1>
+        </a>
+    </header>
+
+    <article itemscope itemtype="http://schema.org/BlogPosting">
+        <header>
+            <h1 itemprop="headline name">Fix SQL Server login after backup</h1>
+            <time class="published" itemprop="datePublished">2016-05-02</time>
+            <time class="modified" itemprop="dateModified">2017-09-29</time>
+        </header>
+
+        <content itemprop="articleBody text">
+
+            <p>
+                Ever had the scenario where there are two SQL servers, one production and one backup, then after backing up the databases to the backup server the logins don’t work anymore? This is because logins in SQL Server <a href="https://dba.stackexchange.com/a/40845/1715">consists of two parts</a>; one server login and one or more database users. After the backup the database users, coming from the production server, no longer matches the server logins, coming from the backup server.
+            </p>
+
+            <p>
+                To avoid this problem the backup server logins can be recreated (or created if they don’t exist yet) so that they <a href="https://www.sqlskills.com/blogs/glenn/how-to-avoid-orphaned-database-users-with-sql-server-authentication/">match the production database</a> users.
+            </p>
+
+            <p>
+                On the production server run the following query to find the name and SID (Security ID) of the login that you want to fix.
+            </p>
+
+            <pre><code class="sql">SELECT name, sid FROM sys.server_principals WHERE type = 's'</code></pre>
+
+            <p>
+                On the backup server start by removing the server login if it already exists.
+            </p>
+
+            <pre><code class="sql">DROP LOGIN Tusse</code></pre>
+
+            <p>
+                Then, on the backup server, create the user with the correct name, password and SID.
+            </p>
+
+            <pre><code class="sql">CREATE LOGIN Tusse WITH password = N'Pa$$w0rd', sid = 0x2D749BCC12...</code></pre>
+
+            <p>
+                Now the backup server logins will match the production database users even after future backups.
+            </p>
+
+        </content>
+
+        <footer>
+            <span class="comment"></span>
+            <span class="author" itemprop="author">Henrik Ripa</span>
+        </footer>
+    </article>
+
+    <footer></footer>
+</body>
+</html>
