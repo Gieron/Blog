@@ -1,0 +1,69 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>Making a user friendly web form | Pseudorandom Knowledge</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="/styles/highlight.css" />
+    <link rel="stylesheet" href="/styles/common.css" />
+    <script src="/scripts/highlight.js"></script>
+    <script src="/scripts/common.js"></script>
+</head>
+<body>
+	<header>
+		<a href="/" rel="home">
+            <h1>Pseudorandom Knowledge</h1>
+        </a>
+    </header>
+
+    <article itemscope itemtype="http://schema.org/BlogPosting">
+        <header>
+            <h1 itemprop="headline name">Making a user friendly web form</h1>
+            <time class="published" itemprop="datePublished">2016-08-31</time>
+            <time class="modified" itemprop="dateModified">2017-09-30</time>
+        </header>
+
+        <content itemprop="articleBody text">
+
+            <p>
+                Here I have tried to put together a form that is simple, practical and adheres to user accessible guide lines.
+            </p>
+
+            <p>
+                <a href="form.html">A user friendly web form</a>
+            </p>
+
+            <img class="left-aligned" src="field-example.png" />
+
+            <pre><code class="html">&lt;div class="field">
+    &lt;label for="temp">Title here &lt;span class="required-star">&lt;/span>&lt;/label>
+    &lt;input id="temp" class="js-required" type="text" name="temp"
+            aria-required="true" placeholder="e.g. example here" />
+    &lt;span class="error js-required-error" style="display: none" role="alert">
+        Error message here
+    &lt;/span>
+    &lt;span class="note">
+        Extra information here
+    &lt;/span>
+&lt;/div></code></pre>
+
+            <ul>
+                <li>Red stars for required fields is a common convention</li>
+                <li>Examples as placeholders may occasionally be useful, but make sure they are understood as examples</li>
+                <li>The <em>aria-required</em> and <em>role</em> attributes are there to help screen readers</li>
+                <li>Error messages should appear when the user leaves the input (i.e. on blur), that way they appear as early as possible without being disruptive during typing</li>
+                <li>If there are errors when the user submits the form an error message should appear at the top in addition to the inline errors</li>
+                <li>Prefer radio buttons over select boxes when there are few options</li>
+            </ul>
+
+        </content>
+
+        <footer>
+            <span class="comment"></span>
+            <span class="author" itemprop="author">Henrik Ripa</span>
+        </footer>
+    </article>
+
+    <footer></footer>
+</body>
+</html>

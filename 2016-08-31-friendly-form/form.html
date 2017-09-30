@@ -1,0 +1,260 @@
+﻿<html>
+<head>
+    <title>Become a henchman for Dr Maybe</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/4.2.0/normalize.min.css">
+    <script src="https://code.jquery.com/jquery-3.1.0.min.js" integrity="sha256-cCueBR6CsyA4/9szpPfrX3s49M9vUU5BgtiJj06wt/s=" crossorigin="anonymous"></script>
+    <style>
+        body {
+            font-size: 16px;
+        }
+        h1 {
+            margin: 10px 10px;
+        }
+        p {
+            margin: 25px 10px;
+        }
+        form {
+            width: 600px;
+            margin: 20px 10px;
+        }
+        .field, fieldset {
+            display: block;
+            border: none;
+            margin: 20px 0;
+            padding: 3px 0 0 0;
+            overflow: auto;
+        }
+        .field label {
+            display: inline-block;
+            width: 200px;
+            margin-bottom: 6px;
+            float: left;
+        }
+        .field input {
+            display: inline-block;
+            width: 200px;
+            margin: -3px 200px 0 0;
+            float: right;
+        }
+        .field input.email {
+            width: 300px;
+            margin-right: 100px;
+        }
+        fieldset .radio-group {
+            display: inline-block;
+            width: 400px;
+            margin: 0;
+        }
+        fieldset legend {
+            display: inline-block;
+            width: 200px;
+            margin-bottom: 6px;
+            float: left;
+        }
+        .radio-group label {
+            display: inline-block;
+            margin: 0;
+            font-size: 0.8em;
+            float: left;
+        }
+        .radio-group label + label {
+            margin-top: 4px;
+        }
+        .radio-group input {
+            float: none;
+            width: 10px;
+            margin: 0;
+            vertical-align: middle;
+        }
+        .required-star:before {
+            content: "*";
+            color: rgb(231, 71, 71);
+        }
+        button {
+            margin: 10px 100px 30px 0;
+            width: 100px;
+            font-size: 1.4em;
+            font-weight: bold;
+            background-color: green;
+            color: white;
+            border: 1px solid rgb(116, 183, 116);
+            padding: 4px 0;
+            float: right;
+        }
+        input.error:not(:focus) {
+            background-color: rgb(255, 205, 205);
+        }
+        p.error {
+            color: red;
+        }
+        .field span.error {
+            display: block;
+            width: 300px;
+            margin: 8px 100px 0 0;
+            font-size: 0.8em;
+            color: red;
+            float: right;
+        }
+        .field span.note {
+            display: block;
+            width: 290px;
+            margin: 8px 110px 0 0;
+            font-size: 0.8em;
+            float: right;
+        }
+        @media (max-width: 600px) {
+            form {
+                width: 400px;
+            }
+        }
+    </style>
+    <script>
+        $(function() {
+
+            $('button[type="submit"]')
+                .click(function() {
+                    var valid = validateName();
+                    valid = validateSsn() && valid;
+                    valid = validateEmail() && valid;
+                    if (!valid) {
+                        $(".js-error-summary").show();
+                        return false;
+                    }
+                    alert("Thank you! Dr Maybe will contact you.");
+                    return true;
+                });
+            $('input[name="name"]')
+                .blur(function() {
+                    validateName();
+                });
+            $('input[name="ssn"]')
+                .blur(function() {
+                    validateSsn();
+                });
+            $('input[name="email"]')
+                .blur(function() {
+                    validateEmail();
+                });
+        });
+
+        function validateName() {
+            var input = $('input[name="name"]');
+            if (input.val() === '') {
+                input.addClass('error');
+                input.siblings('.js-required-error').show();
+                return false;
+            }
+            input.removeClass('error');
+            input.siblings('.js-required-error').hide();
+            return true;
+        }
+
+        function validateSsn() {
+            var input = $('input[name="ssn"]');
+            var val = input.val();
+            if (val === '') {
+                input.addClass('error');
+                input.siblings('.js-required-error').show();
+                input.siblings('.js-format-error').hide();
+                return false;
+            }
+            val = val.replace(/\D/g, '');
+            if (val.length !== 9 || val === '078051120') {
+                input.addClass('error');
+                input.siblings('.js-required-error').hide();
+                input.siblings('.js-format-error').show();
+                return false;
+            }
+            input.val(val.substring(0, 3) + '-' + val.substring(3, 5) + '-' + val.substr(5, 9));
+            input.removeClass('error');
+            input.siblings('.js-required-error').hide();
+            input.siblings('.js-format-error').hide();
+            return true;
+        }
+
+        function validateEmail() {
+            var input = $('input[name="email"]');
+            var val = input.val();
+            if (val !== '' && val.indexOf('@') === -1) {
+                input.addClass('error');
+                input.siblings('.js-format-error').show();
+                return false;
+            }
+            input.removeClass('error');
+            input.siblings('.js-format-error').hide();
+            return true;
+        }
+
+    </script>
+</head>
+<body>
+
+<h1>Become a henchman for Dr Maybe</h1>
+
+<p class="error js-error-summary" style="display: none" role="alert">
+    There were some issues with your submission,
+    please check the information that you have entered
+</p>
+
+<p>
+    <span class="required-star"></span> required information
+</p>
+
+<form>
+
+    <div class="field">
+        <label for="name">Name <span class="required-star"></span></label>
+        <input id="name" class="js-required" type="text" name="name" aria-required="true" />
+        <span class="error js-required-error" style="display: none" role="alert">
+            Please enter your name
+        </span>
+    </div>
+
+    <div class="field">
+        <label for="ssn">Social security number <span class="required-star"></span></label>
+        <input id="ssn" class="js-required" type="text" name="ssn" aria-required="true" placeholder="e.g. 078-05-1120" />
+        <span class="error js-required-error" style="display: none" role="alert">
+            Please enter your social security number
+        </span>
+        <span class="error js-format-error" style="display: none" role="alert">
+            Please check that you have entered your social security number correctly
+        </span>
+    </div>
+
+    <fieldset>
+        <legend>Work experience <span class="required-star"></span></legend>
+        <div class="radio-group">
+            <label>
+                <input type="radio" name="experience" value="yes" />
+                I have previously worked as a henchman
+            </label>
+            <label>
+                <input type="radio" name="experience" value="some" />
+                I have experience from law enforcement, military or similiar
+            </label>
+            <label>
+                <input type="radio" name="experience" value="no" checked/>
+                I have no relevant experience
+            </label>
+        </div>
+    </fieldset>
+
+    <div class="field">
+        <label for="email">E-mail</label>
+        <input id="email" type="text" name="email" class="email" aria-required="false" />
+        <span class="error js-format-error" style="display: none" role="alert">
+            Please enter a correct e-mail address if you wish to get
+            your preparation papers via e-mail
+        </span>
+        <span class="note">
+            If you do not give an e-mail address you will have to
+            collect your preparation papers at Dr Maybe's lair between
+            10:00 and 12:00 on mondays
+        </span>
+    </div>
+
+    <button type="submit">Send</button>
+</form>
+
+</body>
+</html>

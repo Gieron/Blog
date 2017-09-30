@@ -1,0 +1,172 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>Translating ASP.NET MVC | Pseudorandom Knowledge</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="/styles/highlight.css" />
+    <link rel="stylesheet" href="/styles/common.css" />
+    <script src="/scripts/highlight.js"></script>
+    <script src="/scripts/common.js"></script>
+</head>
+<body>
+	<header>
+		<a href="/" rel="home">
+            <h1>Pseudorandom Knowledge</h1>
+        </a>
+    </header>
+
+    <article itemscope itemtype="http://schema.org/BlogPosting">
+        <header>
+            <h1 itemprop="headline name">Translating ASP.NET MVC</h1>
+            <time class="published" itemprop="datePublished">2016-10-02</time>
+            <time class="modified" itemprop="dateModified">2017-09-30</time>
+        </header>
+
+        <content itemprop="articleBody text">
+
+            <p>
+                Resource files are the easiest way to translate ASP.NET MVC applications into multiple languages. They are XML files containing name-value pairs for a specific language.
+            </p>
+
+            <img src="resource-file.png" width="600" />
+
+            <pre>WelcomeTexts.resx
+WelcomeTexts.de.resx
+WelcomeTexts.sv-SE.resx
+WelcomeTexts.uz-Cyrl-UZ.resx</pre>
+
+            <p>
+                Above are examples of resource file names. The language of the resource file is denoted by a <a href="https://tools.ietf.org/html/bcp47">BCP 47</a> language tag. When .NET looks up a resource by name it will choose the most appropriate file available (e.g. using <em>en</em> if <em>en-US </em>doesn’t exist). The last resort is to use the resource file without a language identifier. This file must exist and it must contain all resource names you want to use or .NET will not find them.
+            </p>
+
+            <h2>Using the resource files</h2>
+
+            <p>
+                When you create a new resource file in Visual Studio it will also generate a .NET class with members for each name. The class is regenerated when you rebuild the project to keep up to date with the resource file.
+            </p>
+
+            <p>
+                <strong>Note:</strong> By default Visual Studio will set the access modifier of the class to Internal. To be able to use them in your Razor files you want to change this to Public. This can be changed in the GUI, just above the editor. Or you can change the Custom Tool property from <em>ResXFileCodeGenerator</em> to <em>PublicResXFileCodeGenerator</em> manually in the Properties.
+            </p>
+
+            <p>
+                I prefer to use the postfix <em>Texts</em> on all my resource files to keep the generated class names from clashing with my other classes.
+            </p>
+            
+            <pre><code class="html">@using TranslatedApplication.Resources
+&lt;!DOCTYPE html>
+&lt;html>
+&lt;head>
+    &lt;title>@WelcomeTexts.Welcome&lt;/title>
+&lt;/head>
+&lt;body>
+&lt;h1>@WelcomeTexts.Welcome&lt;/h1>
+ 
+&lt;p>
+    @WelcomeTexts.Introduction
+&lt;/p>
+&lt;/body>
+&lt;/html></code></pre>
+
+            <h2>Setting the language</h2>
+
+            <p>
+                .NET chooses which resource file to use based on the language of the current thread. Specifically, it looks at the CurrentUICulture of the thread. We must set it at the start of every HTTP request.
+            </p>
+
+            <p>
+                The user should be given the option to change the language. But I also like to start with an educated guess based on the user’s language settings, which are sent to us by the browser.
+            </p>
+
+            <p>
+                To set the language I recommend creating an action filter attribute that performs the necessary steps before each controller action executes.
+            </p>
+
+            <pre><code class="csharp">namespace TranslatedApplication.Infrastructure.Attributes
+{
+    public class LocalizeAttribute : ActionFilterAttribute, IActionFilter
+    {
+        private readonly string[] SupportedLanguages = {"en", "sv"};
+        private const string DefaultLanguge = "en";
+ 
+        void IActionFilter.OnActionExecuting(ActionExecutingContext filterContext)
+        {
+            string language = DefaultLanguge;
+ 
+            HttpRequestBase request = filterContext.HttpContext.Request;
+ 
+            HttpCookie cookie = request.Cookies["Language"];
+            if(cookie != null && SupportedLanguages.Contains(cookie.Value))
+            {
+                language = cookie.Value;
+            }
+            else if(request.UserLanguages != null)
+            {
+                foreach(string userLang in request.UserLanguages)
+                {
+                    string lang = userLang;
+                    if(lang.Length &lt; 2) continue;
+                    if(lang.Contains('-'))
+                        lang = lang.Substring(0, lang.IndexOf('-'));
+                    if(SupportedLanguages.Contains(lang))
+                    {
+                        language = lang;
+                        break;
+                    }
+                }
+            }
+ 
+            CultureInfo culture = new CultureInfo(language);
+            Thread.CurrentThread.CurrentCulture = culture;
+            Thread.CurrentThread.CurrentUICulture = culture;
+        }
+    }
+}</code></pre>
+
+            <p>
+                To make the attribute apply to all controller actions, add it to the global filters in <em>FilterConfig.cs</em>. This file should be in the <em>App_Start</em> directory, create it if it doesn’t exist.
+            </p>
+
+            <pre><code class="csharp">namespace TranslatedApplication
+{
+    public class FilterConfig
+    {
+        public static void RegisterGlobalFilters(GlobalFilterCollection filters)
+        {
+            filters.Add(new LocalizeAttribute());
+        }
+    }
+}</code></pre>
+
+            <p>
+                Finally, make sure the following line is in the <em>Application_Start</em> method in <em>Global.asax</em>.
+            </p>
+
+
+            <pre><code class="csharp">FilterConfig.RegisterGlobalFilters(GlobalFilters.Filters);</code></pre>
+
+            <p>
+                To let the user change the language themselves, add a controller action for it. The page has to be reloaded to reflect the change.
+            </p>
+
+            <pre><code class="csharp">public class LocaleController : Controller
+{
+    public ActionResult Switch(string language)
+    {
+        Response.Cookies["Language"].Value = language;
+        return Redirect("/");
+    }
+}</code></pre>
+
+        </content>
+
+        <footer>
+            <span class="comment"></span>
+            <span class="author" itemprop="author">Henrik Ripa</span>
+        </footer>
+    </article>
+
+    <footer></footer>
+</body>
+</html>

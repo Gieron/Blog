@@ -1,0 +1,141 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>Speedy mobile web pages with AMP | Pseudorandom Knowledge</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="/styles/highlight.css" />
+    <link rel="stylesheet" href="/styles/common.css" />
+    <script src="/scripts/highlight.js"></script>
+    <script src="/scripts/common.js"></script>
+</head>
+<body>
+	<header>
+		<a href="/" rel="home">
+            <h1>Pseudorandom Knowledge</h1>
+        </a>
+    </header>
+
+    <article itemscope itemtype="http://schema.org/BlogPosting">
+        <header>
+            <h1 itemprop="headline name">Speedy mobile web pages with AMP</h1>
+            <time class="published" itemprop="datePublished">2016-10-29</time>
+            <time class="modified" itemprop="dateModified">2017-09-30</time>
+        </header>
+
+        <content itemprop="articleBody text">
+
+            <p>
+                <a href="https://www.ampproject.org/">Accelerated Mobile Pages</a> (AMP) is a technique for making fast rendering web pages on mobile devices. It is primarily intended for static and non-interactive content, such as articles.
+            </p>
+
+            <p>
+                AMP is written in AMP HTML, which is HTML with certain restrictions and additions. For example, custom JavaScript is banned, <em>img</em> tags are replaced with <em>amp-img</em> tags and all styling must be inside the <em>head</em> tag.
+            </p>
+
+            <p>
+                AMP HTML is interpreted partly by the web browser and partly by AMP JS. The latter is a JavaScript library that takes care of resource loading, layout calculations and implements custom tags. For example, for the <em>amp-img</em> tag AMP JS will:
+            </p>
+
+            <ol>
+                <li>find the <em>amp-img</em> tag</li>
+                <li>reserve space for the image in the layout</li>
+                <li>load the image asynchronously</li>
+                <li>add the image to the DOM</li>
+            </ol>
+
+            <p>
+                The great thing about AMP is that it is built entirely upon HTML standards and JavaScript. Therefore, AMP works natively in any web browser.
+            </p>
+
+            <p>
+                <a href="html.html">For a practical example, take a look at this ordinary static web page</a>.
+            </p>
+
+            <pre><code class="html">&lt;!DOCTYPE html>
+&lt;html>
+&lt;head>
+ 
+&lt;title>Berries&lt;/title>
+&lt;link type="text/css" rel="stylesheet" href="style.css" />
+ 
+&lt;/head>
+&lt;body>
+ 
+&lt;article>
+    &lt;img alt="Blueberries" src="Blueberries.jpg" />
+    &lt;h1>Forest food&lt;/h1>
+    &lt;p>
+        The word berry is used for many different kinds of small fruits...
+    &lt;/p>
+&lt;/article>
+ 
+&lt;/body>
+&lt;/html></code></pre>
+
+            <p>
+                <a href="amp.html">Then check out this AMP version of the same page</a>.
+            </p>
+
+            <pre><code class="html">&lt;!doctype html>
+&lt;html amp>
+&lt;head>
+ 
+&lt;meta charset="utf-8">
+&lt;script async src="https://cdn.ampproject.org/v0.js">&lt;/script>
+&lt;title>Accelerated berries&lt;/title>
+&lt;link rel="canonical" href="index.html" />
+&lt;meta name="viewport" content="width=device-width,minimum-scale=1,initial-scale=1">
+&lt;style amp-boilerplate>
+    body {-webkit-animation:-amp-start 8s steps(1,end) 0s 1 normal both;
+             -moz-animation:-amp-start 8s steps(1,end) 0s 1 normal both;
+              -ms-animation:-amp-start 8s steps(1,end) 0s 1 normal both;
+                  animation:-amp-start 8s steps(1,end) 0s 1 normal both}
+    @-webkit-keyframes -amp-start{from{visibility:hidden}to {visibility:visible}}
+       @-moz-keyframes -amp-start{from{visibility:hidden}to{visibility:visible}}
+        @-ms-keyframes -amp-start{from{visibility:hidden}to{visibility:visible}}
+         @-o-keyframes -amp-start{from{visibility:hidden}to{visibility:visible}}
+            @keyframes -amp-start{from{visibility:hidden}to{visibility:visible}}
+&lt;/style>
+&lt;noscript>&lt;style amp-boilerplate>
+    body{-webkit-animation:none;
+            -moz-animation:none;
+             -ms-animation:none;
+                 animation:none}
+&lt;/style>&lt;/noscript>
+&lt;style amp-custom>
+    body{font-family: arial; font-size: 14px; background: maroon;}
+    article{width: 700px; margin: 50px auto; background: white; padding: 0 0 15px 0;}
+    h1{font-size: 1.5em; margin: 10px 20px;}
+    p{margin: 5px 20px 5px;}
+&lt;/style>
+ 
+&lt;/head>
+&lt;body>
+ 
+&lt;article>
+    &lt;amp-img alt="Berries" src="Blueberries.jpg" height="500" width="700">&lt;/amp-img>
+    &lt;h1>Forest food&lt;/h1>
+    &lt;p>
+        The word berry is used for many different kinds of small fruits...
+    &lt;/p>
+&lt;/article>
+ 
+&lt;/body>
+&lt;/html></code></pre>
+
+            <p>
+                <em>Note: The code shown above will not pass AMP validation because the validator is very pedantic about whitespace in the the amp-boilerplate style. I wanted it to be readable here. The code in the linked AMP page validates properly.</em>
+            </p>
+
+        </content>
+
+        <footer>
+            <span class="comment"></span>
+            <span class="author" itemprop="author">Henrik Ripa</span>
+        </footer>
+    </article>
+
+    <footer></footer>
+</body>
+</html>

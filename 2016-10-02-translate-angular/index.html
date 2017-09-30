@@ -1,0 +1,206 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>Translating Angular 2 with ASP.NET | Pseudorandom Knowledge</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="/styles/highlight.css" />
+    <link rel="stylesheet" href="/styles/common.css" />
+    <script src="/scripts/highlight.js"></script>
+    <script src="/scripts/common.js"></script>
+</head>
+<body>
+	<header>
+		<a href="/" rel="home">
+            <h1>Pseudorandom Knowledge</h1>
+        </a>
+    </header>
+
+    <article itemscope itemtype="http://schema.org/BlogPosting">
+        <header>
+            <h1 itemprop="headline name">Translating Angular 2 with ASP.NET</h1>
+            <time class="published" itemprop="datePublished">2016-10-02</time>
+            <time class="modified" itemprop="dateModified">2017-09-30</time>
+        </header>
+
+        <content itemprop="articleBody text">
+
+            <p>
+                Angular 2 uses templates for the html. I would like to write my templates in Razor and have them processed on the server before they get to the client side. This way I can use resource files for translations.
+            </p>
+
+            <p>
+                <strong>Note:</strong> See my other blog post ‘<a href="/2016-10-02-aspnet-mvc-eels">Translating ASP.NET MVC</a>’ for an explanation on how to use resource files and how to set the language on the server.
+            </p>
+
+            <h2>The core concept</h2>
+
+            <p>
+                The concept is simple, on the server I create a controller which has an action for each template. And each action has the template in its corresponding View. In Angular we simply specify the URL for the action as the URL for the template.
+            </p>
+
+            <pre class="code-header">TemplateController.cs</pre>
+
+            <pre><code class="csharp">namespace AngularApplication.Controllers
+{
+    public class TemplateController : Controller
+    {
+        public ActionResult Welcome()
+        {
+            return View();
+        }
+ 
+        public ActionResult Locale()
+        {
+            return View();
+        }
+    }
+}</code></pre>
+
+            <pre class="code-header">Welcome.cshtml</pre>
+
+            <pre><code class="html">@using AngularApplication.Resources
+&lt;h2>@WelcomeTexts.Welcome&lt;/h2>
+ 
+&lt;p>
+    @WelcomeTexts.Introduction
+&lt;/p></code></pre>
+
+            <pre class="code-header">app.component.ts</pre>
+
+            <pre><code class="typescript">import { Component } from '@angular/core';
+ 
+@Component({
+    selector: 'angular-application',
+    templateUrl: '/Template/Welcome'
+})
+export class AppComponent {}</code></pre>
+
+            <h2>Switching languages</h2>
+
+            <p>
+                To switch language I create an Angular component and an Angular service. The component handles the interface for the user and the service sends the chosen language back to the server. After the user selects a new language the Angular application is reloaded.
+            </p>
+            
+            <pre class="code-header">locale.component.ts</pre>
+
+            <pre><code class="typescript">import {Component} from '@angular/core';
+import {LocaleService} from './locale.service';
+ 
+@Component({
+    selector: 'locale-switcher',
+    templateUrl: 'Template/Locale'
+})
+ 
+export class LocaleComponent {
+    constructor(private _localeService: LocaleService) {}
+ 
+    switch(language: string) {
+        this._localeService.switchLanguage(language);
+    }
+}</code></pre>
+
+            <pre class="code-header">Locale.cshtml</pre>
+
+            <pre><code class="html">@using AngularApplication.Resources
+&lt;h2>@LocaleTexts.SwitchLanguage&lt;/h2>
+ 
+&lt;ul>
+    &lt;li>&lt;a (click)='switch("en")'>English&lt;/a>&lt;/li>
+    &lt;li>&lt;a (click)='switch("sv")'>Svenska&lt;/a>&lt;/li>
+&lt;/ul></code></pre>
+
+            <pre class="code-header">locale.service.ts</pre>
+
+            <pre><code class="typescript">import {Injectable, ApplicationRef} from '@angular/core';
+import {Http, Response} from '@angular/http';
+import {Observable} from 'rxjs/Observable';
+ 
+@Injectable()
+export class LocaleService {
+    constructor(private _http: Http) {}
+ 
+    switchLanguage(language: string) {
+        this._http
+            .post('Locale/Switch', { language: language })
+            .subscribe();
+ 
+        // Must reload to change language in templates
+        window.location.reload();
+    }
+}</code></pre>
+
+            <h2>But wait, there’s a cache!</h2>
+
+            <p>
+                While the above sounds good on paper it won’t work terribly well in practice. The content of the templates depend on the language, but this isn’t reflected in the URLs. Hence any caching going on in the browser will interfere when the user changes the language. And any caching on the server will interfere when there are users with different languages.
+            </p>
+
+            <p>
+                To fix this we must add the language to the template URLs.
+            </p>
+
+            <pre class="code-header">TemplateController.cs</pre>
+
+            <pre><code class="csharp">namespace AngularApplication.Controllers
+{
+    [OutputCache(Duration = 604800, VaryByParam = "language")]
+    public class TemplateController : Controller
+    {
+        public ActionResult Welcome(string language)
+        {
+            return View();
+        }
+ 
+        public ActionResult Locale(string language)
+        {
+            return View();
+        }
+    }
+}</code></pre>
+
+            <p>
+                The browser then has to use these new URLs when getting the templates. Therefore, we need to send the language to the browser. We do this by adding it to the DOM and using a bit of JavaScript to get it into a global JavaScript variable.
+            </p>
+
+            <pre class="code-header">Index.cshtml</pre>
+
+            <pre><code class="html">&lt;div style="display:none">
+    &lt;div id="language" data-language="@ViewBag.Language">&lt;/div>
+&lt;/div></code></pre>
+
+            <pre class="code-header">language-init.js</pre>
+
+            <pre><code class="javascript">window.onload = function() {
+    document.language = document
+        .getElementById('language')
+        .dataset['language'];
+};</code></pre>
+
+            <p>
+                Lastly, we must add the language to the template URL in the component. We also have to add a type definition for <em>document</em>, otherwise TypeScript will complain about it being an unknown type.
+            </p>
+
+            <pre class="code-header">app.component.ts</pre>
+
+            <pre><code class="typescript">import { Component } from '@angular/core';
+ 
+declare var document: any;
+ 
+@Component({
+    selector: 'angular-application',
+    templateUrl: `/Template/Welcome?language=${document.language}`
+})
+export class AppComponent {}</code></pre>
+
+        </content>
+
+        <footer>
+            <span class="comment"></span>
+            <span class="author" itemprop="author">Henrik Ripa</span>
+        </footer>
+    </article>
+
+    <footer></footer>
+</body>
+</html>

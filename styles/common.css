@@ -190,6 +190,11 @@ body
             margin-right: auto;
         }
 
+            body > article > content > img.left-aligned
+            {
+                margin-left: 0;
+            }
+
         body > article > content > table
         {
             border-collapse: collapse;
