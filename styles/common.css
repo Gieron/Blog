@@ -173,8 +173,14 @@ body
 
         body > article > content > h2
         {
+            color: black;
             margin-top: 12px;
             font-size: 1.5em;
+        }
+
+        body > article > content > p em
+        {
+            color: black;
         }
 
         body > article > content > ol,
@@ -209,6 +215,7 @@ body
 
         body > article > content > pre.code-header
         {
+            color: black;
             letter-spacing: 1px;
             margin-bottom: 0;
         }
