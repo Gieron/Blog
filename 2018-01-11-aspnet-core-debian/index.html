@@ -1,0 +1,195 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>ASP.NET Core on Debian and Apache | Pseudorandom Knowledge</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="/styles/highlight.css" />
+    <link rel="stylesheet" href="/styles/common.css" />
+    <script src="/scripts/highlight.js"></script>
+    <script src="/scripts/common.js"></script>
+</head>
+<body>
+	<header>
+		<a href="/" rel="home">
+            <h1>Pseudorandom Knowledge</h1>
+        </a>
+    </header>
+
+    <article itemscope itemtype="http://schema.org/BlogPosting">
+        <header>
+            <h1 itemprop="headline name">ASP.NET Core on Debian and Apache</h1>
+            <time class="published" itemprop="datePublished">2018-01-11</time>
+            <!--<time class="modified" itemprop="dateModified">2001-01-01</time>-->
+        </header>
+
+        <content itemprop="articleBody text">
+
+            <p>
+                Now that Microsoft has created .NET Core it should be possible to host a .NET website on Linux.
+                Specifically I want to host an ASP.NET Core 2.0 website on .NET 2.0 on Debian 9 (stretch) with Apache 2.
+            </p>
+
+            <h2>Install .NET Core</h2>
+
+            <p>
+                .NET Core is not part of Debian. It must be installed <a href="https://docs.microsoft.com/en-us/dotnet/core/linux-prerequisites">from Microsoft's package feed</a>, which is added by creating the following file:
+            </p>
+
+            <pre class="code-header">/etc/apt/sources.list.d/dotnetdev.list</pre>
+
+            <pre><code class="text">deb [arch=amd64] https://packages.microsoft.com/repos/microsoft-debian-stretch-prod stretch main</code></pre>
+
+            <p>
+                We also need the Microsoft package key to validate packages. This must be downloaded and converted before it can be installed
+                in the correct place.
+            </p>
+
+            <pre><code class="bash">curl https://packages.microsoft.com/keys/microsoft.asc
+gpg --dearmor microsoft.asc > microsoft.gpg
+sudo mv microsoft.gpg /etc/apt/trusted.gpg.d/microsoft.gpg</code></pre>
+
+            <p>
+                Now we should be able to install .NET Core. This will also install ASP.NET Core.
+            </p>
+
+            <pre><code class="bash">sudo apt-get update
+sudo apt-get install dotnet-sdk-2.0.3</code></pre>
+
+            <p>
+                If successful the following command should display <em>2.0.3</em>:
+            </p>
+
+            <pre><code class="bash">dotnet --version</code></pre>
+
+            <h2>Create website</h2>
+
+            <p>
+                I prefer to develop my web sites in Visual Studio on Windows.
+                Visual Studio Code can be used if you want to develop under Linux.
+            </p>
+
+            <p>
+                The web site should be an ASP.NET Core Web Application for .NET Core and ASP.NET Core 2.0.
+                I will call this web site <em>DotnetExampleSite</em> because it's clever.
+            </p>
+
+            <img src="create-web-site-1.png" width="600" />
+
+            <img src="create-web-site-2.png" width="600" />
+
+            <p>
+                Publish the site to <a href="https://superuser.com/a/635293/40849">some directory</a> on the Debian machine.
+                I will use <em>/srv/www/DotnetExampleSite</em>.
+            </p>
+
+            <img src="publish-web-site.png" width="600" />
+
+            <h2>Configure Kestrel</h2>
+
+            <p>
+                The way ASP.NET Core works is that each web application runs its own instance of a web server called Kestrel.
+                By default Kestrel will listen <a href="https://github.com/aspnet/KestrelHttpServer/issues/639">on port 5000</a>.
+            </p>
+
+            <p>
+                To make Kestrel and our web application run we must create a systemd service.
+                Create the following file:
+            </p>
+
+            <pre class="code-header">/etc/systemd/system/dotnet-example-site.service</pre>
+
+            <pre><code class="text">[Unit]
+Description=.NET Example Site
+After=network.target
+
+[Service]
+WorkingDirectory=/srv/www/DotnetExampleSite
+ExecStart=/usr/bin/dotnet /srv/www/DotnetExampleSite/DotnetExampleSite.dll
+Restart=always
+RestartSec=10
+SyslogIdentifier=dotnet-example-site
+User=www-data
+Environment=ASPNETCORE_ENVIRONMENT=Production
+
+[Install]
+WantedBy=multi-user.target</code></pre>
+
+            <p>
+                As can be seen above we will run the Kestrel web server under the <em>www-data</em> user.
+                This makes sense and will work well when we configure Apache next.
+            </p>
+
+            <p> 
+                Before we can run the web application we need to create a directory that ASP.NET Core will use for some housekeeping.
+            </p>
+
+            <pre><code class="bash">sudo mkdir /var/www/.dotnet
+sudo chown www-data:www-data /var/www/.dotnet</code></pre>
+
+            <p>
+                Now we shuould be able to run the service.
+            </p>
+
+            <pre><code class="bash">sudo systemctl start dotnet-example-site</code></pre>
+
+            <p>
+                If everything works you should now be able to view the site on port 5000.
+            </p>
+
+            <pre><code class="bash">curl http://localhost:5000</code></pre>
+
+            <h2>Configure Apache</h2>
+
+            <p>
+                We could stop here. But Kestrel is a very limited web server and not intended to be exposed to the Internet.
+                Instead it is recommended to run a more competent web server before it as a proxy.
+                On Windows this would be IIS. On Linux is often nginx.
+                But I will <a href="https://docs.microsoft.com/en-us/aspnet/core/publishing/apache-proxy">use Apache</a>.
+            </p>
+
+            <p>
+                Begin by enabling the Apache 2 proxy modules for HTTP.
+            </p>
+
+            <pre><code class="bash">sudo a2enmod proxy
+sudo a2enmod proxy_http</code></pre>
+
+            <p>
+                Then create the following file:
+            </p>
+
+            <pre class="code-header">/etc/apache2/sites-available/dotnet-example-site.conf</pre>
+
+            <pre><code class="text">&lt;VirtualHost *:80>
+    ServerName gieron.localtest.me
+    ServerAdmin henrik@gieron.info
+
+    ProxyPreserveHost On
+    ProxyPass / http://localhost:5000/
+    ProxyPassReverse / http://localhost:5000/
+&lt;/VirtualHost></code></pre>
+
+            <p>
+                Finally enable the new web site configuration.
+            </p>
+
+            <pre><code class="bash">sudo a2ensite dotnet-example-site</code></pre>
+
+            <p>
+                Now, if everything works, we should be able to navigate to the site.
+            </p>
+
+            <pre><code class="bash">curl http://gieron.localtest.me</code></pre>
+
+        </content>
+
+        <footer>
+            <span class="comment"></span>
+            <span class="author" itemprop="author">Henrik Ripa</span>
+        </footer>
+    </article>
+
+    <footer></footer>
+</body>
+</html>
