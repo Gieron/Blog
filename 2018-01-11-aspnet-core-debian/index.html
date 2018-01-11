@@ -162,8 +162,7 @@ sudo a2enmod proxy_http</code></pre>
             <pre class="code-header">/etc/apache2/sites-available/dotnet-example-site.conf</pre>
 
             <pre><code class="text">&lt;VirtualHost *:80>
-    ServerName gieron.localtest.me
-    ServerAdmin henrik@gieron.info
+    ServerName dotnet.localtest.me
 
     ProxyPreserveHost On
     ProxyPass / http://localhost:5000/
@@ -180,7 +179,7 @@ sudo a2enmod proxy_http</code></pre>
                 Now, if everything works, we should be able to navigate to the site.
             </p>
 
-            <pre><code class="bash">curl http://gieron.localtest.me</code></pre>
+            <pre><code class="bash">curl http://dotnet.localtest.me</code></pre>
 
         </content>
 
