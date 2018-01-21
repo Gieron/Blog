@@ -1,0 +1,143 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>SQL Server on Debian | Pseudorandom Knowledge</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="/styles/highlight.css" />
+    <link rel="stylesheet" href="/styles/common.css" />
+    <script src="/scripts/highlight.js"></script>
+    <script src="/scripts/common.js"></script>
+</head>
+<body>
+	<header>
+		<a href="/" rel="home">
+            <h1>Pseudorandom Knowledge</h1>
+        </a>
+    </header>
+
+    <article itemscope itemtype="http://schema.org/BlogPosting">
+        <header>
+            <h1 itemprop="headline name">SQL Server on Debian</h1>
+            <time class="published" itemprop="datePublished">2018-01-21</time>
+            <!--<time class="modified" itemprop="dateModified">2001-01-01</time>-->
+        </header>
+
+        <content itemprop="articleBody text">
+
+            <p>
+                Not only have Microsoft made <a href="../2018-01-11-aspnet-core-debian">.NET available for Linux</a>, they also ported SQL Server.
+                This time, I want to install Microsoft SQL Server 2017 on Debian 9 (stretch).
+            </p>
+
+            <h2>Install SQL Server</h2>
+
+            <p>
+                Unfortunately, Microsoft has not made a SQL Server package for Debian.
+                But they have made <a href="https://docs.microsoft.com/en-us/sql/linux/quickstart-install-connect-ubuntu">one for Ubuntu</a>, and Ubuntu 16.04 (Xenial Xerus) is close enough to Debian 9 (stretch) to make this work.
+            </p>
+
+            <p>
+                Add the package feed by creating the following file:
+            </p>
+
+            <pre class="code-header">/etc/apt/sources.list.d/mssql-server.list</pre>
+
+            <pre><code class="text">deb [arch=amd64] https://packages.microsoft.com/ubuntu/16.04/mssql-server xenial main</code></pre>
+
+            <p>
+                We also need the Microsoft package key to validate packages. This must be downloaded and converted before it can be installed
+                in the correct place.
+            </p>
+
+            <pre><code class="bash">curl https://packages.microsoft.com/keys/microsoft.asc
+gpg --dearmor microsoft.asc > microsoft.gpg
+sudo mv microsoft.gpg /etc/apt/trusted.gpg.d/microsoft.gpg</code></pre>
+
+            <p>
+                Now try and install SQL Server.
+            </p>
+
+            <pre><code class="bash">sudo apt-get update
+sudo apt-get install mssql-server</code></pre>
+
+            <aside>
+
+                <h3>Version problems</h3>
+
+                <p>
+                    In my case the installation failed because of a dependency problem.
+                    The <em>mssql-server</em> package depended on <em>openssl</em> version <em>1.1.0</em> or earlier while the version installed in Debian was <em>1.1.0f-3+deb9ul</em>.
+                </p>
+
+                <p>
+                    Since I had nothing installed that specifically depended on the later version of <em>openssl</em> I was able to install an earlier version.
+                    I also had to install an earlier version of <em>libssl</em>.
+                </p>
+
+                <pre><code class="bash">wget http://ftp.se.debian.org/debian/pool/main/o/openssl/openssl_1.0.2l-1~bpo8+1_amd64.deb
+wget http://ftp.se.debian.org/debian/pool/main/o/openssl/libssl1.0.0_1.0.2l-1~bpo8+1_amd64.deb
+sudo dpkg -i libssl1.0.0_1.0.2l-1~bpo8+1_amd64.deb
+sudo dpkg -i openssl_1.0.2l-1~bpo8+1_amd64.deb
+sudo apt-mark hold openssl</code></pre>
+
+                <p>
+                    The last line freezes the package version so that future upgrades doesn't change it.
+                </p>
+
+                <p>
+                    After this I was able to install SQL Server.
+                </p>
+
+            </aside>
+
+            <h2>Setup SQL Server</h2>
+
+            <p>
+                Once SQL Server has been successfully installed it needs to be setup.
+            </p>
+
+            <pre><code class="bash">sudo /opt/mssql/bin/mssql-conf setup</code></pre>
+
+            <p>
+                This will ask for which edition you want to run. I chose Express, which is adequate for most purposes.
+            </p>
+
+            <p>
+                When the setup is complete SQL Server should start automatically.
+                Run the following command to check that this is the case:
+            </p>
+
+            <pre><code class="bash">sudo systemctl status mssql-server</code></pre>
+
+            <h2>Connect to SQL Server</h2>
+
+            <p>
+                I prefer to do my database administration from Windows with
+                <a href="https://docs.microsoft.com/en-us/sql/ssms/download-sql-server-management-studio-ssms">SQL Server Management Studio</a>.
+                But any SQL client will do. There is nothing special about connecting to SQL Server on Linux compared to any other database server.
+            </p>
+
+            <img src="connect-to-server.png" alt="Connect to server dialog in SSMS" />
+
+            <p>
+                Finally, run the following query to see that everything is working:
+            </p>
+
+            <pre><code class="sql">SELECT @@VERSION</code></pre>
+
+            <p>
+                In my case this displays: <em>Microsoft SQL Server 2017 (RC2) - 14.0.900.75 (X64)   Jul 27 2017 08:53:49   Copyright (C) 2017 Microsoft Corporation  Express Edition (64-bit) on Linux (Debian GNU/Linux 9 (stretch))</em>.
+            </p>
+
+        </content>
+
+        <footer>
+            <span class="comment"></span>
+            <span class="author" itemprop="author">Henrik Ripa</span>
+        </footer>
+    </article>
+
+    <footer></footer>
+</body>
+</html>

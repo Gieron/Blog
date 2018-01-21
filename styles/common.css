@@ -171,60 +171,82 @@ body
             margin-bottom: 8px;
         }
 
-        body > article > content > h2
+        body > article > content > aside
+        {
+            padding: 0 10px 0 10px;
+            margin-top: 12px;
+            margin-bottom: 0;
+            border: 1px solid blue;
+            background-color: rgb(245,245,255);
+        }
+
+            body > article > content > aside > *
+            {
+                font-size: 1em;
+                margin-bottom: 8px;
+            }
+
+            body > article > content > aside > h3
+            {
+                color: black;
+                margin-top: 6px;
+                font-size: 1.35em;
+            }
+
+        body > article > content h2
         {
             color: black;
             margin-top: 12px;
             font-size: 1.5em;
         }
 
-        body > article > content > p em
+        body > article > content p em
         {
             color: black;
         }
 
-        body > article > content > ol,
-        body > article > content > ul
+        body > article > content ol,
+        body > article > content ul
         {
             padding-left: 20px;
         }
 
-        body > article > content > img
+        body > article > content img
         {
             display: block;
             margin-left: auto;
             margin-right: auto;
         }
 
-            body > article > content > img.left-aligned
+            body > article > content img.left-aligned
             {
                 margin-left: 0;
             }
 
-        body > article > content > table
+        body > article > content table
         {
             border-collapse: collapse;
         }
 
-            body > article > content > table td
+            body > article > content table td
             {
                 border: 1px solid gray;
                 padding: 2px 6px;
             }
 
-        body > article > content > pre
+        body > article > content pre
         {
             padding: 3px 5px;
             overflow-x: auto;
             background-color: rgb(245,245,245);
         }
 
-            body > article > content > pre > code
+            body > article > content pre > code
             {
                 display: block;
             }
 
-            body > article > content > pre.code-header
+            body > article > content pre.code-header
             {
                 color: black;
                 letter-spacing: 1px;
@@ -232,7 +254,7 @@ body
                 border-bottom: 1px dotted rgb(205,205,205);
             }
 
-                body > article > content > pre.code-header + pre
+                body > article > content pre.code-header + pre
                 {
                     padding-top: 8px;
                 }
