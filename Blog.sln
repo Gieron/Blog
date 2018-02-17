@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
-VisualStudioVersion = 15.0.26430.12
+VisualStudioVersion = 15.0.27130.2024
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{E24C65DC-7377-472B-9ABA-BC803B73C61A}") = "Blog", ".", "{D35BEA6D-DF5C-43B2-8EC9-79FD58196247}"
 	ProjectSection(WebsiteProperties) = preProject
@@ -30,9 +30,12 @@ Global
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
 		{D35BEA6D-DF5C-43B2-8EC9-79FD58196247}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{D35BEA6D-DF5C-43B2-8EC9-79FD58196247}.Debug|Any CPU.Deploy.0 = Debug|Any CPU
+		{D35BEA6D-DF5C-43B2-8EC9-79FD58196247}.Debug|Any CPU.Build.0 = Debug|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {CFE8B08A-75CB-4BC1-8F64-85C4F089EBA7}
 	EndGlobalSection
 EndGlobal
