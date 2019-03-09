@@ -1,0 +1,274 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>UI threading in .NET | Pseudorandom Knowledge</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="/styles/highlight.css" />
+    <link rel="stylesheet" href="/styles/common.css" />
+    <script src="/scripts/highlight.js"></script>
+    <script src="/scripts/common.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <style>
+        span.blurred, span.blurred em {
+            cursor: pointer;
+            color: transparent;
+            text-shadow: 0 0 5px rgba(0,0,0,0.5);
+        }
+        img.ui {
+            float: right;
+            margin: 10px 10px 10px 20px;
+        }
+    </style>
+    <script>
+        $(function () {
+            $("span.blurred").click(function () {
+                $(this).removeClass("blurred");
+            });
+        });
+    </script>
+</head>
+<body>
+    <header>
+        <a href="/" rel="home">
+            <h1>Pseudorandom Knowledge</h1>
+        </a>
+    </header>
+
+    <article itemscope itemtype="http://schema.org/BlogPosting">
+        <header>
+            <h1 itemprop="headline name">UI threading in .NET</h1>
+            <time class="published" itemprop="datePublished">2019-03-06</time>
+            <!--<time class="modified" itemprop="dateModified">2001-01-01</time>-->
+        </header>
+
+        <content itemprop="articleBody text">
+
+            <img class="ui" src="ui.png" />
+
+            <p>
+                Here is a simple WPF program with nine buttons. Each button is supposed
+                to run the code below, which takes a couple of seconds, and report when
+                it's done.
+            </p>
+
+            <pre><code class="csharp">private void PerformCalculation()
+{
+    // Placeholder calculation
+    for (int i = int.MinValue; i < int.MaxValue; i++) ;
+}</code></pre>
+
+            <p>
+                Try to work out how each button will behave before clicking the blurred
+                description to reveal it. Will the interface remain repsonsive? Will an
+                exception be raised? Will the program crash?
+            </p>
+
+            <h2>
+                Button 1
+            </h2>
+
+            <pre><code class="csharp">private void Button1_Click(object sender, RoutedEventArgs e)
+{
+    PerformCalculation();
+    TextBox.AppendText("Done");
+}</code></pre>
+
+            <p>
+                <strong>Behaviour:</strong>
+                <span class="blurred">
+                    The interface will be unresponsive while the calculation is being
+                    performed. Only the UI thread may update the interface and it is
+                    blocked from doing so while it executes the method. Once
+                    <em>Done</em> has been written to text box the interface will
+                    become responsive again.
+                </span>
+            </p>
+
+            <h2>
+                Button 2
+            </h2>
+
+            <pre><code class="csharp">private async void Button2_Click(object sender, RoutedEventArgs e)
+{
+    await Task.Run(() => PerformCalculation());
+    TextBox.AppendText("Done");
+}</code></pre>
+
+            <p>
+                <strong>Behaviour:</strong>
+                <span class="blurred">
+                    The interface will remain responsive while the calculation is being
+                    performed. The work will be done on a worker thread, leaving the UI
+                    thread free to update the interface. When the task is finished the UI
+                    thread will regain control and write <em>Done</em> to the text box.
+                </span>
+            </p>
+
+            <h2>
+                Button 3
+            </h2>
+
+            <pre><code class="csharp">private async void Button3_Click(object sender, RoutedEventArgs e)
+{
+    await Task.Run(() =>
+    {
+        PerformCalculation();
+        TextBox.AppendText("Done");
+    });
+}</code></pre>
+
+            <p>
+                <strong>Behaviour:</strong>
+                <span class="blurred">
+                    The interface will remain responsive while the calculation is being
+                    performed. Then the program will crash due to an unhandled
+                    <em>InvalidOperationException</em>. This is because the program attempts
+                    to update the text box from a worker thread, which it is not allowed
+                    to do.
+                </span>
+            </p>
+
+            <h2>
+                Button 4
+            </h2>
+
+            <pre><code class="csharp">private void Button4_Click(object sender, RoutedEventArgs e)
+{
+    Task.Run(() =>
+    {
+        PerformCalculation();
+        TextBox.AppendText("Done");
+    });
+}</code></pre>
+
+            <p>
+                <strong>Behaviour:</strong>
+                <span class="blurred">
+                    This button will appear to do nothing at all. An exception will be
+                    thrown when the program attempts to update the text box from a worker
+                    thread. However, when an unhandled exception occur within a task it will
+                    be saved until the task is joined with the rest of the code. Since that
+                    never happens here the exception is silently ignored.
+                </span>
+            </p>
+
+            <h2>
+                Button 5
+            </h2>
+
+            <pre><code class="csharp">private async void Button5_Click(object sender, RoutedEventArgs e)
+{
+    await Task.Run(() => PerformCalculation()).ConfigureAwait(false);
+    TextBox.AppendText("Done");
+}</code></pre>
+
+            <p>
+                <strong>Behaviour:</strong>
+                <span class="blurred">
+                    By using <em>ConfigureAwait(false)</em> we tell the program to continue
+                    execution on the worker thread after the calculation has been performed.
+                    Since the text box cannot be updated from a worker thread the program
+                    crashes due to an unhandled exception.
+                </span>
+            </p>
+
+            <h2>
+                Button 6
+            </h2>
+
+            <pre><code class="csharp">private async void Button6_Click(object sender, RoutedEventArgs e)
+{
+    var syncContext = SynchronizationContext.Current;
+    await Task.Run(() =>
+    {
+        PerformCalculation();
+        syncContext.Post(_ => TextBox.AppendText("Done"), null);
+    });
+}</code></pre>
+
+            <p>
+                <strong>Behaviour:</strong>
+                <span class="blurred">
+                    This code works just fine. By capturing the synchronization context
+                    of the UI thread we can post back to it from the worker thread. The
+                    text box fill be written to from the UI thread.
+                </span>
+            </p>
+
+            <h2>
+                Button 7
+            </h2>
+
+            <pre><code class="csharp">private async void Button7_Click(object sender, RoutedEventArgs e)
+{
+    await Task.Run(() =>
+    {
+        PerformCalculation();
+        Dispatcher.Invoke(() => TextBox.AppendText("Done"));
+    });
+}</code></pre>
+
+            <p>
+                <strong>Behaviour:</strong>
+                <span class="blurred">
+                    This code also works fine. <em>Dispatcher</em> is a property of
+                    <em>DispatcherObject</em> which <em>Window</em> penultimately
+                    derives from. When invoking an action on this dispatcher it will
+                    be executed on the UI thread.
+                </span>
+            </p>
+
+            <h2>
+                Button 8
+            </h2>
+
+            <pre><code class="csharp">private async void Button8_Click(object sender, RoutedEventArgs e)
+{
+    await Task.Run(() => PerformCalculation());
+    MessageBox.Show("Done");
+}</code></pre>
+
+            <p>
+                <strong>Behaviour:</strong>
+                <span class="blurred">
+                    A dialog box with the message <em>Done</em> will be shown after the
+                    calculation has been performed. The dialog is modal, it must be
+                    closed before the rest of the interface can be interacted with.
+                </span>
+            </p>
+
+            <h2>
+                Button 9
+            </h2>
+
+            <pre><code class="csharp">private async void Button9_Click(object sender, RoutedEventArgs e)
+{
+    await Task.Run(() =>
+    {
+        PerformCalculation();
+        MessageBox.Show("Done");
+    });
+}</code></pre>
+
+            <p>
+                <strong>Behaviour:</strong>
+                <span class="blurred">
+                    This will also show a dialog box after the calculation is done.
+                    Dialog boxes can be opened from worker threads. However, there is one
+                    significant difference. This dialog box is not modal. It does not have
+                    to be closed before the rest of the interface can be interacted with.
+                </span>
+            </p>
+
+        </content>
+
+        <footer>
+            <a class="comment" itemprop="discussionUrl" href="https://github.com/Gieron/Blog/issues/new" target="_blank">Have an issue with the post?</a>
+            <span class="author" itemprop="author">Henrik Ripa</span>
+        </footer>
+    </article>
+
+    <footer></footer>
+</body>
+</html>
