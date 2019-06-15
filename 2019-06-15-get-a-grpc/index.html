@@ -1,0 +1,154 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>Where the g stands for gRPC | Pseudorandom Knowledge</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="/styles/highlight.css" />
+    <link rel="stylesheet" href="/styles/common.css" />
+    <script src="/scripts/highlight.js"></script>
+    <script src="/scripts/common.js"></script>
+</head>
+<body>
+    <header>
+        <a href="/" rel="home">
+            <h1>Pseudorandom Knowledge</h1>
+        </a>
+    </header>
+
+    <article itemscope itemtype="http://schema.org/BlogPosting">
+        <header>
+            <h1 itemprop="headline name">Where the g stands for gRPC</h1>
+            <time class="published" itemprop="datePublished">2019-06-15</time>
+        </header>
+
+        <content itemprop="articleBody text">
+
+            <p>
+                .NET 5 marks
+                <a href="https://devblogs.microsoft.com/dotnet/introducing-net-5/">the end of .NET Framework</a>
+                and, since it isn't getting ported,
+                <a href="https://visualstudiomagazine.com/blogs/data-driver/2019/05/net-5-wcf.aspx">the end of WCF</a>
+                as well.
+                Microsoft recommend we move to REST (ASP.NET Core Web API) or gRPC instead.
+            </p>
+
+            <p>
+                <a href="https://grpc.io/">gRPC</a> is a Remote Procedure Call framework
+                running over HTTP/2. Services are described in a language called
+                <a href="https://developers.google.com/protocol-buffers/">Protocol Buffers</a>
+                which are used to generate partial implementations in a variety of languages.
+            </p>
+
+            <h2>gRPC in .NET</h2>
+
+            <p>
+                gRPC and Protocol Buffers integrates nicely with Visual Studio and C#.
+                The following NuGet packages are necessary:
+            </p>
+
+            <ul>
+                <li><a href="https://www.nuget.org/packages/Grpc/">Grpc</a></li>
+                <li><a href="https://www.nuget.org/packages/Grpc.Tools/">Grpc.Tools</a></li>
+                <li><a href="https://www.nuget.org/packages/Google.Protobuf/">Google.Protobuf</a></li>
+            </ul>
+
+            <p>
+                The service is described in a <em>.proto</em> file using Protocol Buffers syntax:
+            </p>
+
+            <pre><code class="protobuf">syntax = "proto3";
+
+message GreetRequest {
+    string name = 1;
+}
+
+message GreetResponse {
+    string text = 1;
+}
+                
+service Greeter {
+    rpc Greet(GreetRequest) returns (GreetResponse) {}
+}</code></pre>
+
+            <p>
+                On the server side the <em>.proto</em> file is seamlessly compiled to
+                a base class that can be inherited to implement the service. Then the
+                connection parameters gets defined and the server is started.
+            </p>
+
+            <pre><code class="csharp">public class GreeterService : Greeter.GreeterBase
+{
+    public override Task<GreetResponse> Greet(GreetRequest request, ServerCallContext context)
+    {
+        return Task.FromResult(new GreetResponse
+        {
+            Text = $"Greetings {request.Name}!"
+        });
+    }
+}
+
+public class Program
+{
+    public static void Main(string[] args)
+    {
+        var server = new Server
+        {
+            Services = { Greeter.BindService(new GreeterService()) },
+            Ports = { new ServerPort("localhost", 50051, ServerCredentials.Insecure) }
+        };
+        server.Start();
+
+        Console.ReadLine();
+    }
+}</code></pre>
+
+            <p>
+                On the client side the same <em>.proto</em> file is compiled to a
+                class that can be instantiated with the connection parameters.
+                Calling the service is then as simple as calling a method. Which is,
+                after all, the point of remote procedure calls.
+            </p>
+
+            <pre><code class="csharp">public class Program
+{
+    public static void Main(string[] args)
+    {
+        var client = new Greeter.GreeterClient(
+            new Channel("localhost:50051", ChannelCredentials.Insecure)                
+        );
+
+        var reply = client.Greet(new GreetRequest { Name = "Earth" });
+
+        Console.WriteLine(reply.Text);
+        Console.ReadLine();
+    }
+}</code></pre>
+
+            <h2>gRPC and streaming BLOBs</h2>
+
+            <p>
+                WCF is huge. That's the reason Microsoft don't want to port it. gRPC,
+                on the other hand, isn't huge. It follows that gRPC can't do everything
+                WCF does.
+            </p>
+
+            <p>
+                One thing that's missing is the ability to stream continous binary data.
+                WCF has a streaming transfer mode that makes it possible to connect a
+                <em>Stream</em> on the server side to a <em>Stream</em>
+                on the client side. gRPC doesn't have any such ability natively, the
+                stream would have to be divided into discrete messages manually.
+            </p>
+
+        </content>
+
+        <footer>
+            <a class="comment" itemprop="discussionUrl" href="https://github.com/Gieron/Blog/issues/new" target="_blank">Have an issue with the post?</a>
+            <span class="author" itemprop="author">Henrik Ripa</span>
+        </footer>
+    </article>
+
+    <footer></footer>
+</body>
+</html>
