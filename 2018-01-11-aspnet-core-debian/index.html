@@ -20,7 +20,7 @@
         <header>
             <h1 itemprop="headline name">ASP.NET Core on Debian and Apache</h1>
             <time class="published" itemprop="datePublished">2018-01-11</time>
-            <!--<time class="modified" itemprop="dateModified">2001-01-01</time>-->
+            <time class="modified" itemprop="dateModified">2019-07-07</time>
         </header>
 
         <content itemprop="articleBody text">
@@ -138,6 +138,14 @@ sudo chown www-data:www-data /var/www/.dotnet</code></pre>
             </p>
 
             <pre><code class="bash">curl http://localhost:5000</code></pre>
+
+            <aside>
+                <p>
+                    Another command is necessary in order to start the service at boot.
+                </p>
+
+                <pre><code class="bash">sudo systemctl enable dotnet-example-site</code></pre>
+            </aside>
 
             <h2>Configure Apache</h2>
 

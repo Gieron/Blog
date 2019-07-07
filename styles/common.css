@@ -190,6 +190,10 @@ body
                 font-size: 1.35em;
             }
 
+            body > article > content > aside > p:first-child {
+                margin-top: 12px;
+            }
+
         body > article > content h2
         {
             color: black;
