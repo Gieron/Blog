@@ -1,0 +1,88 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>A modern three tier website | Pseudorandom Knowledge</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="/styles/highlight.css" />
+    <link rel="stylesheet" href="/styles/common.css" />
+    <link rel="stylesheet" href="layers.css" />
+    <script src="/scripts/highlight.js"></script>
+    <script src="/scripts/common.js"></script>
+</head>
+<body>
+    <header>
+        <a href="/" rel="home">
+            <h1>Pseudorandom Knowledge</h1>
+        </a>
+    </header>
+
+    <article itemscope itemtype="http://schema.org/BlogPosting">
+        <header>
+            <h1 itemprop="headline name">A modern three tier website</h1>
+            <time class="published" itemprop="datePublished">2019-09-01</time>
+            <!--<time class="modified" itemprop="dateModified">2001-01-01</time>-->
+        </header>
+
+        <content itemprop="articleBody text">
+
+            <p>
+                Design principles for a three tier website with clear
+                responsibilities and well defined interfaces.
+            </p>
+
+            <div class="layer frontend">
+                <h2>Frontend</h2>
+
+                <p class="description">
+                    The frontend is implemented as a Single Page Application using
+                    <a href="/2016-07-31-let-angular-work/">Angular</a>.
+                </p>
+
+                <p class="interaction">
+                    The frontend communicates with the backend using REST.
+                </p>
+            </div>
+
+            <div class="layer backend">
+                <h2>Backend</h2>
+
+                <p class="interaction">
+                    The backend is implemented as a
+                    <a href="https://blog.mwaysolutions.com/2014/06/05/10-best-practices-for-better-restful-api/">RESTful API</a>
+                    using ASP.NET Core.
+                </p>
+
+                <p class="description">
+                    The backend is responsible for security, authentication and authorization.
+                </p>
+
+                <p class="interaction">
+                    The backend generates database queries via, for example,
+                    <a href="../2011-10-03-linq-speak-in-sql/">LINQ to SQL</a>.
+                </p>
+            </div>
+
+            <div class="layer database">
+                <h2>Database</h2>
+
+                <p class="interaction">
+                    The database exposes simple interfaces by providing views and stored procedures.
+                </p>
+
+                <p class="description">
+                    The database ensures data is consistent with the help of triggers and constraints.
+                </p>
+            </div>
+
+        </content>
+
+        <footer>
+            <a class="comment" itemprop="discussionUrl" href="https://github.com/Gieron/Blog/issues/new" target="_blank">Have an issue with the post?</a>
+            <span class="author" itemprop="author">Henrik Ripa</span>
+        </footer>
+    </article>
+
+    <footer></footer>
+</body>
+</html>

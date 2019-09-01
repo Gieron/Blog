@@ -1,0 +1,67 @@
+﻿.layer p,
+.layer h2 {
+    box-sizing: border-box;
+    position: relative;
+}
+
+.layer p {
+    top: -30px;
+    padding: 18px 0 0 18px;
+    height: 50px;
+    margin-left: 30px;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
+}
+
+.layer h2 {
+    top: 0;
+    margin: 0;
+    height: 30px;
+    padding: 4px;
+    text-align: center;
+    transform-origin: 15px 15px;
+    transform: rotate(90deg);
+}
+
+.layer.frontend {
+    height: 100px;
+    margin-bottom: 0;
+    background-color: #dab1f9;
+}
+
+    .layer.frontend h2 {
+        width: 100px;
+    }
+
+    .layer.frontend .interaction {
+        background-color: #bf9ad9;
+    }
+
+.layer.backend {
+    height: 150px;
+    margin-top: 0;
+    margin-bottom: 0;
+    background-color: #f9dab1;
+}
+
+    .layer.backend h2 {
+        width: 150px;
+    }
+    .layer.backend .interaction {
+        background-color: #d9bf9a;
+    }
+
+.layer.database {
+    height: 100px;
+    margin-top: 0;
+    background-color: #b1f9da;
+}
+
+    .layer.database h2 {
+        width: 100px;
+    }
+
+    .layer.database .interaction {
+        background-color: #9ad9bf;
+    }
