@@ -330,3 +330,15 @@ body
             margin-top: 0;
         }
 }
+
+@media screen and (max-width: 650px) {
+    body > article > header > time.modified {
+        display: none;
+    }
+}
+
+@media screen and (max-width: 550px) {
+    body > article > header > time.published {
+        display: none;
+    }
+}
