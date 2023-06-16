@@ -62,8 +62,9 @@ body
             height: 100%;
         }
 
-        body > header h1
+        body > header span
         {
+            display: block;
             transform: translateY(149px);
             margin-right: 4px;
             font-size: 30px;
@@ -83,7 +84,7 @@ body
                 transition: linear 350ms;
             }
 
-                body > header > a:hover > h1
+                body > header > a:hover > span
                 {
                     text-decoration: underline;
                 }
