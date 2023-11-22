@@ -20,47 +20,38 @@
         <header>
             <h1 itemprop="headline name">ASP.NET Core on Debian and Apache</h1>
             <time class="published" itemprop="datePublished">2018-01-11</time>
-            <time class="modified" itemprop="dateModified">2019-07-07</time>
+            <time class="modified" itemprop="dateModified">2023-11-22</time>
         </header>
 
         <content itemprop="articleBody text">
 
             <p>
                 Now that Microsoft has created .NET Core it should be possible to host a .NET website on Linux.
-                Specifically I want to host an ASP.NET Core 2.0 website on .NET 2.0 on Debian 9 (stretch) with Apache 2.
+                Specifically I want to host an ASP.NET Core 8.0 website on .NET 8.0 on Debian 12 (bookworm) with Apache 2.
             </p>
 
             <h2>Install .NET Core</h2>
 
             <p>
-                .NET Core is not part of Debian. It must be installed <a href="https://docs.microsoft.com/en-us/dotnet/core/linux-prerequisites">from Microsoft's package feed</a>, which is added by creating the following file:
+                .NET is not part of Debian. It must be installed <a href="https://learn.microsoft.com/en-us/dotnet/core/install/linux-debian#debian-12">from Microsoft's package feed</a>, which is added by running the following commands:
             </p>
 
-            <pre class="code-header">/etc/apt/sources.list.d/dotnetdev.list</pre>
-
-            <pre><code class="text">deb [arch=amd64] https://packages.microsoft.com/repos/microsoft-debian-stretch-prod stretch main</code></pre>
-
-            <p>
-                We also need the Microsoft package key to validate packages. This must be downloaded and converted before it can be installed
-                in the correct place.
-            </p>
-
-            <pre><code class="bash">curl https://packages.microsoft.com/keys/microsoft.asc
-gpg --dearmor microsoft.asc > microsoft.gpg
-sudo mv microsoft.gpg /etc/apt/trusted.gpg.d/microsoft.gpg</code></pre>
+            <pre><code class="bash">wget https://packages.microsoft.com/config/debian/12/packages-microsoft-prod.deb
+sudo dpkg -i packages-microsoft-prod.deb
+rm packages-microsoft-prod.deb</code></pre>
 
             <p>
-                Now we should be able to install .NET Core. This will also install ASP.NET Core.
+                Now we should be able to install the ASP.NET Core Runtime. This will also install the .NET Runtime.
             </p>
 
             <pre><code class="bash">sudo apt-get update
-sudo apt-get install dotnet-sdk-2.0.3</code></pre>
+sudo apt-get install aspnetcore-runtime-8.0</code></pre>
 
             <p>
-                If successful the following command should display <em>2.0.3</em>:
+                If successful the following command should display the versions for both ASP.NET Core and .NET:
             </p>
 
-            <pre><code class="bash">dotnet --version</code></pre>
+            <pre><code class="bash">dotnet --list-runtimes</code></pre>
 
             <h2>Create website</h2>
 
