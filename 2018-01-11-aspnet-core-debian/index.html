@@ -33,12 +33,20 @@
             <h2>Install .NET Core</h2>
 
             <p>
-                .NET is not part of Debian. It must be installed <a href="https://learn.microsoft.com/en-us/dotnet/core/install/linux-debian#debian-12">from Microsoft's package feed</a>, which is added by running the following commands:
+                .NET is not part of Debian. It must be installed <a href="https://learn.microsoft.com/en-us/dotnet/core/install/linux-debian#debian-12">from Microsoft's package feed</a>, which is added by creating the following file:
             </p>
 
-            <pre><code class="bash">wget https://packages.microsoft.com/config/debian/12/packages-microsoft-prod.deb
-sudo dpkg -i packages-microsoft-prod.deb
-rm packages-microsoft-prod.deb</code></pre>
+            <pre class="code-header">/etc/apt/sources.list.d/microsoft.list</pre>
+
+            <pre><code class="text">deb [arch=amd64] https://packages.microsoft.com/debian/12/prod bookworm main</code></pre>
+
+            <p>
+                We also need the Microsoft package key to validate packages. This must be downloaded and converted before it can be installed
+                in the correct place.
+            </p>
+
+            <pre><code class="bash">wget https://packages.microsoft.com/keys/microsoft.asc
+sudo mv microsoft.asc /etc/apt/trusted.gpg.d/</code></pre>
 
             <p>
                 Now we should be able to install the ASP.NET Core Runtime. This will also install the .NET Runtime.
