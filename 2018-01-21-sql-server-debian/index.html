@@ -20,21 +20,21 @@
         <header>
             <h1 itemprop="headline name">SQL Server on Debian</h1>
             <time class="published" itemprop="datePublished">2018-01-21</time>
-            <!--<time class="modified" itemprop="dateModified">2001-01-01</time>-->
+            <time class="modified" itemprop="dateModified">2023-11-22</time>
         </header>
 
         <content itemprop="articleBody text">
 
             <p>
                 Not only have Microsoft made <a href="../2018-01-11-aspnet-core-debian">.NET available for Linux</a>, they also ported SQL Server.
-                This time, I want to install Microsoft SQL Server 2017 on Debian 9 (stretch).
+                This time, I want to install Microsoft SQL Server 2022 on Debian 12 (bookworm).
             </p>
 
             <h2>Install SQL Server</h2>
 
             <p>
                 Unfortunately, Microsoft has not made a SQL Server package for Debian.
-                But they have made <a href="https://docs.microsoft.com/en-us/sql/linux/quickstart-install-connect-ubuntu">one for Ubuntu</a>, and Ubuntu 16.04 (Xenial Xerus) is close enough to Debian 9 (stretch) to make this work.
+                But they have made one for Ubuntu, and Ubuntu 22.04 (Jammy Jellyfish) is close enough to Debian 12 (bookworm) to make this work.
             </p>
 
             <p>
@@ -43,16 +43,15 @@
 
             <pre class="code-header">/etc/apt/sources.list.d/mssql-server.list</pre>
 
-            <pre><code class="text">deb [arch=amd64] https://packages.microsoft.com/ubuntu/16.04/mssql-server xenial main</code></pre>
+            <pre><code class="text">deb [arch=amd64] https://packages.microsoft.com/ubuntu/22.04/mssql-server-2022 jammy main</code></pre>
 
             <p>
-                We also need the Microsoft package key to validate packages. This must be downloaded and converted before it can be installed
+                We also need the Microsoft package key to validate packages. This must be downloaded and installed
                 in the correct place.
             </p>
 
-            <pre><code class="bash">curl https://packages.microsoft.com/keys/microsoft.asc
-gpg --dearmor microsoft.asc > microsoft.gpg
-sudo mv microsoft.gpg /etc/apt/trusted.gpg.d/microsoft.gpg</code></pre>
+            <pre><code class="bash">wget https://packages.microsoft.com/keys/microsoft.asc
+sudo mv microsoft.asc /etc/apt/trusted.gpg.d/</code></pre>
 
             <p>
                 Now try and install SQL Server.
@@ -61,6 +60,7 @@ sudo mv microsoft.gpg /etc/apt/trusted.gpg.d/microsoft.gpg</code></pre>
             <pre><code class="bash">sudo apt-get update
 sudo apt-get install mssql-server</code></pre>
 
+<!--
             <aside>
 
                 <h3>Version problems</h3>
@@ -90,7 +90,7 @@ sudo apt-mark hold openssl</code></pre>
                 </p>
 
             </aside>
-
+-->
             <h2>Setup SQL Server</h2>
 
             <p>
