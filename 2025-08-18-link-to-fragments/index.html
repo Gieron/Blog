@@ -1,0 +1,131 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>Linking to text fragments | Pseudorandom Knowledge</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="/styles/highlight.css" />
+    <link rel="stylesheet" href="/styles/common.css" />
+    <script src="/scripts/highlight.js"></script>
+    <script src="/scripts/common.js"></script>
+</head>
+<body>
+    <header>
+        <a href="/" rel="home">
+            <span>Pseudorandom Knowledge</span>
+        </a>
+        <style>
+            a.example {
+                display: block;
+                padding-top: 10px;
+                padding-bottom: 10px;
+                font-size: 16px;
+            }
+                a.example .base {
+                    color: grey;
+                }
+
+                a.example .syntax {
+                    color: red;
+                }
+
+            ::target-text {
+                color: red;
+                background-color: yellow;
+                font-variant: small-caps;
+            }
+        </style>
+    </header>
+
+    <article itemscope itemtype="http://schema.org/BlogPosting">
+        <header>
+            <h1 itemprop="headline name">Linking to text fragments</h1>
+            <time class="published" itemprop="datePublished">2025-08-18</time>
+            <!--<time class="modified" itemprop="dateModified">2001-01-01</time>-->
+        </header>
+
+        <content itemprop="articleBody text">
+
+            <p>
+                <a href="https://developer.mozilla.org/en-US/docs/Web/URI/Reference/Fragment/Text_fragments">Text fragments</a>
+                allows for linking to any text content in a web page. Text fragments are part of the URL as shown in the examples on this page.
+                In these examples, the syntax for text fragments are shown in red and the texts used are in blue.
+            </p>
+
+            <a class="example" href="https://shakespeare.mit.edu/hamlet/full.html#:~:text=something is rotten">
+                <span class="base">https://shakespeare.mit.edu/hamlet/full.html</span><span class="syntax">#:~:text=</span>something is rotten
+            </a>
+
+            <p>
+                This link opens the text for the Shakespeare play <em>Hamlet</em>, scrolls to the text <em>Something is rotten</em> and highlights it,
+                much like if the user had opened the page and searched for that text themselves. The text is used case insensitively.
+            </p>
+
+            <a class="example" href="https://shakespeare.mit.edu/hamlet/full.html#:~:text=to be,the question">
+                <span class="base">https://shakespeare.mit.edu/hamlet/full.html</span><span class="syntax">#:~:text=</span>to be<span class="syntax">,</span>the question
+            </a>
+
+            <p>
+                It's also possible to give a start text and an end text where both texts and everything in between is highlighted.
+                This example tries to highlight the text <em>To be, or not to be, that is the question</em>. However, it doesn't work.
+                The problem is that the text <em>to be</em> is found in more than one place.
+                Naturally, the first occurrence will be used which results in this link highlighting too much.
+            </p>
+
+            <a class="example" href="https://shakespeare.mit.edu/hamlet/full.html#:~:text=hamlet-,to be,the question">
+                <span class="base">https://shakespeare.mit.edu/hamlet/full.html</span><span class="syntax">#:~:text=</span>hamlet<span class="syntax">-,</span>to be<span class="syntax">,</span>the question
+            </a>
+
+            <p>
+                To solve the problem we can use another text, in this case <em>Hamlet</em>, which must prefix the text we want to search for.
+                This text will not be part of the highlighting, so we end up highlighting just what we want.
+                Note the use of a hyphen at the end of the prefix, this is required.
+            </p>
+
+            <a class="example" href="https://shakespeare.mit.edu/hamlet/full.html#:~:text=hamlet-,to be,the question,-of this straw">
+                <span class="base">https://shakespeare.mit.edu/hamlet/full.html</span><span class="syntax">#:~:text=</span>hamlet<span class="syntax">-,</span>to be<span class="syntax">,</span>the question<span class="syntax">,-</span>of this straw
+            </a>
+
+            <p>
+                It's also possible to use a suffix, like in this example where we once again highlight too much by selecting a later instance of the text <em>the question</em>.
+                Similiarly to the prefix, note the use of a hyphen at the start of the suffix.
+            </p>
+
+            <a class="example" href="https://shakespeare.mit.edu/hamlet/full.html#:~:text=alas%2C poor yorick!">
+                <span class="base">https://shakespeare.mit.edu/hamlet/full.html</span><span class="syntax">#:~:text=</span>alas%2C poor yorick!
+            </a>
+
+            <p>
+                Since the syntax uses commas as separators, any commas in the text we want to search must be URL-encoded.
+                In this example, this highlights the text <em>Alas, poor Yorick!</em>.
+            </p>
+
+            <a class="example" href="index.html#:~:text=highlights-,can be styled with CSS">
+                <span class="base">index.html</span><span class="syntax">#:~:text=</span>highlights<span class="syntax">-,</span>can be styled with CSS
+            </a>
+
+            <p>
+                Text fragment highlights can be styled with CSS on the site where they occur.
+                That is, they can only be styled on the web page that is linked to, it is not possible to style someone else's page.
+            </p>
+
+            <pre><code class="css">::target-text {
+    color: red;
+    background-color: yellow;
+}</code></pre>
+
+            <p>
+                Only expect text and background colors to be stylable. The documentation for this limitation is a bit vague but it seems to be true in practice.
+            </p>
+
+        </content>
+
+        <footer>
+            <a class="comment" itemprop="discussionUrl" href="https://github.com/Gieron/Blog/issues/new" target="_blank">Have an issue with the post?</a>
+            <span class="author" itemprop="author">Henrik Ripa</span>
+        </footer>
+    </article>
+
+    <footer></footer>
+</body>
+</html>
