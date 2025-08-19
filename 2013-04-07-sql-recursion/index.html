@@ -20,7 +20,7 @@
         <header>
             <h1 itemprop="headline name">SQL Server: recursion in queries</h1>
             <time class="published" itemprop="datePublished">2013-04-07</time>
-            <time class="modified" itemprop="dateModified">2017-09-16</time>
+            <time class="modified" itemprop="dateModified">2025-08-19</time>
         </header>
 
         <content itemprop="articleBody text">
@@ -112,6 +112,64 @@ SELECT Name FROM Branches ORDER BY Name</code></pre>
                     <td>/var/</td>
                 </tr>
             </table>
+
+            <h2>Recursion in tables</h2>
+
+            <p>
+                There is a better way to store hierarchical data in SQL Server, by using a specific SQL Server type called <em>hierarchyid</em>.
+            </p>
+
+            <table>
+                <tr>
+                    <td><strong>HierarchyId</strong></td>
+                    <td><strong>Name</strong></td>
+                </tr>
+                <tr>
+                    <td>/</td>
+                    <td>/</td>
+                </tr>
+                <tr>
+                    <td>/1/</td>
+                    <td>var/</td>
+                </tr>
+                <tr>
+                    <td>/2/</td>
+                    <td>boot/</td>
+                </tr>
+                <tr>
+                    <td>/2/1/</td>
+                    <td>vmlinuz</td>
+                </tr>
+                <tr>
+                    <td>/2/2/</td>
+                    <td>initrd.img</td>
+                </tr>
+            </table>
+
+            <p>
+                The query to get the same results as above would then look like follows.
+            </p>
+
+            <pre><code class="sql">WITH Branches (HierarchyId, Name)
+AS
+(
+    SELECT t.HierarchyId, CAST(t.Name AS VARCHAR(512))
+    FROM Tree t
+    WHERE t.HierarchyId = hierarchyid::GetRoot()
+
+    UNION ALL
+
+    SELECT t.HierarchyId, CAST(b.Name + t.Name AS VARCHAR(512)) AS Name
+    FROM Tree t INNER JOIN Branches b ON t.HierarchyId.GetAncestor(1) = b.HierarchyId
+)
+SELECT Name FROM Branches ORDER BY Name
+</code></pre>
+
+            <p>
+                This query doesn't seem much simpler, but there are other queries that are easier with this approach.
+                Another, very important, benefit of using <em>hierarchyid</em> is data integrity.
+                For example, it becomes to introduce loops and, as long as the column has a unique constraint, it is impossible to add more than one root.
+            </p>
 
         </content>
 
