@@ -1,0 +1,170 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>SQL Server: unit testing in Visual Studio | Pseudorandom Knowledge</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="/styles/highlight.css" />
+    <link rel="stylesheet" href="/styles/common.css" />
+    <script src="/scripts/highlight.js"></script>
+    <script src="/scripts/common.js"></script>
+</head>
+<body>
+    <header>
+        <a href="/" rel="home">
+            <span>Pseudorandom Knowledge</span>
+        </a>
+    </header>
+
+    <article itemscope itemtype="http://schema.org/BlogPosting">
+        <header>
+            <h1 itemprop="headline name">SQL Server: unit testing in Visual Studio</h1>
+            <time class="published" itemprop="datePublished">2025-08-30</time>
+            <!--<time class="modified" itemprop="dateModified">2001-01-01</time>-->
+        </header>
+
+        <content itemprop="articleBody text">
+
+            <p>
+                Wherever we have logic there is value in unit testing.
+                This shouldn't be any less true just because that that logic is in a database.
+                This post looks at how to use Visual Studio to unit test database logic in SQL Server.
+            </p>
+
+            <h2>Something to test</h2>
+
+            <p>
+                To start with we need some logic to test.
+                The following is a table with a computed column (<em>Axles</em>) and a check constraint (on <em>Wheels</em>),
+                plus a stored procedure (<em>RemoveDuplicateTrucks</em>).
+            </p>
+
+            <pre><code class="sql">CREATE TABLE Trucks (
+    Wheels int NOT NULL,
+    Axles AS (Wheels / 2)
+)
+GO
+ALTER TABLE Trucks WITH CHECK ADD CONSTRAINT CK_Trucks CHECK (Wheels % 2 = 0)
+GO
+CREATE PROCEDURE RemoveDuplicateTrucks
+AS
+BEGIN
+    SET NOCOUNT ON;
+    DELETE NumberedRows FROM (SELECT
+        ROW_NUMBER() OVER (PARTITION BY Wheels ORDER BY Wheels) AS RowNumber
+        FROM Trucks) AS NumberedRows
+    WHERE RowNumber > 1
+END</code></pre>
+
+            <h2>The test project</h2>
+
+            <p>
+                For the tests we need a test project in Visual Studio that is set up in a special way.
+                This is probably possible to do directly, but I found it easiest to do by creating a <em>SQL Server Database Project</em>.
+            </p>
+
+            <img src="Test-project-1.png" alt="SQL Server Database Project choice in the Create a new project dialog in Visual Studio" width="600" />
+
+            <p>
+                Create a new project and choose the <em>SQL Server Database Project</em> template.
+                Then create an empty stored procedure in the project via <em>Add</em> in the right click menu.
+                Alternatively, if you want to use this database project further, you can import your entire database into it.
+            </p>
+
+            <img src="Test-project-2.png" alt="Create Unit Tests... choice in the right click menu on any stored procedure" width="300" />
+
+            <p>
+                Right click the stored procedure you created, or any stored procedure in your database, and choose to create unit tests.
+            </p>
+
+            <img src="Test-project-3.png" alt="Create Unit Tests dialog in Visual Studio" width="600" />
+
+            <p>
+                Give the test project an appropriate name.
+                Ignore the class name, we will delete it shortly, we only want the test project.
+            </p>
+
+            <img src="Test-project-4.png" alt="Create Unit Tests dialog in Visual Studio" width="450" />
+
+            <p>
+                Next you will be asked to connect to your database.
+                Make sure you select a test database here as our tests will destroy data in it.
+                If you are using the database project you can also select to have it automatically deployed before tests are run.
+            </p>
+
+            <img src="Test-project-5.png" alt="Solution Explorer with DatabaseProject, SqlServerUnitTests1.cs and UnitTests1.cs selected" width="300" />
+
+            <p>
+                Clean up the solution by removing the automatically created unit tests and the database project (unless you intend to use it).
+                I also get a conflict regarding <em>Microsoft.Data.Tools.Schema.Sql</em> which I solved by removing it from the references.
+            </p>
+
+            <img src="Test-project-6.png" alt="Solution Explorer with DatabaseTestProject containing only Properties, References, app.config, packages.config and SqlDatabaseSetup.cs" width="300" />
+
+            <p>
+                You should now have a properly setup database test project.
+                This is a .NET Framework project, support for the same thing in .NET is on its way in the form of
+                <a href="https://learn.microsoft.com/en-us/sql/ssdt/sql-server-data-tools-sdk-style">SQL Server Data Tools, SDK-style</a> which is currently in preview.
+            </p>
+
+            <h2>The tests</h2>
+
+            <p>
+                We are finally ready to actually test something. Create a new test class by right clicking the test project and add a new item.
+            </p>
+
+            <img src="Tests-1.png" alt="Add New Item dialog in Visual Studio with the SQL Server Unit Test selected and given the name TrucksTableTests.cs" width="600" />
+
+            <p>
+                Select <em>SQL Server Unit Test</em> and give it an appropriate name.
+            </p>
+
+            <img src="Tests-2.png" alt="TrucksTableTests.cs design window in Visual Studio with no tests" width="600" />
+
+            <p>
+                Delete the automatically created test by clicking the red <span style="color: red; font-weight: bold;">X</span> at the top.
+                Select <em>Test initialize</em> in the drop down and click the link in the middle of the screen.
+            </p>
+
+            <img src="Tests-3.png" alt="TrucksTableTests.cs test initialize with the SQL script 'TRUNCATE TABLE Trucks'" width="600" />
+
+            <p>
+                In the test initialize we truncate the <em>Trucks</em> table so that every test will start with an empty table.
+                I recommend leaving the data in the table after each test since it makes debugging easier.
+                Now click the green <span style="color: green; font-weight: bold;">+</span> at the top to create three tests as shown and described below.
+            </p>
+
+            <img src="Tests-4.png" alt="TrucksTable_AxlesColumn_ComputesCorrectly test with the SQL script 'INSERT INTO Trucks (Wheels) VALUES (48); SELECT Axles FROM Trucks' and a test condition that expects the scalar value 24" width="600" />
+
+            <p>
+                The first test checks that the computed column <em>Axles</em> returns <em>24</em> after inserting a row into
+                <em>Trucks</em> with the value for the <em>Wheels</em> column set to 48.
+                The SQL script part of the test is used to arrange and act while the assert part of the test is done partly in the SQL script
+                but mostly in the form of test conditions in its own part of the GUI at the bottom.
+            </p>
+
+            <img src="Tests-5.png" alt="TrucksTable_WheelsColumn_RejectsOddNumber test with the SQL script 'BEGIN TRY; INSERT INTO Trucks (Wheels) VALUES (7); END TRY BEGIN CATCH; SELECT 'caught'; END CATCH; SELECT * FROM Trucks' and two test conditions that expects the first result to be 'caught' and the second to have no rows" width="600" />
+
+            <p>
+                In the second test we try to insert an odd number in the column <em>Wheels</em>, which is not allowed by the check constraint.
+                The test conditions can handle multiple result sets, here it checks that the first contains the value 'caught' and that the second contains no rows (i.e. the insert failed).
+            </p>
+
+            <img src="Tests-6.png" alt="StoredProcedure_RemoveDuplicateTrucks_RemovesCorrectly test with the SQL script 'INSERT INTO Trucks (Wheels) VALUES (4),(2),(2),(4),(8),(6),(8),(10),(8),(12),(2); EXEC RemoveDuplicateTrucks; SELECT * FROM Trucks' and a test condition that expects the first result to return 6 rows and a second test condition that expects the execution time to be less than 2 seconds" width="600" />
+
+            <p>
+                This test checks that the correct number of rows remain after removing duplicates, but it also checks that the execution time for the stored procedure is less than 2 seconds.
+                I suspect unit test purists do not like this non-deterministic test condition, but it is useful for regression testing.
+            </p>
+
+        </content>
+
+        <footer>
+            <a class="comment" itemprop="discussionUrl" href="https://github.com/Gieron/Blog/issues/new" target="_blank">Have an issue with the post?</a>
+            <span class="author" itemprop="author">Henrik Ripa</span>
+        </footer>
+    </article>
+
+    <footer></footer>
+</body>
+</html>
