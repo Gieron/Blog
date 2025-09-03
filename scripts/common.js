@@ -1,5 +1,5 @@
 ﻿if (typeof hljs !== 'undefined') {
-    hljs.initHighlightingOnLoad();
+    hljs.highlightAll();
 }
 
 window.onload = function () {
