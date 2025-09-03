@@ -1,0 +1,162 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>Dependency injection: scoped classes | Pseudorandom Knowledge</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="/styles/highlight.css" />
+    <link rel="stylesheet" href="/styles/common.css" />
+    <script src="/scripts/highlight.js"></script>
+    <script src="/scripts/common.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+    <style>
+        span.blurred, span.blurred em {
+            cursor: pointer;
+            color: transparent;
+            text-shadow: 0 0 8px rgba(0,0,0,0.5);
+        }
+
+        img.ui {
+            float: right;
+            margin: 10px 10px 10px 20px;
+        }
+    </style>
+    <script>
+        $(function () {
+            $("span.blurred").click(function () {
+                $(this).removeClass("blurred");
+            });
+        });
+    </script>
+</head>
+<body>
+    <header>
+        <a href="/" rel="home">
+            <span>Pseudorandom Knowledge</span>
+        </a>
+    </header>
+
+    <article itemscope itemtype="http://schema.org/BlogPosting">
+        <header>
+            <h1 itemprop="headline name">Dependency injection: scoped classes</h1>
+            <time class="published" itemprop="datePublished">2025-09-03</time>
+            <!--<time class="modified" itemprop="dateModified">2001-01-01</time>-->
+        </header>
+
+        <content itemprop="articleBody text">
+
+            <p>
+                There are three ways to register classes for dependency injection: <em>singleton</em>, <em>scoped</em> and <em>transient</em>.
+                A class registered as singleton will be created and returned the first time it is called for
+                and then the same instance is returned every subsequent time it is called for.
+                A class registered as transient will be created and returned every time it is called for.
+            </p>
+
+            <p>
+                <strong>What about scoped classes?</strong>
+            </p>
+
+            <p>
+                Scoped classes behave like singleton inside of a scope and as transient between scopes.
+                In other words, a class registered as scoped is created and returned the first time it is called for in a scope and then
+                the same instance is returned every subsequent time it is called for in that scope.
+            </p>
+
+            <p>
+                <strong>What is a scope?</strong>
+            </p>
+
+            <p>
+                A scope, for the purposes of dependency injection, is most often a HTTP request.
+                Scoped classes is mostly used in backend development for the web.
+                But it doesn't have to be, you can create a scope yourself.
+                In that case a scope can be whatever you want it to be.
+            </p>
+
+            <p>
+                <strong>How?</strong>
+            </p>
+
+            <p>
+                Here is an example where three classes are registered as singleton, scoped and transient respectively.
+                These three classes are used by two middle classes which are in turn used by one top class.
+                Two scopes are then created and used to resolve the top class twice.
+            </p>
+
+            <pre class="code-header">Console application</pre>
+            <pre><code class="csharp">using Microsoft.Extensions.DependencyInjection;
+
+interface ISingletonClass { static int Count = 0; }
+interface IScopedClass { static int Count = 0; }
+interface ITransientClass { static int Count = 0; }
+interface IMiddleClassA { }
+interface IMiddleClassB { }
+interface ITopClass { }
+class SingletonClass : ISingletonClass { public SingletonClass() { ISingletonClass.Count++; } }
+class ScopedClass : IScopedClass { public ScopedClass() { IScopedClass.Count++; } }
+class TransientClass : ITransientClass { public TransientClass() { ITransientClass.Count++; } }
+class MiddleClassA(ISingletonClass a, IScopedClass b, ITransientClass c) : IMiddleClassA { }
+class MiddleClassB(ISingletonClass a, IScopedClass b, ITransientClass c) : IMiddleClassB { }
+class TopClass(IMiddleClassA a, IMiddleClassB b) : ITopClass { }
+
+internal class Program
+{
+    private static void Main(string[] args)
+    {
+        IServiceCollection services = new ServiceCollection();
+
+        services.AddSingleton&lt;ISingletonClass, SingletonClass>();
+        services.AddScoped&lt;IScopedClass, ScopedClass>();
+        services.AddTransient&lt;ITransientClass, TransientClass>();
+
+        services.AddTransient&lt;IMiddleClassA, MiddleClassA>();
+        services.AddTransient&lt;IMiddleClassB, MiddleClassB>();
+        services.AddTransient&lt;ITopClass, TopClass>();
+
+        IServiceProvider provider = services.BuildServiceProvider();
+
+        using var scope1 = provider.CreateScope();
+        using var scope2 = provider.CreateScope();
+
+        scope1.ServiceProvider.GetRequiredService&lt;ITopClass>();
+        scope2.ServiceProvider.GetRequiredService&lt;ITopClass>();
+
+        Console.WriteLine("Singleton: " + ISingletonClass.Count);
+        Console.WriteLine("Scoped   : " + IScopedClass.Count);
+        Console.WriteLine("Transient: " + ITransientClass.Count);
+
+        Console.ReadLine();
+    }
+}
+</code></pre>
+
+            <p>
+                Take a moment to think about what counts the program will write at the end.
+                Also, consider whether the counts will change if the middle and top classes were registered
+                as singleton or scoped instead of transient.
+            </p>
+
+            <p>
+                Click the blurred text below to reveal the answers.
+            </p>
+
+            <p>
+                <span class="blurred">
+                    The counts written at the end are 1, 2 and 4.
+                    If the middle and top classes were registered as scoped the result would be the same,
+                    since the top class is only called for once per scope.
+                    Had they been registered as singleton, however, the counts would be 1, 1 and 2
+                    because the scope wouldn't matter and the top class would only be only created once.
+                </span>
+            </p>
+        </content>
+
+        <footer>
+            <a class="comment" itemprop="discussionUrl" href="https://github.com/Gieron/Blog/issues/new" target="_blank">Have an issue with the post?</a>
+            <span class="author" itemprop="author">Henrik Ripa</span>
+        </footer>
+    </article>
+
+    <footer></footer>
+</body>
+</html>
