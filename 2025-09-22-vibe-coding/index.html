@@ -1,0 +1,260 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>Vibe coding: Lovable (or hatable) | Pseudorandom Knowledge</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="/styles/highlight.css" />
+    <link rel="stylesheet" href="/styles/common.css" />
+    <script src="/scripts/highlight.js"></script>
+    <script src="/scripts/common.js"></script>
+    <style>
+        p.citation {
+            padding-top: 5px;
+            margin-bottom: 0px;
+        }
+        ol.citation {
+            margin-bottom: 0px;
+        }
+        div.citation {
+            text-align: right;
+            margin-bottom: 5px;
+        }
+        p.prompt {
+            background-color: #e0e0e0;
+            padding: 10px;
+            margin-left: auto;
+            margin-right: auto;
+            width: 75%;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <a href="/" rel="home">
+            <span>Pseudorandom Knowledge</span>
+        </a>
+    </header>
+
+    <article itemscope itemtype="http://schema.org/BlogPosting">
+        <header>
+            <h1 itemprop="headline name">Vibe coding: Lovable (or hatable)</h1>
+            <time class="published" itemprop="datePublished">2025-09-22</time>
+            <!--<time class="modified" itemprop="dateModified">2001-01-01</time>-->
+        </header>
+
+        <content itemprop="articleBody text">
+
+            <p class="citation">
+                <strong>vibe coding</strong> <em>(uncountable)</em>
+                <ol class="citation">
+                    <li>
+                        <em>(programming, neologism)</em> A method of programming in which a developer generates source code by
+                        repeatedly prompting a large language model, and has a very limited awareness of how the code actually functions.
+                    </li>
+                </ol>
+                <div class="citation">
+                    <a href="https://en.m.wiktionary.org/wiki/vibe_coding">Wiktionary</a>
+                </div>
+            </p>
+
+            <h2>My preconceptions</h2>
+
+            <p>
+                I have been using AI chatbots to get information for some time now.
+            </p>
+
+            <p>
+                I understand that collaborating with an AI when writing code is a viable use case.
+            </p>
+
+            <p>
+                However, I had my doubts that letting AI do all the coding could actually produce anything useful.
+            </p>
+
+            <h2>Build something</h2>
+
+            <p>
+                To challenge those doubts I used a vibe coding web site called <a href="https://lovable.dev">Lovable</a>:
+            </p>
+
+            <img src="Lovable-01.png" alt="Lovable logo with the tagline 'Create apps and websites by chatting with AI'" width="500" />
+
+            <p>
+                I created a free account and entered the following prompt:
+            </p>
+
+            <p class="prompt">
+                <em>I want a web page which takes data from Vattenfall's hourly prices for electricity area 3 in Sweden and turns it into a graph for the current day.</em>
+            </p>
+
+            <p>
+                The way I usually read my electricity prices is via a rather unfriendly web page where I have to scroll down quite a bit.
+                My expecation was that the AI would have to find this web page and scrape its content before it could show anything.
+            </p>
+
+            <p>
+                I doubted the AI would be able to do that.
+            </p>
+
+            <p>
+                The AI did, in fact, not do that.
+            </p>
+
+            <p>
+                Instead, it found a public API and proceeded to produce this, rather nice looking, web page:
+            </p>
+
+            <img src="Lovable-02.png" alt="Web site labeled 'Vattenfall Electricity Prices' with current price, average, min and max prices and a graph" width="600" />
+
+            <p>
+                This was seriously impressive at first sight.
+            </p>
+
+            <p>
+                At second sight I realized the prices didn't match the site I used.
+            </p>
+
+            <p>
+                After some prompting the AI confessed that the site wasn't showing real prices at all, it was all just dummy data.
+            </p>
+
+            <p>
+                The AI took it upon itself to correct the problem and show the correct data.
+            </p>
+
+            <p>
+                There was a dotted straight line in the graph that I didn't understand the meaning of.
+            </p>
+
+            <p>
+                I asked the AI about it and got the explanation that it was the average price for the day.
+            </p>
+
+            <p>
+                I asked for it to be replaced with a fixed line at 50 öre/kWh instead.
+            </p>
+
+            <p>
+                I prompted some more changes; move the graph to the top, use a table instead of the other data and translate the whole page to Swedish.
+            </p>
+
+            <p>
+                It did it all without issues.
+            </p>
+
+            <p>
+                A request to remove the axis and labels from the graph took some extra prompting to get right.
+            </p>
+
+            <p>
+                After a while the page looked less nice but more practical:
+            </p>
+
+            <img src="Lovable-03.png" alt="Web site labeled 'Elpriser för lördag 22 september 2025' with a graph and a table showing prices per hour" width="600" />
+
+            <p>
+                This was mostly what I wanted, but for it to be useful it needed to be hosted somewhere.
+            </p>
+
+            <p>
+                That was no problem.
+            </p>
+
+            <p>
+                Turns out Lovable is happy to host the site for free with the push of a button:
+            </p>
+
+            <img src="Lovable-04.png" alt="Dialog at Lovable for publishing the web site to vattenfall-prices.lovable.app" width="300" />
+
+            <p>
+                My final request was for the page to show tomorrow prices as well.
+            </p>
+
+            <p>
+                In my experince, getting the prices for the next day is only possible later in the afternoon.
+            </p>
+
+            <p>
+                But the page was able to show them right away.
+            </p>
+
+            <p>
+                This was great. I asked the AI how it had managed that feat.
+            </p>
+
+            <p>
+                Turns out it hadn't. It was using dummy data again and showing it whenever it couldn't get the real data.
+            </p>
+
+            <p>
+                I suggested that an error would be more useful in that case.
+            </p>
+
+            <p>
+                With that little issue fixed there was just a few more weird problems.
+            </p>
+
+            <p>
+                The page showed a now indicator next to the current time even when showing the next days prices, which doesn't make sense.
+            </p>
+
+            <p>
+                Also, the page didn't update the date in the header when showing the next days prices.
+            </p>
+
+            <p>
+                I asked for both of these problems to be fixed.
+            </p>
+
+            <p>
+                The AI fixed it but also changed the formatting of the date:
+            </p>
+
+            <img src="Lovable-05.png" alt="Header of the web site showing 'Elpriser för 2025-09-22'" width="400" />
+
+            <p>
+                I asked it to revert the format.
+            </p>
+
+            <p>
+                The AI told me I could revert to a previous version myself. Which I could, though that would also revert the fixes I asked for.
+            </p>
+
+            <p>
+                Some more prompting took care of that final issue.
+            </p>
+
+            <p>
+                I publish the updated site and called it done.
+            </p>
+
+            <h2>My revelations</h2>
+
+            <p>
+                Vibe coding can absolutely produce something useful.
+            </p>
+
+            <p>
+                It's probably most useful for non-developers. For developers it's perhaps best suited for quick prototyping.
+            </p>
+
+            <p>
+                The better you know the tools (in this case Lovable) and prompting, the better your results will be.
+            </p>
+
+            <p>
+                Extensive testing is recommended.
+            </p>
+
+        </content>
+
+        <footer>
+            <a class="comment" itemprop="discussionUrl" href="https://github.com/Gieron/Blog/issues/new" target="_blank">Have an issue with the post?</a>
+            <span class="author" itemprop="author">Henrik Ripa</span>
+        </footer>
+    </article>
+
+    <footer></footer>
+</body>
+</html>
