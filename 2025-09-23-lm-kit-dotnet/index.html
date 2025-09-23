@@ -1,0 +1,170 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>Local language models | Pseudorandom Knowledge</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="/styles/highlight.css" />
+    <link rel="stylesheet" href="/styles/common.css" />
+    <script src="/scripts/highlight.js"></script>
+    <script src="/scripts/common.js"></script>
+    <style>
+        code.plaintext {
+            white-space: pre-wrap;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <a href="/" rel="home">
+            <span>Pseudorandom Knowledge</span>
+        </a>
+    </header>
+
+    <article itemscope itemtype="http://schema.org/BlogPosting">
+        <header>
+            <h1 itemprop="headline name">Local language models</h1>
+            <time class="published" itemprop="datePublished">2025-09-23</time>
+            <!--<time class="modified" itemprop="dateModified">2001-01-01</time>-->
+        </header>
+
+        <content itemprop="articleBody text">
+
+            <p>
+                Large language models (LLM) are, as the name suggest, quite large.
+                These require serious hardware to run.
+                In their shadow are the small language models (SLM) that can be run on a normal computer.
+            </p>
+
+            <p>
+                To try this out, I made a simple console program in C# that takes a directory and tells you what that directory is used for.
+            </p>
+
+            <pre><code class="csharp">var argument = Environment.GetCommandLineArgs().ElementAtOrDefault(1);
+if(string.IsNullOrEmpty(argument)) { return; }
+
+// Get the names of 7 directories and 7 files
+var fileNames = Directory.GetFiles(argument).Select(d => Path.GetFileName(d)).Take(7);
+var directoryNames = Directory.GetDirectories(argument).Select(d => Path.GetFileName(d)).Take(7);
+
+// Assemble the prompt
+var a = $"'{new DirectoryInfo(argument).Name}'";
+var b = string.Join(", ", fileNames.Select(f => $"'{f}'"));
+var c = string.Join(", ", directoryNames.Select(d => $"'{d}'"));
+var prompt = @$"You are an arrogant directory content expert.
+A directory called {a} contains the following files: {b} and the following directories: {c}.
+What is the purpose of this directory? Answer in one sentence. Do not use any formatting.
+Repeat the directory name in the answer.";
+
+// Query the language model
+var model = LMKit.Model.LM.LoadFromModelID("gemma3:4b");
+var chat = new LMKit.TextGeneration.SingleTurnConversation(model);
+var response = chat.Submit(prompt);
+
+Console.WriteLine(response.Completion);</code></pre>
+
+            <p>
+                To use a language model from .NET I am using <a href="https://lm-kit.com/">LM-Kit</a>.
+                The model is downloaded from <a href="https://huggingface.co/">Hugging Face</a> and cached locally.
+                The model used here is about 3 GB in size.
+            </p>
+
+            <pre><code class="plaintext">&gt; .\SummarizeDirectory.exe 'C:\Windows\'
+The Windows directory, as a comprehensive resource, meticulously catalogs essential system files and directories involved in operating Windows.
+                
+&gt; .\SummarizeDirectory.exe 'C:\Windows\SysWOW64\'
+The SysWOW64 directory facilitates compatibility for 32-bit applications on 64-bit Windows systems by providing emulation files and resources.
+
+&gt; .\SummarizeDirectory.exe 'D:\Repositories\Blog\'
+This Blog directory appears to be a rather disorganized collection of files and subdirectories related to web development projects, primarily focused on older technologies like jQuery and ASP.NET MVC.</code></pre>
+
+            <p>
+                I added the word <em>arrogant</em> to the prompt to make the responses less unsure.
+                Without it, most responses would contain the word <em>likely</em>.
+                This resulted in a somewhat condescending tone at times, which I quite enjoyed.
+            </p>
+
+            <h2>Correcting texts</h2>
+
+            <p>
+                Language models can be used for more than just generating texts. This program can fix spelling and grammar mistakes.
+            </p>
+
+            <pre><code class="csharp">var model = LMKit.Model.LM.LoadFromModelID("pixtral");
+var corrector = new LMKit.TextEnhancement.TextCorrection(model);
+
+while (true) {
+    var text = Console.ReadLine();
+    var corrected = corrector.Correct(text);
+    Console.WriteLine(corrected);
+    Console.WriteLine();
+}</code></pre>
+
+            <p>
+                This uses a somewhat larger language model, with a size of 7 GB.
+                There are lots of language models available and working out which one is best suited for your usage is not easy.
+                For these examples, I just tried out a couple of different ones.
+            </p>
+
+            <pre><code class="plaintext">&gt; .\TextCorrector.exe
+no I recieved difrent cloths from my cusin
+No, I received different clothes from my cousin.
+
+In my personal thought opinion, I thought that the movie is really well good.
+In my personal opinion, I thought the movie was really good.
+
+[INST][/INST][AVAILABLE_TOOLS][/AVAILABLE_TOOLS]
+I wanted to visit the zoo, see the aquarium, and visit the pet rescue center.</code></pre>
+
+            <p>
+                I have no idea what is going on with the last example here.
+                I think it may be an artifact of the training process as this phrase can be
+                <a href="https://www.indeed.com/career-advice/career-development/common-grammar-mistakes">found online</a>
+                as the corrected version of a run-on sentence.
+            </p>
+
+            <h2>Analyzing texts</h2>
+
+            <p>
+                Language models can also be used to detect emotions and sentiment in texts. In this case it detects sarcasm.
+            </p>
+
+            <pre><code class="csharp">var model = LMKit.Model.LM.LoadFromModelID("lmkit-sarcasm-detection");
+var detector = new LMKit.TextAnalysis.SarcasmDetection(model);
+
+while (true) {
+    var text = Console.ReadLine();
+    var sarcasm = detector.IsSarcastic(text);
+    Console.WriteLine(sarcasm ? "Sarcastic" : "Sincere");
+    Console.WriteLine();
+}</code></pre>
+
+            <p>
+                This uses a language model that is specifically created for this purpose.
+            </p>
+
+            <pre><code class="plaintext">&gt; .\SarcasmDetector.exe
+The blog 'Pseudorandom Knowledge' is very good.
+Sincere
+
+I’m glad we’re having a rehearsal dinner. I so rarely get to practice my meals before I eat them.
+Sarcastic
+
+Oh, a sarcasm detector. That's a real useful invention.
+Sincere</code></pre>
+
+            <p>
+                Text can't convey <a href="https://www.youtube.com/watch?v=EZ73Q4DwrGM">the tone</a> in which things are said, so this will never work reliably.
+            </p>
+
+        </content>
+
+        <footer>
+            <a class="comment" itemprop="discussionUrl" href="https://github.com/Gieron/Blog/issues/new" target="_blank">Have an issue with the post?</a>
+            <span class="author" itemprop="author">Henrik Ripa</span>
+        </footer>
+    </article>
+
+    <footer></footer>
+</body>
+</html>
