@@ -311,6 +311,11 @@ body
     {
         margin-top: 0;
     }
+
+    body > article > content img
+    {
+        max-width: 100%;
+    }
 }
 
 @media screen and (max-width: 650px) {
