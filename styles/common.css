@@ -20,7 +20,7 @@ body
     background-image: url('/images/rubber_grip.png');
     background-repeat: repeat;
     font-family: Arial, Helvetica, Sans-Serif;
-    font-size: 12px;
+    font-size: 14px;
 }
 
     body a
@@ -238,6 +238,7 @@ body
 
         body > article > content pre
         {
+            font-size: 12px;
             padding: 3px 5px;
             overflow-x: auto;
             background-color: rgb(245,245,245);
