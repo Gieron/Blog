@@ -158,9 +158,12 @@ body
                 order: 3;
             }
 
-                body > article > header > time.modified::before
-                {
-                    content: ', upd. ';
+                body > article > header > time.modified::before {
+                    content: ' (upd. ';
+                }
+
+                body > article > header > time.modified::after {
+                    content: ')';
                 }
 
         body > article > content > *
@@ -313,6 +316,11 @@ body
         margin-top: 0;
     }
 
+    body > article > header > a,
+    body > article > header > h1 {
+        width: 100%;
+    }
+
     body > article > content img
     {
         max-width: 100%;
@@ -320,15 +328,11 @@ body
 }
 
 @media screen and (max-width: 650px) {
-    body > article > header > time.modified {
-        display: none;
+    body > article > header {
+        flex-flow: row wrap;
+        justify-content: right;
     }
-}
 
-@media screen and (max-width: 550px) {
-    body > article > header > time.published {
-        display: none;
-    }
 }
 
 @media screen and (min-resolution: 2dppx)
