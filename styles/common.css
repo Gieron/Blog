@@ -332,7 +332,6 @@ body
         flex-flow: row wrap;
         justify-content: right;
     }
-
 }
 
 @media screen and (min-resolution: 2dppx)
@@ -353,7 +352,8 @@ body
             margin-top: 0;
         }
 
-        body > article > header > time {
-            display: none;
+        body > article > header {
+            flex-flow: row wrap;
+            justify-content: right;
         }
 }
