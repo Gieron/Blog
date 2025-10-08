@@ -1,0 +1,257 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>My Visual Studio | Pseudorandom Knowledge</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="/styles/highlight.css" />
+    <link rel="stylesheet" href="/styles/common.css" />
+    <script src="/scripts/highlight.js"></script>
+    <script src="/scripts/common.js"></script>
+    <style>
+        li {
+            margin-bottom: 2px;
+        }
+
+            li.opt, li.on, li.off {
+                list-style-type: none;
+                position: relative;
+                padding-left: 20px;
+            }
+
+                li.opt::before {
+                    content: "▷";
+                    color: brown;
+                    position: absolute;
+                    left: 0;
+                    top: -2px;
+                }
+
+                li.on::before {
+                    content: "☒";
+                    color: green;
+                    position: absolute;
+                    left: 0;
+                    top: -2px;
+                }
+
+                li.off::before {
+                    content: "☐";
+                    color: red;
+                    position: absolute;
+                    left: 0;
+                    top: -2px;
+                }
+
+                li.opt span {
+                    text-decoration: underline brown 1px;
+                }
+
+        kbd {
+            border-radius: 3px;
+            padding: 0 3px;
+            border: 1px solid #909090;
+            background-color: #f8f8f8;
+            box-shadow: 0 1px 1px rgba(0, 0, 0, 0.1);
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <a href="/" rel="home">
+            <span>Pseudorandom Knowledge</span>
+        </a>
+    </header>
+
+    <article itemscope itemtype="http://schema.org/BlogPosting">
+        <header>
+            <h1 itemprop="headline name">My Visual Studio</h1>
+            <time class="published" itemprop="datePublished">2025-10-08</time>
+            <!--<time class="modified" itemprop="dateModified">2001-01-01</time>-->
+        </header>
+
+        <content itemprop="articleBody text">
+
+            <p>
+                A reference of how I want my Visual Studio development environment configured.
+            </p>
+
+            <p>
+                The base configuration is for development in C#.
+                The windows shown are the ones I use most often,
+                the settings are the ones I changed from the defaults
+                and the hotkeys are those I have added to the defaults.
+            </p>
+
+            <p>
+                The usage of Copilot is experimentary, I may scale it back in the future.
+            </p>
+
+            <h2>Layout</h2>
+
+            <img src="MyVisualStudio.png" width="670" alt="Visual Studio set up in the way described in this blog post" />
+
+            <ul>
+                <li>
+                    Right side
+                    <ul>
+                        <li>Solution Explorer</li>
+                        <li>Properties</li>
+                        <li>Toolbox <em>(when relevant)</em></li>
+                        <li>Test Explorer</li>
+                    </ul>
+                </li>
+                <li>
+                    Center
+                    <ul>
+                        <li>Code editor</li>
+                    </ul>
+                </li>
+                <li>
+                    Bottom
+                    <ul>
+                        <li>Find Results <em>(when relevant)</em></li>
+                        <li>Output</li>
+                        <li>Error List</li>
+                        <li>Immediate Window</li>
+                        <li>Task List</li>
+                        <li>Bookmarks</li>
+                        <li>Autos <em>(during debugging)</em></li>
+                        <li>Watch 1 <em>(during debugging)</em></li>
+                        <li>Call Stack <em>(during debugging)</em></li>
+                    </ul>
+                </li>
+                <li>
+                    Left side
+                    <ul>
+                        <li>Diagnostic Tools <em>(during debugging)</em></li>
+                        <li>GitHub Copilot Chat</li>
+                        <li>Git Changes</li>
+                        <li>Notifications</li>
+                    </ul>
+                </li>
+            </ul>
+
+            <h2>Settings</h2>
+
+            <ul>
+                <li>
+                    Environment &gt; Visual Experience
+                    <ul>
+                        <li class="opt">Color theme: <span>Cool Breeze</span></li>
+                    </ul>
+                </li>
+                <li>
+                    Environment &gt; Search
+                    <ul>
+                        <li class="off">Automatically limit search to selection</li>
+                    </ul>
+                </li>
+                <li>
+                    Environment &gt; Tabs &gt; Document Tabs
+                    <ul>
+                        <li class="on">Show tabs in multiple rows</li>
+                        <li class="on">Show pinned tabs in a separate row</li>
+                        <li class="on">Show Close button in the document well</li>
+                        <li class="opt">Dirty indicator: <span>Dot</span></li>
+                        <li class="opt">Tab colorization method: <span>Project</span></li>
+                    </ul>
+                </li>
+                <li>
+                    Environment &gt; Tabs &gt; Preview Tab
+                    <ul>
+                        <li class="off">Allow new files to be opened in the preview tab</li>
+                    </ul>
+                </li>
+                <li>
+                    Projects and Solutions &gt; General
+                    <ul>
+                        <li class="on">Show Output window when build starts</li>
+                    </ul>
+                </li>
+                <li>
+                    Projects and Solutions &gt; Build and Run
+                    <ul>
+                        <li class="opt">On Run, when build or deployment errors occur: <span>Do not launch</span></li>
+                    </ul>
+                </li>
+                <li>
+                    Text Editor &gt; General &gt; Display
+                    <ul>
+                        <li class="off">Show selection margin</li>
+                        <li class="off">Enable brace pair colorization</li>
+                        <li class="off">Automatically surround selections when typing quotes or brackets</li>
+                    </ul>
+                </li>
+                <li>
+                    Text Editor &gt; Advanced
+                    <ul>
+                        <li class="opt">Difference display mode: <span>Mixed outline</span></li>
+                        <li class="on">Difference overview margin</li>
+                        <li class="opt">Default IntelliSence completion mode: <span>Tab-only</span></li>
+                    </ul>
+                </li>
+                <li>
+                    Text Editor &gt; Code Completions &gt; General
+                    <ul>
+                        <li class="opt">Code Completion Invocation: <span>Manual</span></li>
+                        <li class="on">Copilot Next Edit Suggestions</li>
+                    </ul>
+                </li>
+                <li>
+                    Languages &gt; Defaults &gt; General
+                    <ul>
+                        <li class="off">Automatic brace completion</li>
+                    </ul>
+                </li>
+                <li>
+                    Debugging &gt; General
+                    <ul>
+                        <li class="on">Automatically close the console when debugging stops</li>
+                        <li class="on">Keep expanded data tips open until clicked away</li>
+                    </ul>
+                </li>
+                <li>
+                    GitHub &gt; Copilot &gt; Source Control Integration
+                    <ul>
+                        <li class="opt">Commit message custome instructions: <span>Summarize changes in one sentence only.</span></li>
+                    </ul>
+                </li>
+                <li>
+                    IntelliCode &gt; General
+                    <ul>
+                        <li class="off">C# Suggestions</li>
+                    </ul>
+                </li>
+                <li>
+                    Windows Forms Designer &gt; General &gt; Refactoring
+                    <ul>
+                        <li class="on">Enable refactoring on rename</li>
+                    </ul>
+                </li>
+            </ul>
+
+            <h2>Hotkeys</h2>
+
+            <ul>
+                <li><kbd>Ctrl</kbd> + <kbd>O</kbd>: Ask.Copilot (Text Editor)</li>
+                <li><kbd>Ctrl</kbd> + <kbd>N</kbd>: Edit.NextSuggestion (Text Editor)</li>
+            </ul>
+
+            <h2>Extensions</h2>
+
+            <ul>
+                <li><a href="https://marketplace.visualstudio.com/items?itemName=NikolayBalakin.Outputenhancer">Output enhancer</a></li>
+            </ul>
+
+        </content>
+
+        <footer>
+            <a class="comment" itemprop="discussionUrl" href="https://github.com/Gieron/Blog/issues/new" target="_blank">Have an issue with the post?</a>
+            <span class="author" itemprop="author">Henrik Ripa</span>
+        </footer>
+    </article>
+
+    <footer></footer>
+</body>
+</html>
