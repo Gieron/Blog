@@ -1,0 +1,98 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>SQL Server: select count | Pseudorandom Knowledge</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="/styles/highlight.css" />
+    <link rel="stylesheet" href="/styles/common.css" />
+    <script src="/scripts/highlight.js"></script>
+    <script src="/scripts/common.js"></script>
+    <style>
+        span.blurred, span.blurred em {
+            cursor: pointer;
+            color: transparent;
+            text-shadow: 0 0 8px rgba(0,0,0,0.5);
+        }
+    </style>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            document.querySelectorAll('span.blurred').forEach(function(span) {
+                span.addEventListener('click', function() {
+                    this.classList.remove('blurred');
+                });
+            });
+        });
+    </script>
+</head>
+<body>
+    <header>
+        <a href="/" rel="home">
+            <span>Pseudorandom Knowledge</span>
+        </a>
+    </header>
+
+    <article itemscope itemtype="http://schema.org/BlogPosting">
+        <header>
+            <h1 itemprop="headline name">SQL Server: select count</h1>
+            <time class="published" itemprop="datePublished">2025-11-18</time>
+            <!--<time class="modified" itemprop="dateModified">2001-01-01</time>-->
+        </header>
+
+        <content itemprop="articleBody text">
+
+            <!-- A rewrite of this reddit comment: https://www.reddit.com/r/SQL/comments/1bp0mtw/comment/kwsgify/?context=3 -->
+
+            <p>
+                Consider the following query, what do you expect it to return?
+            </p>
+
+            <p>
+                <em>
+                    In case the use of VALUES is confusing (it's a way to include data in a query without having to use a table),
+                    the values for id that you are considering are 0, 1, 2, 2 and NULL.
+                </em>
+            </p>
+
+            <pre><code class="sql">SELECT
+    COUNT(*),
+    COUNT(id),
+    COUNT(DISTINCT id)
+FROM
+    (VALUES
+        (0),
+        (1),
+        (2),
+        (2),
+        (NULL)
+    ) AS _(id)</code></pre>
+
+            <p>
+                <strong>Answer</strong> (click to reveal):
+                <span class="blurred">
+                    <strong>5, 4, 3</strong>
+                </span>
+            </p>
+
+            <h2>Explanation</h2>
+
+            <p>
+                There are three ways to use COUNT() in a SELECT clause:
+            </p>
+
+            <ul>
+                <li>COUNT(*) - counts <strong>all</strong> returned rows, regardless of content</li>
+                <li>COUNT(id) - counts rows where column <em>id</em> is <strong>not null</strong>, can also be written as COUNT(ALL id)</li>
+                <li>COUNT(DISTINCT id) - counts <strong>unique</strong> values of <em>id</em> that are <strong>not null</strong></li>
+            </ul>
+        </content>
+
+        <footer>
+            <a class="comment" itemprop="discussionUrl" href="https://github.com/Gieron/Blog/issues/new" target="_blank">Have an issue with the post?</a>
+            <span class="author" itemprop="author">Henrik Ripa</span>
+        </footer>
+    </article>
+
+    <footer></footer>
+</body>
+</html>
