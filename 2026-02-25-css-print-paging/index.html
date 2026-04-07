@@ -1,0 +1,148 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>Breaking pages in CSS | Pseudorandom Knowledge</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="/styles/highlight.css" />
+    <link rel="stylesheet" href="/styles/common.css" />
+    <script src="/scripts/highlight.js"></script>
+    <script src="/scripts/common.js"></script>
+</head>
+<body>
+    <header>
+        <a href="/" rel="home">
+            <span>Pseudorandom Knowledge</span>
+        </a>
+    </header>
+
+    <article itemscope itemtype="http://schema.org/BlogPosting">
+        <header>
+            <h1 itemprop="headline name">Breaking pages in CSS</h1>
+            <time class="published" itemprop="datePublished">2026-02-25</time>
+            <!--<time class="modified" itemprop="dateModified">2001-01-01</time>-->
+        </header>
+
+        <content itemprop="articleBody text">
+
+            <pre><code class="html">&lt;article&gt;
+    &lt;h1&gt;Heading&lt;/h1&gt;
+    &lt;p&gt;
+        ...
+    &lt;/p&gt;
+    &lt;p&gt;
+        ...
+    &lt;/p&gt;
+    ...
+&lt;article&gt;
+&lt;article&gt;
+    &lt;h1&gt;Heading&lt;/h1&gt;
+    &lt;p&gt;
+        ...
+    &lt;/p&gt;
+    &lt;p&gt;
+        ...
+    &lt;/p&gt;
+    ...
+&lt;article&gt;
+...</code></pre>
+
+            <p>
+                If you were to print the page outlined above, where would you want page breaks to happen?
+                And how would you write the CSS to make it happen?
+            </p>
+
+            <br>
+
+            <p>
+                <strong>Allow pages break anywhere, so that pages may be filled to their maximum</strong>
+            </p>
+            <p>
+                This is the default behavior, so nothing needs to be done.
+            </p>
+            <pre><code class="css">// no styling required</code></pre>
+
+            <br>
+
+            <p>
+                <strong>Each article should be on its own page</strong>
+            </p>
+            <p>
+                Easy, set the following CSS for each article element (except the first).
+            </p>
+            <pre><code class="css">@media print {
+    article:not(:first-child) {
+        break-before: page;
+    }
+}</code></pre>
+            <p>
+                The reason not to set this for the first article is that otherwise the first page will be empty.
+                Note that articles longer than one page will still be broken into pages.
+            </p>
+
+            <br>
+
+            <p>
+                <strong>Multiple articles may share a page as long as there is enough room</strong>
+            </p>
+            <p>
+                Also easy, set the following CSS for each article element.
+            </p>
+            <pre><code class="css">@media print {
+    article {
+        break-inside: avoid;
+    }
+}</code></pre>
+            <p>
+                Note that articles longer than one page will still be broken into pages, but will always start on a new page.
+            </p>
+
+            <br>
+
+            <p>
+                <strong>Page breaks are allowed, but not within paragraphs or directly after headings</strong>
+            </p>
+            <p>
+                Somewhat complicated, but the following CSS will accomplish it.
+            </p>
+            <pre><code class="css">@media print {
+    h1 {
+        break-after: avoid;
+    }
+    p:first-child {
+        break-before: avoid;
+    }
+    p {
+        break-inside: avoid;
+        margin-bottom: 1px;
+    }
+}</code></pre>
+            <p>
+                In order for page breaks to actually happen there must be some space between adjacent paragraphs,
+                otherwise the paragraphs will be considered connected and always be kept on the same page. Here this
+                is accomplished with a bottom margin, but other separations also work.
+            </p>
+
+            <br>
+
+            <p>
+                <strong>The same as above, but it should work in Firefox</strong>
+            </p>
+            <p>
+                Not possible, at least not in the same way. Firefox
+                <a href="https://bugzilla.mozilla.org/show_bug.cgi?id=775617">hasn't implemented</a>
+                <em>break-after: avoid</em>. One potential solution is to rewrite the HTML so that each
+                heading and first paragraph sits inside a div with <em>break-inside: avoid</em>.
+            </p>
+
+        </content>
+
+        <footer>
+            <a class="comment" itemprop="discussionUrl" href="https://github.com/Gieron/Blog/issues/new" target="_blank">Have an issue with the post?</a>
+            <span class="author" itemprop="author">Henrik Ripa</span>
+        </footer>
+    </article>
+
+    <footer></footer>
+</body>
+</html>

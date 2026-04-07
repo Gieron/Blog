@@ -1,0 +1,289 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>My JetBrains Rider | Pseudorandom Knowledge</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="/styles/highlight.css" />
+    <link rel="stylesheet" href="/styles/common.css" />
+    <script src="/scripts/highlight.js"></script>
+    <script src="/scripts/common.js"></script>
+    <style>
+        article {
+            background-color: #F9F9F9 !important;
+        }
+
+        li {
+            margin-bottom: 2px;
+        }
+
+            li.opt, li.on, li.off, li.color {
+                list-style-type: none;
+                position: relative;
+                padding-left: 20px;
+            }
+
+                li.opt::before {
+                    content: "▷";
+                    color: brown;
+                    position: absolute;
+                    left: 0;
+                    top: -2px;
+                }
+
+                li.on::before {
+                    content: "☒";
+                    color: green;
+                    position: absolute;
+                    left: 0;
+                    top: -2px;
+                }
+
+                li.off::before {
+                    content: "☐";
+                    color: red;
+                    position: absolute;
+                    left: 0;
+                    top: -2px;
+                }
+
+                li.opt span {
+                    text-decoration: underline brown 1px;
+                }
+
+                li.color {
+                    padding-left: 0;
+                }
+
+                    li.color span {
+                        margin-right: 7px;
+                        font-family: monospace;
+                    }
+
+        kbd {
+            border-radius: 3px;
+            padding: 0 3px;
+            border: 1px solid #909090;
+            background-color: #f8f8f8;
+            box-shadow: 0 1px 1px rgba(0, 0, 0, 0.1);
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <a href="/" rel="home">
+            <span>Pseudorandom Knowledge</span>
+        </a>
+    </header>
+
+    <article itemscope itemtype="http://schema.org/BlogPosting">
+        <header>
+            <h1 itemprop="headline name">My JetBrains Rider</h1>
+            <time class="published" itemprop="datePublished">2026-04-08</time>
+            <!--<time class="modified" itemprop="dateModified">2001-01-01</time>-->
+        </header>
+
+        <content itemprop="articleBody text">
+
+            <p>
+                A reference of how I want my JetBrains Rider development environment configured.
+            </p>
+
+            <p>
+                The windows shown are the ones I use most often,
+                the settings are the ones I changed from the defaults,
+                the color scheme shows general use cases
+                and the hotkeys are those I have added to the defaults.
+            </p>
+
+            <h2>Layout</h2>
+
+            TODO
+
+            <img src="MyJetBrainsRider.png" width="670" alt="JetBrains Rider set up in the way described in this blog post" />
+
+            <ul>
+                <li>
+                    Right side
+                    <ul>
+                        <li>Solution Explorer</li>
+                        <li>Properties</li>
+                        <li>Toolbox <em>(when relevant)</em></li>
+                        <li>Test Explorer</li>
+                    </ul>
+                </li>
+                <li>
+                    Center
+                    <ul>
+                        <li>Code editor</li>
+                    </ul>
+                </li>
+                <li>
+                    Bottom
+                    <ul>
+                        <li>Find Results <em>(when relevant)</em></li>
+                        <li>Output</li>
+                        <li>Error List</li>
+                        <li>Immediate Window</li>
+                        <li>Task List</li>
+                        <li>Bookmarks</li>
+                        <li>Autos <em>(during debugging)</em></li>
+                        <li>Watch 1 <em>(during debugging)</em></li>
+                        <li>Call Stack <em>(during debugging)</em></li>
+                    </ul>
+                </li>
+                <li>
+                    Left side
+                    <ul>
+                        <li>Diagnostic Tools <em>(during debugging)</em></li>
+                        <li>GitHub Copilot Chat</li>
+                        <li>Git Changes</li>
+                        <li>Notifications</li>
+                    </ul>
+                </li>
+            </ul>
+
+            <h2>Settings</h2>
+
+            <ul>
+                <li>
+                    Appearance &amp; Behavior &gt; Appearance
+                    <ul>
+                        <li class="opt">Theme: <span>Islands Light</span></li>
+                        <li class="opt">Editor color scheme: <span>Rider Light</span></li>
+                        <li class="on">Widescreen tool window layout</li>
+                    </ul>
+                </li>
+                <li>
+                    Keymap
+                    <ul>
+                        <li class="opt"><span>Visual Studio 2022</span> <i>(see below for changed hotkeys)</i></li>
+                    </ul>
+                </li>
+                <li>
+                    Editor &gt; Code Editing
+                    <ul>
+                        <li class="on">Highlight on Caret Movement; Current scope</li>
+                    </ul>
+                </li>
+                <li>
+                    Editor &gt; Font
+                    <ul>
+                        <li class="on">Enable ligatures</li>
+                    </ul>
+                </li>
+                <li>
+                    Editor &gt; General &gt; Editor Tabs
+                    <ul>
+                        <li class="opt">Show tabs in: <span>One row</span>, and if tabs don't fit: <span>Scroll the tabs panel</span></li>
+                        <li class="on">Show pinned tabs in a separate row</li>
+                    </ul>
+                </li>
+                <li>
+                    Editor &gt; General &gt; Typing Assistance
+                    <ul>
+                        <li class="off">Auto-format on semicolon</li>
+                        <li class="off">Auto-format on closing brace</li>
+                        <li class="opt">Auto-format on paste: <span>None</span></li>
+                        <li class="off">Smart indent on enter</li>
+                        <li class="off">Auto-insert pair brackets, parentheses and quotes</li>
+                        <li class="opt">Auto-insert closing brace: <span>On Enter after an opening brace</span></li>
+                    </ul>
+                </li>
+                <li>
+                    Editor &gt; General &gt; Code Folding
+                    <ul>
+                        <li class="opt">Show code folding arrows: <span>Always</span></li>
+                        <li class="off">Fold by default; General Imports</li>
+                        <li class="off">Fold by default; .NET Preprocessor regions</li>
+                    </ul>
+                </li>
+                <li>
+                    Editor &gt; Inlay Hints
+                    <ul>
+                        <li class="opt">Default visibility: <span>Push-to-Hint</span></li>
+                    </ul>
+                </li>
+            </ul>
+
+            <h2>Color scheme</h2>
+
+            <ul>
+                <li>
+                    Background
+                    <ul>
+                        <li class="color"><span style="background: #F9F9F9">F9F9F9</span> Ordinary</li>
+                        <li class="color"><span style="background: #E4E5ED">E4E5ED</span> Active row/symbol</li>
+                        <li class="color"><span style="background: #BDDEAB">BDDEAB</span> Searches</li>
+                        <li class="color"><span style="background: #B1D8F6">B1D8F6</span> Selection</li>
+                        <li class="color"><span style="background: #FFA1A1">FFA1A1</span> Breakpoints</li>
+                        <li class="color"><span style="background: #FFDCA0">FFDCA0</span> <i>available</i></li>
+                        <li class="color"><span style="background: #FBDAFF">FBDAFF</span> <i>available</i></li>
+                    </ul>
+                </li>
+                <li>
+                    Foreground
+                    <ul>
+                        <li class="color"><span style="color: #26272D">26272D</span> Ordinary</li>
+                        <li class="color"><span style="color: #6D93BB">6D93BB</span> Punctuation</li>
+                        <li class="color"><span style="color: #D5D6DD">D5D6DD</span> Unused code</li>
+                        <li class="color"><span style="color: #D52753">D52753</span> Comments</li>
+                        <li class="color"><span style="color: #23974A">23974A</span> Constants (strings/numbers)</li>
+                        <li class="color"><span style="color: #275FE4">275FE4</span> Parameters / Database parameters</li>
+                        <li class="color"><span style="color: #DF631C">DF631C</span> Global variables / Outer query columns</li>
+                        <li class="color"><span style="color: #CE33C0">CE33C0</span> Local variables</li>
+                        <li class="color"><span style="color: #823FF1">823FF1</span> Database objects</li>
+                        <li class="color"><span style="color: #27618D">27618D</span> Database columns</li>
+                    </ul>
+                </li>
+                <li>
+                    Underlines (wavy)
+                    <ul>
+                        <li class="color"><span style="text-decoration: #0099E1 wavy underline">0099E1</span> Hints</li>
+                        <li class="color"><span style="text-decoration: #C5A332 wavy underline ">C5A332</span> Warnings</li>
+                        <li class="color"><span style="text-decoration: #3CBC66 wavy underline ">3CBC66</span> Grammar</li>
+                        <li class="color"><span style="text-decoration: #FF6480 wavy underline ">FF6480</span> Errors</li>
+                    </ul>
+                </li>
+                <li>
+                    Stripe marks (in the gutter)
+                    <ul>
+                        <li class="color"><span style="text-decoration: line-through #FF6480 2px">FF6480</span> Errors</li>
+                        <li class="color"><span style="text-decoration: line-through #FFA1A1 2px">FFA1A1</span> Breakpoints</li>
+                        <li class="color"><span style="text-decoration: line-through #FFB011 2px">FFB011</span> Bookmarks</li>
+                    </ul>
+                </li>
+            </ul>
+
+
+            <h2>Hotkeys</h2>
+
+            <ul>
+                <li><kbd>F6</kbd>: Build Solution</li>
+                <li><kbd>Ctrl</kbd> + <kbd>T</kbd>: Go to Declaration or Usages
+                <li><kbd>Ctrl</kbd> + <kbd>Shift</kbd> + <kbd>T</kbd>: Go to Implementation(s)
+                <li><kbd>Ctrl</kbd> + <kbd>Q</kbd>: Open Settings
+                <li><kbd>Ctrl</kbd> + <kbd>P</kbd>: Search Everywhere
+                <li><kbd>Ctrl</kbd> + <kbd>Shift</kbd> + <kbd>P</kbd>: Go to File...
+                <li><kbd>Ctrl</kbd> + <kbd>D</kbd>: Show Context Actions, Show Quick-Fixes plus several others
+                <li><kbd>Ctrl</kbd> + <kbd>Shift</kbd> + <kbd>G</kbd>: Select In...
+                <li><kbd>Ctrl</kbd> + <kbd>W</kbd>: Insert Inline Proposal
+            </ul>
+
+            <h2>Extensions</h2>
+
+            <ul>
+                <li><a>TODO</a></li>
+            </ul>
+
+        </content>
+
+        <footer>
+            <a class="comment" itemprop="discussionUrl" href="https://github.com/Gieron/Blog/issues/new" target="_blank">Have an issue with the post?</a>
+            <span class="author" itemprop="author">Henrik Ripa</span>
+        </footer>
+    </article>
+
+    <footer></footer>
+</body>
+</html>
