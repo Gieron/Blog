@@ -166,7 +166,7 @@
                 <li>
                     Editor &gt; General &gt; Editor Tabs
                     <ul>
-                        <li class="opt">Show tabs in: <span>One row</span>, and if tabs don't fit: <span>Scroll the tabs panel</span></li>
+                        <li class="opt">Show tabs in: <span>Multiple rows</span></li>
                         <li class="on">Show pinned tabs in a separate row</li>
                     </ul>
                 </li>
@@ -179,6 +179,7 @@
                         <li class="off">Smart indent on enter</li>
                         <li class="off">Auto-insert pair brackets, parentheses and quotes</li>
                         <li class="opt">Auto-insert closing brace: <span>On Enter after an opening brace</span></li>
+						<li class="off">Use Tab/Shift+Tab keys for structural navigation</li>
                     </ul>
                 </li>
                 <li>
@@ -226,30 +227,30 @@
                         <li class="color"><span style="color: #26272D">26272D</span> Ordinary</li>
                         <li class="color"><span style="color: #6D93BB">6D93BB</span> Punctuation</li>
                         <li class="color"><span style="color: #D5D6DD">D5D6DD</span> Unused code</li>
-                        <li class="color"><span style="color: #D52753">D52753</span> Comments</li>
-                        <li class="color"><span style="color: #23974A">23974A</span> Constants (strings/numbers)</li>
-                        <li class="color"><span style="color: #275FE4">275FE4</span> Parameters / Database parameters</li>
-                        <li class="color"><span style="color: #DF631C">DF631C</span> Global variables / Outer query columns</li>
-                        <li class="color"><span style="color: #CE33C0">CE33C0</span> Local variables</li>
-                        <li class="color"><span style="color: #823FF1">823FF1</span> Database objects</li>
-                        <li class="color"><span style="color: #27618D">27618D</span> Database columns</li>
+                        <li class="color"><span style="color: #D52753">D52753</span> Comment</li>
+                        <li class="color"><span style="color: #23974A">23974A</span> Constant (string/number)</li>
+                        <li class="color"><span style="color: #275FE4">275FE4</span> Parameter / Database parameter</li>
+                        <li class="color"><span style="color: #DF631C">DF631C</span> Instance field / Global variable / Outer query column</li>
+                        <li class="color"><span style="color: #CE33C0">CE33C0</span> Local variable</li>
+                        <li class="color"><span style="color: #823FF1">823FF1</span> Database object</li>
+                        <li class="color"><span style="color: #27618D">27618D</span> Database column</li>
                     </ul>
                 </li>
                 <li>
                     Underlines (wavy)
                     <ul>
-                        <li class="color"><span style="text-decoration: #0099E1 wavy underline">0099E1</span> Hints</li>
-                        <li class="color"><span style="text-decoration: #C5A332 wavy underline ">C5A332</span> Warnings</li>
+                        <li class="color"><span style="text-decoration: #0099E1 wavy underline">0099E1</span> Hint</li>
+                        <li class="color"><span style="text-decoration: #C5A332 wavy underline ">C5A332</span> Warning</li>
                         <li class="color"><span style="text-decoration: #3CBC66 wavy underline ">3CBC66</span> Grammar</li>
-                        <li class="color"><span style="text-decoration: #FF6480 wavy underline ">FF6480</span> Errors</li>
+                        <li class="color"><span style="text-decoration: #FF6480 wavy underline ">FF6480</span> Error</li>
                     </ul>
                 </li>
                 <li>
                     Stripe marks (in the gutter)
                     <ul>
-                        <li class="color"><span style="text-decoration: line-through #FF6480 2px">FF6480</span> Errors</li>
-                        <li class="color"><span style="text-decoration: line-through #FFA1A1 2px">FFA1A1</span> Breakpoints</li>
-                        <li class="color"><span style="text-decoration: line-through #FFB011 2px">FFB011</span> Bookmarks</li>
+                        <li class="color"><span style="text-decoration: line-through #FF6480 2px">FF6480</span> Error</li>
+                        <li class="color"><span style="text-decoration: line-through #FFA1A1 2px">FFA1A1</span> Breakpoint</li>
+                        <li class="color"><span style="text-decoration: line-through #FFB011 2px">FFB011</span> Bookmark</li>
                     </ul>
                 </li>
                 <li>
@@ -264,24 +265,26 @@
             <h2>Hotkeys</h2>
 
             <ul>
+                <li><kbd>Ctrl</kbd> + <kbd>D</kbd>: Show Context Actions, Show Quick-Fixes plus several others
+                <li><kbd>Ctrl</kbd> + <kbd>Shift</kbd> + <kbd>G</kbd>: Select In...
+                <li><kbd>Ctrl</kbd> + <kbd>Shift</kbd> + <kbd>F</kbd>: <em>macro</em> (Find in Files..., Directory)
+                <li><kbd>Ctrl</kbd> + <kbd>P</kbd>: Search Everywhere
+                <li><kbd>Ctrl</kbd> + <kbd>Shift</kbd> + <kbd>P</kbd>: Go to File...
+                <li><kbd>Ctrl</kbd> + <kbd>Q</kbd>: Open Settings
+                <li><kbd>Ctrl</kbd> + <kbd>Shift</kbd> + <kbd>R</kbd>: Pin Active Tab
+                <li><kbd>Ctrl</kbd> + <kbd>T</kbd>: Go to Declaration or Usages
+                <li><kbd>Ctrl</kbd> + <kbd>Shift</kbd> + <kbd>T</kbd>: Go to Implementation(s)
+                <li><kbd>Ctrl</kbd> + <kbd>W</kbd>: Insert Inline Proposal
                 <li><kbd>F6</kbd>: Build Solution</li>
                 <li><kbd>F7</kbd>: Rebuild Solution</li>
                 <li><kbd>F8</kbd>: Clean Solution</li>
-                <li><kbd>Ctrl</kbd> + <kbd>T</kbd>: Go to Declaration or Usages
-                <li><kbd>Ctrl</kbd> + <kbd>Shift</kbd> + <kbd>T</kbd>: Go to Implementation(s)
-                <li><kbd>Ctrl</kbd> + <kbd>Q</kbd>: Open Settings
-                <li><kbd>Ctrl</kbd> + <kbd>P</kbd>: Search Everywhere
-                <li><kbd>Ctrl</kbd> + <kbd>Shift</kbd> + <kbd>P</kbd>: Go to File...
-                <li><kbd>Ctrl</kbd> + <kbd>D</kbd>: Show Context Actions, Show Quick-Fixes plus several others
-                <li><kbd>Ctrl</kbd> + <kbd>Shift</kbd> + <kbd>G</kbd>: Select In...
-                <li><kbd>Ctrl</kbd> + <kbd>W</kbd>: Insert Inline Proposal
             </ul>
 
             <!--
 			<h2>Extensions</h2>
 
 			<ul>
-				<li>None at the moement</li>
+				<li>None at the moment</li>
 			</ul>
 			-->
 
